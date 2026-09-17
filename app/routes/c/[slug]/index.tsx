@@ -29,6 +29,7 @@ export default createRoute(async (c) => {
   const { calendar, slots } = detail
   const firebaseConfig = getPublicFirebaseConfig(c.env)
   const currentUser = await getCurrentUser(c).catch(() => null)
+  const isOwner = currentUser?.id === calendar.ownerId
   const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土']
   const firstScheduledDate = slots.find((slot) => slot.scheduledDate)?.scheduledDate
   const leadingBlankDays = firstScheduledDate ? getUtcWeekday(firstScheduledDate) : 0
@@ -50,10 +51,13 @@ export default createRoute(async (c) => {
         </div>
       </header>
 
-      <section class="mb-12 grid gap-10 sm:grid-cols-[10rem_1fr">
-        <div class="flex items-baseline">
-          <p class="text-6xl font-light leading-none text-(--color-accent)">01 /</p>
-          <div class="mt-2 flex items-center gap-2 text-sm italic text-(--color-muted)">
+      <section class="mb-12 grid gap-10">
+        <div>
+          <div class="flex items-baseline">
+            <span class="text-6xl font-light leading-none text-(--color-accent)">01 /</span>
+            <span class="mt-2 text-sm italic text-(--color-muted)">Overview</span>
+          </div>
+          <div class="mt-3 flex items-center gap-2 text-sm italic text-(--color-muted)">
             {calendar.owner.avatarUrl ? (
               <img class="h-6 w-6 rounded-full border border-(--color-border-strong) object-cover" src={calendar.owner.avatarUrl} alt={calendar.owner.username} />
             ) : (
@@ -72,7 +76,7 @@ export default createRoute(async (c) => {
         </div>
       </section>
 
-      <section class="mb-12 grid gap-6 sm:grid-cols-[10rem_1fr">
+      <section class="mb-12 grid gap-6">
         <div class="flex items-baseline">
           <span class="text-5xl font-light leading-none">02 /</span>
           <span class="mt-2 text-sm italic text-(--color-muted)">Calendar</span>
@@ -104,7 +108,7 @@ export default createRoute(async (c) => {
                         <span class="min-w-0 truncate text-sm font-semibold">{slot.displayName ?? slot.username}</span>
                       </div>
                     </div>
-                  ) : (
+                  ) : currentUser ? (
                     <form method="post" action={`/api/slots/${slot.id}/join`} class="h-full">
                       <button class="flex h-full w-full flex-col justify-between gap-3 text-left hover:text-(--color-accent)" type="submit">
                         <span>
@@ -114,6 +118,14 @@ export default createRoute(async (c) => {
                         <span class="text-sm font-semibold text-(--color-accent)">参加する</span>
                       </button>
                     </form>
+                  ) : (
+                    <div class="flex h-full flex-col justify-between gap-3 text-(--color-muted)">
+                      <span>
+                        <span class="block text-2xl font-light leading-none">{day}</span>
+                        <span class="mt-1 block text-xs">{slot.scheduledDate}</span>
+                      </span>
+                      <span class="text-sm font-semibold">ログイン後に参加できます</span>
+                    </div>
                   )}
                 </div>
               )
@@ -122,7 +134,7 @@ export default createRoute(async (c) => {
         </div>
       </section>
 
-      <section class="grid gap-6 sm:grid-cols-[10rem_1fr">
+      <section class="grid gap-6">
         <div class="flex items-baseline">
           <span class="text-5xl font-light leading-none">03 /</span>
           <span class="mt-2 text-sm italic text-(--color-muted)">Slots</span>
@@ -132,7 +144,7 @@ export default createRoute(async (c) => {
           const isCurrentUserSlot = currentUser?.id === slot.userId
 
           return (
-            <article class="grid gap-3 border-t border-(--color-border) py-4 sm:grid-cols-[7rem_1fr_auto sm:items-start">
+            <article class="grid gap-3 border-t border-(--color-border) py-4 sm:grid-cols-[7rem_1fr_auto] sm:items-start">
               <div>
                 <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
               </div>
@@ -145,7 +157,7 @@ export default createRoute(async (c) => {
                       ) : (
                         <span class="grid h-7 w-7 place-items-center rounded-full border border-(--color-border-strong) text-xs font-semibold text-(--color-muted)">{(slot.displayName ?? slot.username ?? '?').slice(0, 1)}</span>
                       )}
-                      <p class="font-semibold">{slot.displayName}</p>
+                      <p class="font-semibold">{slot.displayName ?? slot.username}</p>
                     </div>
                     {slot.articleUrl ? (
                       <a class="mt-1 block text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.articleUrl} rel="noopener noreferrer" target="_blank">
@@ -156,7 +168,7 @@ export default createRoute(async (c) => {
                     )}
                     {isCurrentUserSlot ? (
                       <form method="post" action={`/api/slots/${slot.id}/article`} class="mt-4 grid gap-3 sm:grid-cols-[1fr_1.4fr_auto]">
-                        <input class="reray-input px-3 py-3" name="title" value={slot.articleTitle ?? ''} placeholder="記事タイトル" required />
+                        <input class="reray-input px-3 py-3" name="title" value={slot.articleTitle ?? ''} placeholder="記事タイトル（空ならURLから自動）" />
                         <input class="reray-input px-3 py-3" name="url" value={slot.articleUrl ?? ''} placeholder="https://example.com/article" required />
                         <button class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">記事を保存</button>
                       </form>
@@ -176,10 +188,12 @@ export default createRoute(async (c) => {
                       <button class="border border-(--color-border-strong) px-4 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" type="submit">キャンセル</button>
                     </form>
                   ) : null
-                ) : (
+                ) : currentUser ? (
                   <form method="post" action={`/api/slots/${slot.id}/join`}>
-                    <button class="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed" type="submit">この日に参加する</button>
+                    <button class="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed]" type="submit">この日に参加する</button>
                   </form>
+                ) : (
+                  <button class="border border-(--color-border-strong) px-4 py-2 text-sm font-semibold text-(--color-muted)" type="button" disabled>ログイン後に参加</button>
                 )}
               </div>
             </article>

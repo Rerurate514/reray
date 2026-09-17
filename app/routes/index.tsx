@@ -24,8 +24,8 @@ export default createRoute(async (c) => {
         </nav>
       </header>
 
-      <section class="grid gap-10 py-12 sm:grid-cols-[9rem_1fr sm:py-16">
-        <div class="sm:pt-3 flex items-baseline">
+      <section class="grid gap-10 py-12 sm:py-16">
+        <div class="flex items-baseline sm:pt-3">
           <span class="text-6xl font-light leading-none text-(--color-accent) sm:text-7xl">01 /</span>
           <span class="mt-2 text-sm italic text-(--color-muted)">Relay Boards</span>
         </div>
@@ -33,7 +33,7 @@ export default createRoute(async (c) => {
           <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page) sm:text-3xl">
             いつでも作れる記事リレー
           </div>
-          <h1 class="mt-8 max-w-3xl text-4xl font-medium leading-[1.08 tracking-tight sm:text-6xl">
+          <h1 class="mt-8 max-w-3xl text-4xl font-medium leading-[1.08] tracking-tight sm:text-6xl">
             テーマを決めて、枠を配って、記事をつなぐ。
           </h1>
           <p class="mt-8 max-w-2xl text-base leading-8 text-(--color-muted)">
@@ -44,7 +44,7 @@ export default createRoute(async (c) => {
         </div>
       </section>
 
-      <section class="grid gap-8 border-t border-(--color-border) py-12 sm:grid-cols-[9rem_1fr">
+      <section class="grid gap-8 border-t border-(--color-border) py-12">
         <div class="flex items-baseline">
           <span class="text-5xl font-light leading-none">02 /</span>
           <span class="mt-2 text-sm italic text-(--color-muted)">Public</span>
@@ -55,10 +55,9 @@ export default createRoute(async (c) => {
           <a class="text-sm font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href="/new">新規作成</a>
         </div>
         {calendars.length > 0 ? (
-          <div class="mt-5 grid gap-0 border-b border-(--color-border)">
+          <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {calendars.map((calendar) => (
-              <a class="grid gap-3 border-t border-(--color-border) py-5 transition hover:bg-(--color-surface-muted) sm:grid-cols-[1fr_auto sm:items-end" href={`/c/${calendar.slug}`}>
-                <div>
+              <a class="grid min-h-48 border border-(--color-border) p-4 transition hover:bg-(--color-surface-muted)" href={`/c/${calendar.slug}`}>
                 <div class="flex items-center gap-2 text-sm text-(--color-subtle)">
                   {calendar.owner.avatarUrl ? (
                     <img class="h-6 w-6 rounded-full border border-(--color-border-strong) object-cover" src={calendar.owner.avatarUrl} alt={calendar.owner.username} />
@@ -67,11 +66,8 @@ export default createRoute(async (c) => {
                   )}
                   <span>@{calendar.owner.username}</span>
                 </div>
-                <h3 class="mt-2 text-xl font-semibold tracking-tight">{calendar.title}</h3>
-                </div>
-                <p class="text-sm text-(--color-muted)">
-                  {calendar.startDate} - {calendar.endDate}
-                </p>
+                <h3 class="mt-4 text-xl font-semibold tracking-tight">{calendar.title}</h3>
+                <p class="mt-auto border-t border-(--color-border) pt-3 text-sm text-(--color-muted)">{calendar.startDate} - {calendar.endDate}</p>
               </a>
             ))}
           </div>

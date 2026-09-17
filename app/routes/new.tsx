@@ -41,10 +41,10 @@ export default createRoute((c) => {
         <AuthStatus config={firebaseConfig} />
       </header>
 
-      <section class="grid gap-10 sm:grid-cols-[12rem_1fr]">
-        <div class="flex items-baseline gap-2">
-          <span class="text-5xl font-light italic leading-none text-(--color-accent)">01 /</span>
-          <span class="text-5xl font-light italic leading-none text-(--color-accent)">Create Relay</span>
+      <section class="grid gap-10">
+        <div class="flex items-baseline">
+          <span class="text-6xl font-light leading-none text-(--color-accent)">01 /</span>
+          <span class="mt-2 text-sm italic text-(--color-muted)">Create Relay</span>
         </div>
 
         <form method="post" class="grid gap-6 border-t border-(--color-border) pt-6">
