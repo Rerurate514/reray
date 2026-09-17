@@ -9,48 +9,48 @@ export default createRoute(async (c) => {
   const calendars = calendarRepository ? await listPublicCalendars(calendarRepository) : []
 
   return c.render(
-    <main class="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-10 px-5 py-8 sm:px-8">
+    <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8">
       <title>Reray</title>
-      <header class="flex items-center justify-between gap-4">
-        <a href="/" class="text-xl font-bold tracking-[0]">Reray</a>
-        <nav class="flex items-center gap-2 text-sm">
-          <a class="rounded-md px-3 py-2 hover:bg-white" href="/me">自分の予定</a>
-          <a class="rounded-md bg-[#1f2933] px-4 py-2 font-semibold text-white" href="/new">リレーを作る</a>
+      <header class="flex items-center justify-between gap-4 border-b border-[var(--color-border)] pb-5">
+        <a href="/" class="text-lg font-semibold tracking-tight">Reray</a>
+        <nav class="flex items-center gap-1 text-sm">
+          <a class="rounded-md px-3 py-2 text-[var(--color-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text)]" href="/me">自分の予定</a>
+          <a class="rounded-md bg-[var(--color-text)] px-4 py-2 font-semibold text-white hover:bg-black" href="/new">リレーを作る</a>
         </nav>
       </header>
 
-      <section class="grid gap-6 py-8 sm:grid-cols-[1.2fr_0.8fr] sm:items-end">
+      <section class="grid gap-10 border-b border-[var(--color-border)] py-16 sm:grid-cols-[1.2fr_0.8fr] sm:items-end">
         <div>
-          <p class="text-sm font-semibold text-[#b3532a]">いつでも作れる記事リレー</p>
-          <h1 class="mt-3 max-w-2xl text-4xl font-bold leading-tight sm:text-6xl">
+          <p class="text-sm font-semibold text-[var(--color-accent)]">いつでも作れる記事リレー</p>
+          <h1 class="mt-4 max-w-2xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl">
             テーマを決めて、枠を配って、記事をつなぐ。
           </h1>
         </div>
-        <p class="text-base leading-8 text-[#55616d]">
+        <p class="max-w-xl text-base leading-8 text-[var(--color-muted)]">
           Reray は Zenn、Qiita、note、個人ブログなどの外部記事 URL を集めるための進行管理サービスです。
           カレンダーを作成して共有すれば、参加者は空き枠を選んで記事を登録できます。
         </p>
       </section>
 
-      <section class="space-y-4">
+      <section class="py-12">
         <div class="flex items-center justify-between gap-4">
-          <h2 class="text-2xl font-bold">開催中のリレー</h2>
-          <a class="text-sm font-semibold text-[#b3532a]" href="/new">新規作成</a>
+          <h2 class="text-2xl font-semibold tracking-tight">開催中のリレー</h2>
+          <a class="text-sm font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]" href="/new">新規作成</a>
         </div>
         {calendars.length > 0 ? (
-          <div class="grid gap-3 sm:grid-cols-2">
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
             {calendars.map((calendar) => (
-              <a class="rounded-lg border border-[#ded6ca] bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md" href={`/c/${calendar.slug}`}>
-                <p class="text-sm text-[#687583]">@{calendar.owner.username}</p>
-                <h3 class="mt-2 text-xl font-bold">{calendar.title}</h3>
-                <p class="mt-3 text-sm text-[#687583]">
+              <a class="block rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition hover:border-[var(--color-border-strong)] hover:bg-[#fffdf9]" href={`/c/${calendar.slug}`}>
+                <p class="text-sm text-[var(--color-subtle)]">@{calendar.owner.username}</p>
+                <h3 class="mt-2 text-xl font-semibold tracking-tight">{calendar.title}</h3>
+                <p class="mt-4 border-t border-[var(--color-border)] pt-3 text-sm text-[var(--color-muted)]">
                   {calendar.startDate} - {calendar.endDate}
                 </p>
               </a>
             ))}
           </div>
         ) : (
-          <div class="rounded-lg border border-dashed border-[#cbbfaf] bg-white/70 p-6 text-[#687583]">
+          <div class="mt-5 rounded-md border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6 text-[var(--color-muted)]">
             まだ公開中のリレーはありません。最初のリレーを作成できます。
           </div>
         )}

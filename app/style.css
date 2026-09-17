@@ -1,1 +1,30 @@
 @import 'tailwindcss' source('../app');
+
+:root {
+  --color-page: #f8f7f4;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f0ec;
+  --color-border: #dedbd3;
+  --color-border-strong: #c9c3b8;
+  --color-text: #181818;
+  --color-muted: #5f625f;
+  --color-subtle: #7b7d78;
+  --color-accent: #9f3f18;
+  --color-accent-hover: #7d3012;
+}
+
+body {
+  background: var(--color-page);
+  color: var(--color-text);
+  font-feature-settings: 'palt';
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+::selection {
+  background: #f1c7b3;
+}

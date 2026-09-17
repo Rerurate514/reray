@@ -26,49 +26,51 @@ export default createRoute(async (c) => {
   const { calendar, slots } = detail
 
   return c.render(
-    <main class="mx-auto min-h-screen w-full max-w-4xl px-5 py-8 sm:px-8">
+    <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
       <title>{calendar.title} - Reray</title>
-      <header class="mb-8 flex items-center justify-between">
-        <a href="/" class="text-xl font-bold">Reray</a>
-        <a class="rounded-md bg-white px-3 py-2 text-sm font-semibold" href="/new">作成</a>
+      <header class="mb-10 flex items-center justify-between border-b border-(--color-border) pb-5">
+        <a href="/" class="text-lg font-semibold tracking-tight">Reray</a>
+        <a class="rounded-md border border-(--color-border) bg-(--color-surface) px-3 py-2 text-sm font-semibold hover:border-(--color-border-strong)" href="/new">作成</a>
       </header>
 
-      <section class="mb-8">
-        <p class="text-sm font-semibold text-[#b3532a]">@{calendar.owner.username}</p>
-        <h1 class="mt-2 text-4xl font-bold leading-tight">{calendar.title}</h1>
-        {calendar.description ? <p class="mt-4 whitespace-pre-wrap leading-8 text-[#55616d]">{calendar.description}</p> : null}
-        <p class="mt-4 text-sm text-[#687583]">
+      <section class="mb-10 grid gap-5 border-b border-(--color-border) pb-10 sm:grid-cols-[1fr_auto] sm:items-end">
+        <div>
+          <p class="text-sm font-semibold text-(--color-accent)">@{calendar.owner.username}</p>
+          <h1 class="mt-3 max-w-3xl text-4xl font-semibold leading-tight tracking-tight">{calendar.title}</h1>
+          {calendar.description ? <p class="mt-5 max-w-2xl whitespace-pre-wrap leading-8 text-(--color-muted)">{calendar.description}</p> : null}
+        </div>
+        <p class="text-sm font-medium text-(--color-muted)">
           {calendar.startDate} - {calendar.endDate}
         </p>
       </section>
 
-      <section class="overflow-hidden rounded-lg border border-[#ded6ca] bg-white shadow-sm">
+      <section class="overflow-hidden rounded-md border border-(--color-border) bg-(--color-surface)">
         {slots.map((slot) => (
-          <article class="grid gap-3 border-b border-[#ece6dd] p-4 last:border-b-0 sm:grid-cols-[7rem_1fr_auto] sm:items-center">
+          <article class="grid gap-3 border-b border-(--color-border) p-4 last:border-b-0 sm:grid-cols-[7rem_1fr_auto] sm:items-center">
             <div>
-              <p class="font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
+              <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
             </div>
             <div>
               {slot.userId ? (
                 <>
                   <p class="font-semibold">{slot.displayName}</p>
                   {slot.articleUrl ? (
-                    <a class="mt-1 block text-[#b3532a] underline-offset-4 hover:underline" href={slot.articleUrl} rel="noopener noreferrer" target="_blank">
+                    <a class="mt-1 block text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.articleUrl} rel="noopener noreferrer" target="_blank">
                       {slot.articleTitle}
                     </a>
                   ) : (
-                    <p class="mt-1 text-[#687583]">記事準備中...</p>
+                    <p class="mt-1 text-(--color-muted)">記事準備中...</p>
                   )}
                 </>
               ) : (
                 <>
-                  <p class="font-semibold text-[#687583]">空き枠</p>
-                  <p class="mt-1 text-sm text-[#687583]">この日の担当者を募集中です。</p>
+                  <p class="font-semibold text-(--color-muted)">空き枠</p>
+                  <p class="mt-1 text-sm text-(--color-muted)">この日の担当者を募集中です。</p>
                 </>
               )}
             </div>
             <div>
-              {slot.userId ? null : <button class="rounded-md border border-[#b3532a] px-4 py-2 text-sm font-semibold text-[#b3532a]">この日に参加する</button>}
+              {slot.userId ? null : <button class="rounded-md border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed]">この日に参加する</button>}
             </div>
           </article>
         ))}

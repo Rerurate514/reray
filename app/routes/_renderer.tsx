@@ -12,7 +12,7 @@ export default jsxRenderer(({ children }) => {
         <Link href="/app/style.css" rel="stylesheet" />
         <Script src="/app/client.ts" async />
       </head>
-      <body class="bg-[#f7f4ef] text-[#1f2933]">{children}</body>
+      <body>{children}</body>
     </html>
   )
 })
