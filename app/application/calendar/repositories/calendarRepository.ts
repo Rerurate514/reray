@@ -7,7 +7,7 @@ import type { UpsertArticleInput } from '../dtos/upsertArticleInput'
 
 export type CalendarRepository = {
   findSlugsByPrefix(baseSlug: string): Promise<string[]>
-  createWithSlots(calendar: NewCalendar, slots: NewSlot[]): Promise<void>
+  createWithSlots(calendar: NewCalendar, slots: NewSlot[], tagNames: string[]): Promise<void>
   findDetailBySlug(slug: string): Promise<CalendarDetail | null>
   listPublishedPublic(limit: number): Promise<CalendarSummary[]>
   findOwnerId(calendarId: string): Promise<string | null>

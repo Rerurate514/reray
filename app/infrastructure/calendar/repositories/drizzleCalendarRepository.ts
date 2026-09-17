@@ -4,6 +4,7 @@ import type { NewCalendar } from '../../../domain/calendar/entities/calendar'
 import type { NewSlot } from '../../../domain/calendar/entities/slot'
 import type { Db } from '../../providers/db/client'
 import { articles, calendars, slots, users } from '../../providers/db/schema'
+import { attachTagsToCalendar, listTagsByCalendarIds } from './calendarTagQueries'
 
 export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
   return {
@@ -16,11 +17,13 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return rows.map((row) => row.slug)
     },
 
-    async createWithSlots(calendar: NewCalendar, slotRows: NewSlot[]) {
+    async createWithSlots(calendar: NewCalendar, slotRows: NewSlot[], tagNames: string[]) {
       await db.insert(calendars).values(calendar)
       for (let index = 0; index < slotRows.length; index += 50) {
         await db.insert(slots).values(slotRows.slice(index, index + 50))
       }
+
+      await attachTagsToCalendar(db, calendar.id, tagNames, calendar.createdAt)
     },
 
     async findDetailBySlug(slug) {
@@ -53,11 +56,13 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         .where(eq(slots.calendarId, calendar.id))
         .orderBy(asc(slots.position))
 
-      return { calendar, slots: slotRows }
+      const calendarTagRows = await listTagsByCalendarIds(db, [calendar.id])
+
+      return { calendar: { ...calendar, tags: calendarTagRows[calendar.id] ?? [] }, slots: slotRows }
     },
 
     async listPublishedPublic(limit) {
-      return db.query.calendars.findMany({
+      const calendarRows = await db.query.calendars.findMany({
         where: and(eq(calendars.visibility, 'public'), eq(calendars.status, 'published')),
         orderBy: (table, { desc }) => [desc(table.createdAt)],
         limit,
@@ -65,6 +70,9 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           owner: true,
         },
       })
+      const tagsByCalendarId = await listTagsByCalendarIds(db, calendarRows.map((calendar) => calendar.id))
+
+      return calendarRows.map((calendar) => ({ ...calendar, tags: tagsByCalendarId[calendar.id] ?? [] }))
     },
 
     async findOwnerId(calendarId) {

@@ -4,6 +4,7 @@ export type CalendarSummary = {
   title: string
   startDate: string | null
   endDate: string | null
+  tags: Array<{ name: string }>
   owner: {
     username: string
     avatarUrl: string | null

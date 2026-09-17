@@ -79,6 +79,13 @@ export default createRoute(async (c) => {
             {calendar.startDate} - {calendar.endDate}
           </div>
           <h1 class="mt-8 max-w-4xl text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{calendar.title}</h1>
+          {calendar.tags.length > 0 ? (
+            <div class="mt-5 flex flex-wrap gap-2">
+              {calendar.tags.map((tag) => (
+                <span class="border border-(--color-border) px-2 py-1 text-xs text-(--color-muted)">#{tag.name}</span>
+              ))}
+            </div>
+          ) : null}
           {calendar.description ? <p class="mt-6 max-w-2xl whitespace-pre-wrap leading-8 text-(--color-muted)">{calendar.description}</p> : null}
           <div class="reray-rule mt-8" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
         </div>

@@ -67,6 +67,13 @@ export default createRoute(async (c) => {
                   <span>@{calendar.owner.username}</span>
                 </div>
                 <h3 class="mt-4 text-xl font-semibold tracking-tight">{calendar.title}</h3>
+                {calendar.tags.length > 0 ? (
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    {calendar.tags.map((tag) => (
+                      <span class="border border-(--color-border) px-2 py-1 text-xs text-(--color-muted)">#{tag.name}</span>
+                    ))}
+                  </div>
+                ) : null}
                 <p class="mt-auto border-t border-(--color-border) pt-3 text-sm text-(--color-muted)">{calendar.startDate} - {calendar.endDate}</p>
               </a>
             ))}

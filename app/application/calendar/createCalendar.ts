@@ -4,6 +4,7 @@ import { generateCalendarSlug } from '../../domain/calendar/services/generateCal
 import { generateSlots } from '../../domain/calendar/services/generateSlots'
 import { normalizeCalendarDescription } from '../../domain/calendar/services/normalizeCalendarDescription'
 import { normalizeCalendarTitle } from '../../domain/calendar/services/normalizeCalendarTitle'
+import { normalizeTagNames } from '../../domain/tag/services/normalizeTagNames'
 import { createId } from '../../domain/shared/services/createId'
 
 export type CreateCalendarInput = {
@@ -13,6 +14,7 @@ export type CreateCalendarInput = {
   startDate: string
   endDate: string
   frequency: SlotFrequency
+  tags?: string
 }
 
 export async function createCalendar(calendarRepository: CalendarRepository, input: CreateCalendarInput) {
@@ -22,6 +24,7 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
   const baseSlug = generateCalendarSlug(title)
   const slug = await createUniqueSlug(calendarRepository, baseSlug)
   const generatedSlots = generateSlots(input.startDate, input.endDate, input.frequency)
+  const tagNames = normalizeTagNames(input.tags)
 
   await calendarRepository.createWithSlots(
     {
@@ -46,6 +49,7 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
       createdAt: now,
       updatedAt: now,
     })),
+    tagNames,
   )
 
   return { id, slug }
