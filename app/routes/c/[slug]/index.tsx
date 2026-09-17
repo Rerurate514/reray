@@ -28,6 +28,8 @@ export default createRoute(async (c) => {
   const { calendar, slots } = detail
   const firebaseConfig = getPublicFirebaseConfig(c.env)
   const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土']
+  const firstScheduledDate = slots.find((slot) => slot.scheduledDate)?.scheduledDate
+  const leadingBlankDays = firstScheduledDate ? getUtcWeekday(firstScheduledDate) : 0
 
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-6xl px-5 py-6 sm:px-8">
@@ -72,8 +74,11 @@ export default createRoute(async (c) => {
             {weekdayLabels.map((label) => (
               <div class="border-b border-r border-(--color-border) px-2 py-2 text-center text-xs font-semibold text-(--color-muted)">{label}</div>
             ))}
+            {Array.from({ length: leadingBlankDays }).map(() => (
+              <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface-muted) opacity-55" aria-hidden="true"></div>
+            ))}
             {slots.map((slot) => {
-              const day = slot.scheduledDate ? new Date(`${slot.scheduledDate}T00:00:00.000Z`).getUTCDate() : slot.position
+              const day = slot.scheduledDate ? getUtcDate(slot.scheduledDate) : slot.position
               return (
                 <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface) p-2">
                   {slot.userId ? (
@@ -160,3 +165,11 @@ export default createRoute(async (c) => {
     </main>,
   )
 })
+
+function getUtcDate(date: string) {
+  return new Date(`${date}T00:00:00.000Z`).getUTCDate()
+}
+
+function getUtcWeekday(date: string) {
+  return new Date(`${date}T00:00:00.000Z`).getUTCDay()
+}
