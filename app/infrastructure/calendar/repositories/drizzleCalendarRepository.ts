@@ -1,4 +1,4 @@
-import { and, asc, eq, sql } from 'drizzle-orm'
+import { and, asc, eq, isNull, sql } from 'drizzle-orm'
 import type { CalendarRepository } from '../../../application/calendar/repositories/calendarRepository'
 import type { NewCalendar } from '../../../domain/calendar/entities/calendar'
 import type { NewSlot } from '../../../domain/calendar/entities/slot'
@@ -62,6 +62,66 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           owner: true,
         },
       })
+    },
+
+    async joinSlot(slotId, userId, now) {
+      const result = await db.update(slots).set({ userId, updatedAt: now }).where(and(eq(slots.id, slotId), isNull(slots.userId)))
+      return result.meta.changes > 0
+    },
+
+    async cancelSlot(slotId, userId, now) {
+      const result = await db.update(slots).set({ userId: null, updatedAt: now }).where(and(eq(slots.id, slotId), eq(slots.userId, userId)))
+      return result.meta.changes > 0
+    },
+
+    async findSlotOwner(slotId) {
+      const slot = await db.query.slots.findFirst({
+        columns: {
+          userId: true,
+        },
+        where: eq(slots.id, slotId),
+      })
+
+      return slot?.userId ?? null
+    },
+
+    async upsertArticle(input) {
+      await db
+        .insert(articles)
+        .values({
+          id: input.id,
+          slotId: input.slotId,
+          title: input.title,
+          url: input.url,
+          createdAt: input.now,
+          updatedAt: input.now,
+        })
+        .onConflictDoUpdate({
+          target: articles.slotId,
+          set: {
+            title: input.title,
+            url: input.url,
+            updatedAt: input.now,
+          },
+        })
+    },
+
+    async listSlotsByUser(userId) {
+      return db
+        .select({
+          id: slots.id,
+          scheduledDate: slots.scheduledDate,
+          position: slots.position,
+          calendarSlug: calendars.slug,
+          calendarTitle: calendars.title,
+          articleTitle: articles.title,
+          articleUrl: articles.url,
+        })
+        .from(slots)
+        .innerJoin(calendars, eq(slots.calendarId, calendars.id))
+        .leftJoin(articles, eq(articles.slotId, slots.id))
+        .where(eq(slots.userId, userId))
+        .orderBy(asc(slots.scheduledDate), asc(slots.position))
     },
   }
 }
