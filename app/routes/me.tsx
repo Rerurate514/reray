@@ -14,14 +14,14 @@ export default createRoute(async (c) => {
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
       <title>自分の予定 - Reray</title>
-      <header class="mb-12 flex items-center justify-between border-b border-(--color-text) pb-5">
+      <header class="mb-12 flex flex-col gap-4 border-b border-(--color-text) pb-5 sm:flex-row sm:items-center sm:justify-between">
         <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
         <AuthStatus config={firebaseConfig} />
       </header>
-      <section class="grid gap-10 sm:grid-cols-[12rem_1fr">
-        <div class="flex items-baseline">
-          <span class="text-6xl font-light leading-none text-(--color-accent)">01 /</span>
-          <span class="mt-2 text-sm italic text-(--color-muted)">My Schedule</span>
+      <section class="grid gap-10 sm:grid-cols-[12rem_1fr]">
+        <div class="flex items-baseline gap-2">
+          <span class="text-5xl font-light italic leading-none text-(--color-accent)">01 /</span>
+          <span class="text-5xl font-light italic leading-none text-(--color-accent)">My Schedule</span>
         </div>
         <div class="border-t border-(--color-border) pt-6">
           <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page)">自分の予定</div>
@@ -47,7 +47,7 @@ export default createRoute(async (c) => {
                         </form>
                       </div>
                       <form method="post" action={`/api/slots/${slot.id}/article`} class="grid gap-3 sm:grid-cols-[1fr_1.4fr_auto]">
-                        <input class="reray-input px-3 py-3" name="title" value={slot.articleTitle ?? ''} placeholder="記事タイトル" required />
+                        <input class="reray-input px-3 py-3" name="title" value={slot.articleTitle ?? ''} placeholder="記事タイトル（空ならURLから自動）" />
                         <input class="reray-input px-3 py-3" name="url" value={slot.articleUrl ?? ''} placeholder="https://example.com/article" required />
                         <button class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">記事を保存</button>
                       </form>

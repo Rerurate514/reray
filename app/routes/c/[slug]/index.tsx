@@ -36,10 +36,16 @@ export default createRoute(async (c) => {
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-6xl px-5 py-6 sm:px-8">
       <title>{calendar.title} - Reray</title>
-      <header class="mb-12 flex items-center justify-between border-b border-(--color-text) pb-5">
+      <header class="mb-12 flex flex-col gap-4 border-b border-(--color-text) pb-5 sm:flex-row sm:items-center sm:justify-between">
         <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <a class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href="/">一覧</a>
           <a class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href="/new">作成</a>
+          {isOwner ? (
+            <form method="post" action={`/api/calendars/${calendar.id}/delete`}>
+              <button class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold text-(--color-red) hover:border-(--color-red)" type="submit">削除</button>
+            </form>
+          ) : null}
           <AuthStatus config={firebaseConfig} />
         </div>
       </header>

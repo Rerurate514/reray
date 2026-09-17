@@ -14,11 +14,12 @@ export default createRoute(async (c) => {
   return c.render(
     <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8">
       <title>Reray</title>
-      <header class="flex items-center justify-between gap-4 border-b border-(--color-text) pb-5">
+      <header class="flex flex-col gap-4 border-b border-(--color-text) pb-5 sm:flex-row sm:items-center sm:justify-between">
         <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
-        <nav class="flex items-center gap-1 text-sm">
-          <a class="px-3 py-2 text-(--color-muted) hover:text-(--color-accent)" href="/me">自分の予定</a>
+        <nav class="flex flex-wrap items-center gap-2 text-sm">
+          <a class="border border-(--color-border-strong) px-3 py-2 font-semibold text-(--color-muted) hover:border-(--color-accent) hover:text-(--color-accent)" href="/me">自分の予定</a>
           <a class="bg-(--color-text) px-4 py-2 font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" href="/new">リレーを作る</a>
+          <span class="mx-1 hidden h-6 border-l border-(--color-border) sm:inline-block"></span>
           <AuthStatus config={firebaseConfig} />
         </nav>
       </header>

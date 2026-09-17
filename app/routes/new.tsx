@@ -36,15 +36,15 @@ export default createRoute((c) => {
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
       <title>リレー作成 - Reray</title>
-      <header class="mb-12 flex items-center justify-between border-b border-(--color-text) pb-5">
+      <header class="mb-12 flex flex-col gap-4 border-b border-(--color-text) pb-5 sm:flex-row sm:items-center sm:justify-between">
         <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
         <AuthStatus config={firebaseConfig} />
       </header>
 
-      <section class="grid gap-10 sm:grid-cols-[12rem_1fr">
-        <div class="flex items-baseline">
-          <span class="text-6xl font-light leading-none text-(--color-accent)">01 /</span>
-          <span class="mt-2 text-sm italic text-(--color-muted)">Create Relay</span>
+      <section class="grid gap-10 sm:grid-cols-[12rem_1fr]">
+        <div class="flex items-baseline gap-2">
+          <span class="text-5xl font-light italic leading-none text-(--color-accent)">01 /</span>
+          <span class="text-5xl font-light italic leading-none text-(--color-accent)">Create Relay</span>
         </div>
 
         <form method="post" class="grid gap-6 border-t border-(--color-border) pt-6">
