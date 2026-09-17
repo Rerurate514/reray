@@ -1,11 +1,26 @@
 ```txt
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ```txt
-npm run deploy
+pnpm run deploy
 ```
+
+## Firebase Authentication
+
+Reray uses Firebase Authentication for identity and stores application users in D1.
+Set these Worker vars before testing login:
+
+```txt
+FIREBASE_PROJECT_ID
+PUBLIC_FIREBASE_API_KEY
+PUBLIC_FIREBASE_AUTH_DOMAIN
+PUBLIC_FIREBASE_PROJECT_ID
+PUBLIC_FIREBASE_APP_ID
+```
+
+The public Firebase values are from the Firebase Web App config. Google and GitHub providers should be enabled in Firebase Authentication.
 
 [For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
 
