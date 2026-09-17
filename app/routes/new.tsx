@@ -1,21 +1,44 @@
 import { createRoute } from 'honox/factory'
+import { getPublicFirebaseConfig } from '../application/auth/firebaseConfig'
+import { createCalendar } from '../application/calendar/createCalendar'
+import AuthStatus from '../islands/auth-status'
+import { requireCurrentUser } from '../infrastructure/auth/currentUser'
+import { createDrizzleCalendarRepository } from '../infrastructure/calendar/repositories/drizzleCalendarRepository'
+import { createDb } from '../infrastructure/providers/db/client'
 
-export const POST = createRoute((c) => {
-  return c.json(
-    {
-      error: 'authentication_required',
-      message: 'Calendar creation will be enabled after Firebase Authentication is connected.',
-    },
-    401,
-  )
+export const POST = createRoute(async (c) => {
+  if (!c.env.DB) {
+    return c.json({ error: 'database_not_configured' }, 500)
+  }
+
+  try {
+    const user = await requireCurrentUser(c)
+    const body = await c.req.parseBody()
+    const result = await createCalendar(createDrizzleCalendarRepository(createDb(c.env.DB)), {
+      ownerId: user.id,
+      title: String(body.title ?? ''),
+      description: String(body.description ?? ''),
+      startDate: String(body.startDate ?? ''),
+      endDate: String(body.endDate ?? ''),
+      frequency: body.frequency === 'weekdays' ? 'weekdays' : 'daily',
+    })
+
+    return c.redirect(`/c/${result.slug}`)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Calendar creation failed'
+    return c.json({ error: message }, message === 'Authentication required' ? 401 : 400)
+  }
 })
 
 export default createRoute((c) => {
+  const firebaseConfig = getPublicFirebaseConfig(c.env)
+
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
       <title>リレー作成 - Reray</title>
       <header class="mb-12 flex items-center justify-between border-b border-(--color-text) pb-5">
         <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
+        <AuthStatus config={firebaseConfig} />
       </header>
 
       <section class="grid gap-10 sm:grid-cols-[12rem_1fr">
