@@ -16,7 +16,12 @@
       "database_id": "local-reray",
       "migrations_dir": "drizzle"
     }
-  ]
+  ],
+  "vars": {
+    "FIREBASE_PROJECT_ID": "reray-83ad4",
+    "PUBLIC_FIREBASE_AUTH_DOMAIN": "reray-83ad4.firebaseapp.com",
+    "PUBLIC_FIREBASE_PROJECT_ID": "reray-83ad4"
+  }
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
