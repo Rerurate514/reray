@@ -13,7 +13,8 @@
     {
       "binding": "DB",
       "database_name": "reray",
-      "database_id": "local-reray"
+      "database_id": "local-reray",
+      "migrations_dir": "drizzle"
     }
   ]
   // "vars": {
