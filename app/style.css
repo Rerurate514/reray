@@ -1,21 +1,25 @@
 @import 'tailwindcss' source('../app');
 
 :root {
-  --color-page: #f8f7f4;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f1f0ec;
-  --color-border: #dedbd3;
-  --color-border-strong: #c9c3b8;
-  --color-text: #181818;
-  --color-muted: #5f625f;
-  --color-subtle: #7b7d78;
-  --color-accent: #9f3f18;
-  --color-accent-hover: #7d3012;
+  --color-page: #f6efe2;
+  --color-surface: #f6efe2;
+  --color-surface-muted: #efe2ce;
+  --color-border: rgba(32, 25, 25, .42);
+  --color-border-strong: rgba(32, 25, 25, .72);
+  --color-text: #201919;
+  --color-muted: #6f665f;
+  --color-subtle: #887b70;
+  --color-accent: #f66620;
+  --color-accent-hover: #802520;
+  --color-green: #5c7f71;
+  --color-red: #802520;
+  --color-yellow: #ba8530;
 }
 
 body {
   background: var(--color-page);
   color: var(--color-text);
+  font-family: Futura, 'Trebuchet MS', 'Helvetica Neue', 'Yu Gothic', 'YuGothic', 'Hiragino Sans', sans-serif;
   font-feature-settings: 'palt';
 }
 
@@ -26,5 +30,42 @@ button {
 }
 
 ::selection {
-  background: #f1c7b3;
+  background: #f6b58e;
+  color: var(--color-text);
+}
+
+.reray-wordmark::first-letter,
+.reray-accent-letter::first-letter {
+  color: var(--color-accent);
+}
+
+.reray-rule {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  height: 2px;
+  background: var(--color-border);
+}
+
+.reray-rule span:nth-child(1) {
+  background: var(--color-red);
+}
+
+.reray-rule span:nth-child(2) {
+  background: var(--color-yellow);
+}
+
+.reray-rule span:nth-child(3) {
+  background: var(--color-green);
+}
+
+.reray-input {
+  border: 1px solid var(--color-border-strong);
+  background: #fff8ed;
+  color: var(--color-text);
+  outline: none;
+}
+
+.reray-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 -2px 0 var(--color-accent);
 }

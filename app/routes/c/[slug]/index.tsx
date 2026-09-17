@@ -26,27 +26,36 @@ export default createRoute(async (c) => {
   const { calendar, slots } = detail
 
   return c.render(
-    <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
+    <main class="mx-auto min-h-screen w-full max-w-6xl px-5 py-6 sm:px-8">
       <title>{calendar.title} - Reray</title>
-      <header class="mb-10 flex items-center justify-between border-b border-(--color-border) pb-5">
-        <a href="/" class="text-lg font-semibold tracking-tight">Reray</a>
-        <a class="rounded-md border border-(--color-border) bg-(--color-surface) px-3 py-2 text-sm font-semibold hover:border-(--color-border-strong)" href="/new">作成</a>
+      <header class="mb-12 flex items-center justify-between border-b border-(--color-text) pb-5">
+        <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
+        <a class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href="/new">作成</a>
       </header>
 
-      <section class="mb-10 grid gap-5 border-b border-(--color-border) pb-10 sm:grid-cols-[1fr_auto] sm:items-end">
+      <section class="mb-12 grid gap-10 sm:grid-cols-[10rem_1fr">
         <div>
-          <p class="text-sm font-semibold text-(--color-accent)">@{calendar.owner.username}</p>
-          <h1 class="mt-3 max-w-3xl text-4xl font-semibold leading-tight tracking-tight">{calendar.title}</h1>
-          {calendar.description ? <p class="mt-5 max-w-2xl whitespace-pre-wrap leading-8 text-(--color-muted)">{calendar.description}</p> : null}
+          <p class="text-6xl font-light leading-none text-(--color-accent)">01 /</p>
+          <p class="mt-2 text-sm italic text-(--color-muted)">@{calendar.owner.username}</p>
         </div>
-        <p class="text-sm font-medium text-(--color-muted)">
-          {calendar.startDate} - {calendar.endDate}
-        </p>
+        <div class="border-t border-(--color-border) pt-6">
+          <div class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) sm:text-base">
+            {calendar.startDate} - {calendar.endDate}
+          </div>
+          <h1 class="mt-8 max-w-4xl text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{calendar.title}</h1>
+          {calendar.description ? <p class="mt-6 max-w-2xl whitespace-pre-wrap leading-8 text-(--color-muted)">{calendar.description}</p> : null}
+          <div class="reray-rule mt-8" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        </div>
       </section>
 
-      <section class="overflow-hidden rounded-md border border-(--color-border) bg-(--color-surface)">
+      <section class="grid gap-6 sm:grid-cols-[10rem_1fr">
+        <div>
+          <p class="text-5xl font-light leading-none">02 /</p>
+          <p class="mt-2 text-sm italic text-(--color-muted)">Slots</p>
+        </div>
+        <div class="border-b border-(--color-border)">
         {slots.map((slot) => (
-          <article class="grid gap-3 border-b border-(--color-border) p-4 last:border-b-0 sm:grid-cols-[7rem_1fr_auto] sm:items-center">
+          <article class="grid gap-3 border-t border-(--color-border) py-4 sm:grid-cols-[7rem_1fr_auto sm:items-center">
             <div>
               <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
             </div>
@@ -70,10 +79,11 @@ export default createRoute(async (c) => {
               )}
             </div>
             <div>
-              {slot.userId ? null : <button class="rounded-md border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed]">この日に参加する</button>}
+              {slot.userId ? null : <button class="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed">この日に参加する</button>}
             </div>
           </article>
         ))}
+        </div>
       </section>
     </main>,
   )

@@ -12,38 +12,43 @@ export const POST = createRoute((c) => {
 
 export default createRoute((c) => {
   return c.render(
-    <main class="mx-auto min-h-screen w-full max-w-4xl px-5 py-6 sm:px-8">
+    <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
       <title>リレー作成 - Reray</title>
-      <header class="mb-10 flex items-center justify-between border-b border-(--color-border) pb-5">
-        <a href="/" class="text-lg font-semibold tracking-tight">Reray</a>
+      <header class="mb-12 flex items-center justify-between border-b border-(--color-text) pb-5">
+        <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
       </header>
 
-      <section class="grid gap-8 sm:grid-cols-[14rem_1fr">
+      <section class="grid gap-10 sm:grid-cols-[12rem_1fr">
         <div>
-          <p class="text-sm font-semibold text-(--color-accent)">Create Relay</p>
-          <h1 class="mt-3 text-3xl font-semibold tracking-tight">記事リレーを作成</h1>
-          <p class="mt-4 text-sm leading-6 text-(--color-muted)">テーマと期間を決めると、投稿枠を自動生成します。</p>
+          <p class="text-6xl font-light leading-none text-(--color-accent)">01 /</p>
+          <p class="mt-2 text-sm italic text-(--color-muted)">Create Relay</p>
         </div>
 
-        <form method="post" class="grid gap-6 rounded-md border border-(--color-border) bg-(--color-surface) p-5 sm:p-6">
+        <form method="post" class="grid gap-6 border-t border-(--color-border) pt-6">
+          <div>
+            <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page)">記事リレーを作成</div>
+            <p class="mt-5 max-w-xl text-sm leading-7 text-(--color-muted)">テーマと期間を決めると、投稿枠を自動生成します。</p>
+            <div class="reray-rule mt-6" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          </div>
+
           <label class="grid gap-2">
             <span class="text-sm font-semibold">タイトル</span>
-            <input class="rounded-md border border-(--color-border-strong) bg-white px-3 py-3 outline-none focus:border-(--color-text)" name="title" required maxlength={120} placeholder="Flutter を30日間語る" />
+            <input class="reray-input px-3 py-3" name="title" required maxlength={120} placeholder="Flutter を30日間語る" />
           </label>
 
           <label class="grid gap-2">
             <span class="text-sm font-semibold">説明</span>
-            <textarea class="min-h-28 rounded-md border border-(--color-border-strong) bg-white px-3 py-3 leading-7 outline-none focus:border-(--color-text)" name="description" placeholder="テーマや参加条件を書いてください" />
+            <textarea class="reray-input min-h-28 px-3 py-3 leading-7" name="description" placeholder="テーマや参加条件を書いてください" />
           </label>
 
           <div class="grid gap-4 sm:grid-cols-2">
             <label class="grid gap-2">
               <span class="text-sm font-semibold">開始日</span>
-              <input class="rounded-md border border-(--color-border-strong) bg-white px-3 py-3 outline-none focus:border-(--color-text)" type="date" name="startDate" required />
+              <input class="reray-input px-3 py-3" type="date" name="startDate" required />
             </label>
             <label class="grid gap-2">
               <span class="text-sm font-semibold">終了日</span>
-              <input class="rounded-md border border-(--color-border-strong) bg-white px-3 py-3 outline-none focus:border-(--color-text)" type="date" name="endDate" required />
+              <input class="reray-input px-3 py-3" type="date" name="endDate" required />
             </label>
           </div>
 
@@ -59,7 +64,7 @@ export default createRoute((c) => {
             </label>
           </fieldset>
 
-          <button class="rounded-md bg-(--color-text) px-5 py-3 font-semibold text-white hover:bg-black" type="submit">作成する</button>
+          <button class="bg-(--color-text) px-5 py-3 font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">作成する</button>
         </form>
       </section>
     </main>,
