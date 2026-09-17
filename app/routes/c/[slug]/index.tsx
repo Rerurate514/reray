@@ -1,5 +1,7 @@
 import { createRoute } from 'honox/factory'
+import { getPublicFirebaseConfig } from '../../../application/auth/firebaseConfig'
 import { getCalendarDetail } from '../../../application/calendar/getCalendarDetail'
+import AuthStatus from '../../../islands/auth-status'
 import { createDrizzleCalendarRepository } from '../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../infrastructure/providers/db/client'
 
@@ -24,13 +26,17 @@ export default createRoute(async (c) => {
   }
 
   const { calendar, slots } = detail
+  const firebaseConfig = getPublicFirebaseConfig(c.env)
 
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-6xl px-5 py-6 sm:px-8">
       <title>{calendar.title} - Reray</title>
       <header class="mb-12 flex items-center justify-between border-b border-(--color-text) pb-5">
         <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
-        <a class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href="/new">作成</a>
+        <div class="flex items-center gap-2">
+          <a class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href="/new">作成</a>
+          <AuthStatus config={firebaseConfig} />
+        </div>
       </header>
 
       <section class="mb-12 grid gap-10 sm:grid-cols-[10rem_1fr">

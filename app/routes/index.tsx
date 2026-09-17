@@ -1,5 +1,7 @@
 import { createRoute } from 'honox/factory'
+import { getPublicFirebaseConfig } from '../application/auth/firebaseConfig'
 import { listPublicCalendars } from '../application/calendar/listPublicCalendars'
+import AuthStatus from '../islands/auth-status'
 import { createDrizzleCalendarRepository } from '../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../infrastructure/providers/db/client'
 
@@ -7,6 +9,7 @@ export default createRoute(async (c) => {
   const db = c.env.DB ? createDb(c.env.DB) : null
   const calendarRepository = db ? createDrizzleCalendarRepository(db) : null
   const calendars = calendarRepository ? await listPublicCalendars(calendarRepository) : []
+  const firebaseConfig = getPublicFirebaseConfig(c.env)
 
   return c.render(
     <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8">
@@ -16,6 +19,7 @@ export default createRoute(async (c) => {
         <nav class="flex items-center gap-1 text-sm">
           <a class="px-3 py-2 text-(--color-muted) hover:text-(--color-accent)" href="/me">自分の予定</a>
           <a class="bg-(--color-text) px-4 py-2 font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" href="/new">リレーを作る</a>
+          <AuthStatus config={firebaseConfig} />
         </nav>
       </header>
 
