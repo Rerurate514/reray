@@ -5,6 +5,7 @@ import AuthStatus from '../islands/auth-status'
 import { requireCurrentUser } from '../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../infrastructure/providers/db/client'
+import { redirectBackWithError } from '../infrastructure/http/redirectBackWithError'
 
 export const POST = createRoute(async (c) => {
   if (!c.env.DB) {
@@ -27,12 +28,13 @@ export const POST = createRoute(async (c) => {
     return c.redirect(`/c/${result.slug}`)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Calendar creation failed'
-    return c.json({ error: message }, message === 'Authentication required' ? 401 : 400)
+    return redirectBackWithError(c.req.url, c.req.header('referer'), 'create_error', message)
   }
 })
 
 export default createRoute((c) => {
   const firebaseConfig = getPublicFirebaseConfig(c.env)
+  const createError = c.req.query('create_error')
 
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
@@ -41,6 +43,12 @@ export default createRoute((c) => {
         <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
         <AuthStatus config={firebaseConfig} />
       </header>
+
+      {createError ? (
+        <div class="mb-8 border border-(--color-red) px-4 py-3 text-sm font-semibold text-(--color-red)">
+          {translateCreateError(createError)}
+        </div>
+      ) : null}
 
       <section class="grid gap-10">
         <div class="flex items-baseline">
@@ -100,3 +108,28 @@ export default createRoute((c) => {
     </main>,
   )
 })
+
+
+function translateCreateError(message: string) {
+  if (message === 'Authentication required') {
+    return 'ログイン後にリレーを作成してください。'
+  }
+
+  if (message === 'Invalid date range') {
+    return '開始日と終了日を確認してください。'
+  }
+
+  if (message === 'No slots generated') {
+    return '指定された期間では枠を作成できませんでした。'
+  }
+
+  if (message === 'Title is required') {
+    return 'タイトルを入力してください。'
+  }
+
+  if (message.startsWith('Tag must be')) {
+    return 'タグは1つ24文字以内で入力してください。'
+  }
+
+  return 'リレーの作成に失敗しました。期間を短くするか、もう一度試してください。'
+}
