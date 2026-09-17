@@ -18,7 +18,9 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
 
     async createWithSlots(calendar: NewCalendar, slotRows: NewSlot[]) {
       await db.insert(calendars).values(calendar)
-      await db.insert(slots).values(slotRows)
+      for (let index = 0; index < slotRows.length; index += 50) {
+        await db.insert(slots).values(slotRows.slice(index, index + 50))
+      }
     },
 
     async findDetailBySlug(slug) {
@@ -63,6 +65,22 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           owner: true,
         },
       })
+    },
+
+    async findOwnerId(calendarId) {
+      const calendar = await db.query.calendars.findFirst({
+        columns: {
+          ownerId: true,
+        },
+        where: eq(calendars.id, calendarId),
+      })
+
+      return calendar?.ownerId ?? null
+    },
+
+    async deleteCalendar(calendarId) {
+      const result = await db.delete(calendars).where(eq(calendars.id, calendarId))
+      return result.meta.changes > 0
     },
 
     async joinSlot(slotId, userId, now) {
