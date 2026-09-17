@@ -19,8 +19,8 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
 
     async createWithSlots(calendar: NewCalendar, slotRows: NewSlot[], tagNames: string[]) {
       await db.insert(calendars).values(calendar)
-      for (let index = 0; index < slotRows.length; index += 50) {
-        await db.insert(slots).values(slotRows.slice(index, index + 50))
+      for (let index = 0; index < slotRows.length; index += 10) {
+        await db.insert(slots).values(slotRows.slice(index, index + 10))
       }
 
       await attachTagsToCalendar(db, calendar.id, tagNames, calendar.createdAt)
