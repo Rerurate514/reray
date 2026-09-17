@@ -167,11 +167,7 @@ export default createRoute(async (c) => {
                       <p class="mt-1 text-(--color-muted)">記事準備中...</p>
                     )}
                     {isCurrentUserSlot ? (
-                      <form method="post" action={`/api/slots/${slot.id}/article`} class="mt-4 grid gap-3 sm:grid-cols-[1fr_1.4fr_auto]">
-                        <input class="reray-input px-3 py-3" name="title" value={slot.articleTitle ?? ''} placeholder="記事タイトル（空ならURLから自動）" />
-                        <input class="reray-input px-3 py-3" name="url" value={slot.articleUrl ?? ''} placeholder="https://example.com/article" required />
-                        <button class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">記事を保存</button>
-                      </form>
+                      <a class="mt-3 inline-block text-sm font-semibold text-(--color-muted) underline-offset-4 hover:text-(--color-accent) hover:underline" href="/me">自分の予定で編集</a>
                     ) : null}
                   </>
                 ) : (
