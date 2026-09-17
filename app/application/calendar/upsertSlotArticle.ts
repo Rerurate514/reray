@@ -12,11 +12,19 @@ export async function upsertSlotArticle(
     throw new Error('Only the assigned user can edit this article')
   }
 
+  const url = normalizeArticleUrl(input.url)
+  const title = input.title.trim() ? normalizeArticleTitle(input.title) : createFallbackArticleTitle(url)
+
   await calendarRepository.upsertArticle({
     id: createId('article'),
     slotId: input.slotId,
-    title: normalizeArticleTitle(input.title),
-    url: normalizeArticleUrl(input.url),
+    title,
+    url,
     now: Date.now(),
   })
+}
+
+function createFallbackArticleTitle(url: string) {
+  const parsed = new URL(url)
+  return parsed.hostname.replace(/^www\./, '') + parsed.pathname.replace(/\/$/, '')
 }
