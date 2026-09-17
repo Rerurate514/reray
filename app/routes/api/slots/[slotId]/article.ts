@@ -27,7 +27,7 @@ export const POST = createRoute(async (c) => {
     return c.redirect(c.req.header('referer') ?? '/me')
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to save article'
-    const status = message.startsWith('Only the assigned user') ? 403 : 400
+    const status = message === 'Authentication required' ? 401 : message.startsWith('Only the assigned user') ? 403 : 400
     return c.json({ error: message }, status)
   }
 })
