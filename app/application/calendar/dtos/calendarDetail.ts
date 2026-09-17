@@ -1,6 +1,7 @@
 export type CalendarDetail = {
   calendar: {
     id: string
+    ownerId: string
     slug: string
     title: string
     description: string | null
