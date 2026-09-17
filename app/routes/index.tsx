@@ -58,7 +58,14 @@ export default createRoute(async (c) => {
             {calendars.map((calendar) => (
               <a class="grid gap-3 border-t border-(--color-border) py-5 transition hover:bg-(--color-surface-muted) sm:grid-cols-[1fr_auto sm:items-end" href={`/c/${calendar.slug}`}>
                 <div>
-                <p class="text-sm text-(--color-subtle)">@{calendar.owner.username}</p>
+                <div class="flex items-center gap-2 text-sm text-(--color-subtle)">
+                  {calendar.owner.avatarUrl ? (
+                    <img class="h-6 w-6 rounded-full border border-(--color-border-strong) object-cover" src={calendar.owner.avatarUrl} alt={calendar.owner.username} />
+                  ) : (
+                    <span class="grid h-6 w-6 place-items-center rounded-full border border-(--color-border-strong) text-xs">{calendar.owner.username.slice(0, 1)}</span>
+                  )}
+                  <span>@{calendar.owner.username}</span>
+                </div>
                 <h3 class="mt-2 text-xl font-semibold tracking-tight">{calendar.title}</h3>
                 </div>
                 <p class="text-sm text-(--color-muted)">

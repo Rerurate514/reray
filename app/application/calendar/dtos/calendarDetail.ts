@@ -8,6 +8,7 @@ export type CalendarDetail = {
     endDate: string | null
     owner: {
       username: string
+      avatarUrl: string | null
     }
   }
   slots: Array<{
@@ -17,6 +18,7 @@ export type CalendarDetail = {
     userId: string | null
     username: string | null
     displayName: string | null
+    avatarUrl: string | null
     articleTitle: string | null
     articleUrl: string | null
   }>

@@ -85,10 +85,18 @@ export default function AuthStatus({ config }: Props) {
   }
 
   if (firebaseUser) {
+    const avatarUrl = sessionUser?.avatarUrl ?? firebaseUser.photoURL
+    const displayName = sessionUser?.displayName ?? firebaseUser.displayName ?? sessionUser?.username ?? 'signed_in'
+
     return (
       <div class="flex items-center gap-3">
+        {avatarUrl ? (
+          <img class="h-7 w-7 rounded-full border border-(--color-border-strong) object-cover" src={avatarUrl} alt={displayName} />
+        ) : (
+          <span class="grid h-7 w-7 place-items-center rounded-full border border-(--color-border-strong) text-xs font-semibold text-(--color-muted)">{displayName.slice(0, 1)}</span>
+        )}
         <span class="hidden text-sm text-(--color-muted) sm:inline">
-          @{sessionUser?.username ?? firebaseUser.displayName ?? 'signed_in'}
+          @{sessionUser?.username ?? displayName}
         </span>
         <button class="border border-(--color-border) px-3 py-2 text-sm text-(--color-muted) hover:border-(--color-accent) hover:text-(--color-text)" type="button" onClick={logout}>
           ログアウト

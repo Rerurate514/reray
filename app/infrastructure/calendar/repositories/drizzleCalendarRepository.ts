@@ -41,6 +41,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           userId: slots.userId,
           username: users.username,
           displayName: users.displayName,
+          avatarUrl: users.avatarUrl,
           articleTitle: articles.title,
           articleUrl: articles.url,
         })

@@ -6,5 +6,6 @@ export type CalendarSummary = {
   endDate: string | null
   owner: {
     username: string
+    avatarUrl: string | null
   }
 }
