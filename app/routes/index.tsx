@@ -24,9 +24,9 @@ export default createRoute(async (c) => {
       </header>
 
       <section class="grid gap-10 py-12 sm:grid-cols-[9rem_1fr sm:py-16">
-        <div class="sm:pt-3">
-          <p class="text-6xl font-light leading-none text-(--color-accent) sm:text-7xl">01 /</p>
-          <p class="mt-2 text-sm italic text-(--color-muted)">Relay Board</p>
+        <div class="sm:pt-3 flex items-baseline">
+          <span class="text-6xl font-light leading-none text-(--color-accent) sm:text-7xl">01 /</span>
+          <span class="mt-2 text-sm italic text-(--color-muted)">Relay Boards</span>
         </div>
         <div>
           <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page) sm:text-3xl">
@@ -44,9 +44,9 @@ export default createRoute(async (c) => {
       </section>
 
       <section class="grid gap-8 border-t border-(--color-border) py-12 sm:grid-cols-[9rem_1fr">
-        <div>
-          <p class="text-5xl font-light leading-none">02 /</p>
-          <p class="mt-2 text-sm italic text-(--color-muted)">Public</p>
+        <div class="flex items-baseline">
+          <span class="text-5xl font-light leading-none">02 /</span>
+          <span class="mt-2 text-sm italic text-(--color-muted)">Public</span>
         </div>
         <div>
         <div class="flex items-center justify-between gap-4 border-b border-(--color-border) pb-4">

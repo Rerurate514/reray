@@ -19,9 +19,9 @@ export default createRoute(async (c) => {
         <AuthStatus config={firebaseConfig} />
       </header>
       <section class="grid gap-10 sm:grid-cols-[12rem_1fr">
-        <div>
-          <p class="text-6xl font-light leading-none text-(--color-accent)">01 /</p>
-          <p class="mt-2 text-sm italic text-(--color-muted)">My Schedule</p>
+        <div class="flex items-baseline">
+          <span class="text-6xl font-light leading-none text-(--color-accent)">01 /</span>
+          <span class="mt-2 text-sm italic text-(--color-muted)">My Schedule</span>
         </div>
         <div class="border-t border-(--color-border) pt-6">
           <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page)">自分の予定</div>

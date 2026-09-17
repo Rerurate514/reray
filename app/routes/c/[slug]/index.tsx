@@ -45,7 +45,7 @@ export default createRoute(async (c) => {
       </header>
 
       <section class="mb-12 grid gap-10 sm:grid-cols-[10rem_1fr">
-        <div>
+        <div class="flex items-baseline">
           <p class="text-6xl font-light leading-none text-(--color-accent)">01 /</p>
           <div class="mt-2 flex items-center gap-2 text-sm italic text-(--color-muted)">
             {calendar.owner.avatarUrl ? (
@@ -67,9 +67,9 @@ export default createRoute(async (c) => {
       </section>
 
       <section class="mb-12 grid gap-6 sm:grid-cols-[10rem_1fr">
-        <div>
-          <p class="text-5xl font-light leading-none">02 /</p>
-          <p class="mt-2 text-sm italic text-(--color-muted)">Calendar</p>
+        <div class="flex items-baseline">
+          <span class="text-5xl font-light leading-none">02 /</span>
+          <span class="mt-2 text-sm italic text-(--color-muted)">Calendar</span>
         </div>
         <div>
           <div class="grid grid-cols-7 border-l border-t border-(--color-border)">
@@ -117,9 +117,9 @@ export default createRoute(async (c) => {
       </section>
 
       <section class="grid gap-6 sm:grid-cols-[10rem_1fr">
-        <div>
-          <p class="text-5xl font-light leading-none">03 /</p>
-          <p class="mt-2 text-sm italic text-(--color-muted)">Slots</p>
+        <div class="flex items-baseline">
+          <span class="text-5xl font-light leading-none">03 /</span>
+          <span class="mt-2 text-sm italic text-(--color-muted)">Slots</span>
         </div>
         <div class="border-b border-(--color-border)">
         {slots.map((slot) => {

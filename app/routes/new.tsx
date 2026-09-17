@@ -42,9 +42,9 @@ export default createRoute((c) => {
       </header>
 
       <section class="grid gap-10 sm:grid-cols-[12rem_1fr">
-        <div>
-          <p class="text-6xl font-light leading-none text-(--color-accent)">01 /</p>
-          <p class="mt-2 text-sm italic text-(--color-muted)">Create Relay</p>
+        <div class="flex items-baseline">
+          <span class="text-6xl font-light leading-none text-(--color-accent)">01 /</span>
+          <span class="mt-2 text-sm italic text-(--color-muted)">Create Relay</span>
         </div>
 
         <form method="post" class="grid gap-6 border-t border-(--color-border) pt-6">
