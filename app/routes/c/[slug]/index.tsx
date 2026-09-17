@@ -85,7 +85,11 @@ export default createRoute(async (c) => {
               )}
             </div>
             <div>
-              {slot.userId ? null : <button class="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed">この日に参加する</button>}
+              {slot.userId ? null : (
+                <form method="post" action={`/api/slots/${slot.id}/join`}>
+                  <button class="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed" type="submit">この日に参加する</button>
+                </form>
+              )}
             </div>
           </article>
         ))}
