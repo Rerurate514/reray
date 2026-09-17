@@ -1,10 +1,12 @@
 import { createRoute } from 'honox/factory'
-import { createDb } from '../db/client'
-import { listPublicCalendars } from '../application/calendar/useCases'
+import { listPublicCalendars } from '../application/calendar/listPublicCalendars'
+import { createDrizzleCalendarRepository } from '../infrastructure/calendar/repositories/drizzleCalendarRepository'
+import { createDb } from '../infrastructure/providers/db/client'
 
 export default createRoute(async (c) => {
   const db = c.env.DB ? createDb(c.env.DB) : null
-  const calendars = db ? await listPublicCalendars(db) : []
+  const calendarRepository = db ? createDrizzleCalendarRepository(db) : null
+  const calendars = calendarRepository ? await listPublicCalendars(calendarRepository) : []
 
   return c.render(
     <main class="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-10 px-5 py-8 sm:px-8">
