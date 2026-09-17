@@ -10,15 +10,17 @@
   "private": true,
   "dependencies": {
     "drizzle-orm": "^0.45.1",
+    "firebase": "^12.19.0",
     "hono": "^4.13.8",
-    "honox": "0.1.61"
+    "honox": "0.1.61",
+    "jose": "^6.2.12"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260712.1",
     "@hono/vite-build": "^1.11.1",
     "@hono/vite-dev-server": "^0.26.1",
-    "drizzle-kit": "^0.31.8",
     "@tailwindcss/vite": "^4.3.2",
+    "drizzle-kit": "^0.31.8",
     "tailwindcss": "^4.3.2",
     "vite": "^8.1.4",
     "wrangler": "^4.110.0"

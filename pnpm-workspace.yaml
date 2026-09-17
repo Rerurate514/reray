@@ -2,5 +2,7 @@ onlyBuiltDependencies:
   - esbuild
   - workerd
 allowBuilds:
+  '@firebase/util': true
   esbuild: true
+  protobufjs: true
   workerd: true
