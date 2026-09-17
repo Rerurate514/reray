@@ -3,6 +3,8 @@ import type {} from 'hono'
 declare module 'hono' {
   interface Env {
     Variables: {}
-    Bindings: {}
+    Bindings: {
+      DB: D1Database
+    }
   }
 }
