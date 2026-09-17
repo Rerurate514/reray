@@ -6,9 +6,18 @@
     "strict": true,
     "skipLibCheck": true,
     "lib": [
-      "ESNext"
+      "ESNext",
+      "DOM"
+    ],
+    "types": [
+      "vite/client",
+      "@cloudflare/workers-types"
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
   },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }
