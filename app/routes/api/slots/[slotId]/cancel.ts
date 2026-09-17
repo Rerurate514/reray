@@ -3,6 +3,7 @@ import { cancelSlot } from '../../../../application/calendar/cancelSlot'
 import { requireCurrentUser } from '../../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../../infrastructure/providers/db/client'
+import { redirectBackWithError } from '../../../../infrastructure/http/redirectBackWithError'
 
 export const POST = createRoute(async (c) => {
   if (!c.env.DB) {
@@ -24,6 +25,6 @@ export const POST = createRoute(async (c) => {
     return c.redirect(c.req.header('referer') ?? '/me')
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to cancel slot'
-    return c.json({ error: message }, message === 'Slot is not assigned to current user' ? 403 : 401)
+    return redirectBackWithError(c.req.url, c.req.header('referer'), 'slot_error', message)
   }
 })

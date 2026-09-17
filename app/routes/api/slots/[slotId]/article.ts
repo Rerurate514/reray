@@ -3,6 +3,7 @@ import { upsertSlotArticle } from '../../../../application/calendar/upsertSlotAr
 import { requireCurrentUser } from '../../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../../infrastructure/providers/db/client'
+import { redirectBackWithError } from '../../../../infrastructure/http/redirectBackWithError'
 
 export const POST = createRoute(async (c) => {
   if (!c.env.DB) {
@@ -27,7 +28,6 @@ export const POST = createRoute(async (c) => {
     return c.redirect(c.req.header('referer') ?? '/me')
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to save article'
-    const status = message === 'Authentication required' ? 401 : message.startsWith('Only the assigned user') ? 403 : 400
-    return c.json({ error: message }, status)
+    return redirectBackWithError(c.req.url, c.req.header('referer'), 'article_error', message)
   }
 })

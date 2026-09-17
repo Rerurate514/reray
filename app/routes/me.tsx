@@ -10,6 +10,8 @@ export default createRoute(async (c) => {
   const firebaseConfig = getPublicFirebaseConfig(c.env)
   const user = await getCurrentUser(c).catch(() => null)
   const mySlots = user && c.env.DB ? await listMySlots(createDrizzleCalendarRepository(createDb(c.env.DB)), user.id) : []
+  const slotError = c.req.query('slot_error')
+  const articleError = c.req.query('article_error')
 
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
@@ -18,6 +20,11 @@ export default createRoute(async (c) => {
         <a href="/" class="reray-wordmark text-xl font-semibold tracking-tight">Reray</a>
         <AuthStatus config={firebaseConfig} />
       </header>
+      {slotError || articleError ? (
+        <div class="mb-8 border border-(--color-red) px-4 py-3 text-sm font-semibold text-(--color-red)">
+          {translateActionError(slotError ?? articleError ?? '')}
+        </div>
+      ) : null}
       <section class="grid gap-10">
         <div class="flex items-baseline">
           <span class="text-6xl font-light leading-none text-(--color-accent)">01 /</span>
@@ -67,3 +74,20 @@ export default createRoute(async (c) => {
     </main>,
   )
 })
+
+
+function translateActionError(message: string) {
+  if (message === 'Authentication required') {
+    return 'ログイン後に操作してください。'
+  }
+
+  if (message === 'Slot is not assigned to current user') {
+    return 'この枠は現在のログインユーザーではキャンセルできません。ページを再読み込みしてログイン状態を確認してください。'
+  }
+
+  if (message.startsWith('Only the assigned user')) {
+    return '記事を編集できるのは、この枠の担当者だけです。'
+  }
+
+  return '操作に失敗しました。ページを再読み込みしてもう一度試してください。'
+}

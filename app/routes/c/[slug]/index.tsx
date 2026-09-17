@@ -30,6 +30,8 @@ export default createRoute(async (c) => {
   const firebaseConfig = getPublicFirebaseConfig(c.env)
   const currentUser = await getCurrentUser(c).catch(() => null)
   const isOwner = currentUser?.id === calendar.ownerId
+  const slotError = c.req.query('slot_error')
+  const articleError = c.req.query('article_error')
   const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土']
   const firstScheduledDate = slots.find((slot) => slot.scheduledDate)?.scheduledDate
   const leadingBlankDays = firstScheduledDate ? getUtcWeekday(firstScheduledDate) : 0
@@ -50,6 +52,12 @@ export default createRoute(async (c) => {
           <AuthStatus config={firebaseConfig} />
         </div>
       </header>
+
+      {slotError || articleError ? (
+        <div class="mb-8 border border-(--color-red) px-4 py-3 text-sm font-semibold text-(--color-red)">
+          {translateActionError(slotError ?? articleError ?? '')}
+        </div>
+      ) : null}
 
       <section class="mb-12 grid gap-10">
         <div>
@@ -207,4 +215,25 @@ function getUtcDate(date: string) {
 
 function getUtcWeekday(date: string) {
   return new Date(`${date}T00:00:00.000Z`).getUTCDay()
+}
+
+
+function translateActionError(message: string) {
+  if (message === 'Authentication required') {
+    return 'ログイン後に操作してください。'
+  }
+
+  if (message === 'Slot is not assigned to current user') {
+    return 'この枠は現在のログインユーザーではキャンセルできません。ページを再読み込みしてログイン状態を確認してください。'
+  }
+
+  if (message === 'Slot is already taken') {
+    return 'この枠はすでに参加済みです。ページを再読み込みしてください。'
+  }
+
+  if (message.startsWith('Only the assigned user')) {
+    return '記事を編集できるのは、この枠の担当者だけです。'
+  }
+
+  return '操作に失敗しました。ページを再読み込みしてもう一度試してください。'
 }
