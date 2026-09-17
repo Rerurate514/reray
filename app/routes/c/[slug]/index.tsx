@@ -27,6 +27,7 @@ export default createRoute(async (c) => {
 
   const { calendar, slots } = detail
   const firebaseConfig = getPublicFirebaseConfig(c.env)
+  const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土']
 
   return c.render(
     <main class="mx-auto min-h-screen w-full max-w-6xl px-5 py-6 sm:px-8">
@@ -42,7 +43,14 @@ export default createRoute(async (c) => {
       <section class="mb-12 grid gap-10 sm:grid-cols-[10rem_1fr">
         <div>
           <p class="text-6xl font-light leading-none text-(--color-accent)">01 /</p>
-          <p class="mt-2 text-sm italic text-(--color-muted)">@{calendar.owner.username}</p>
+          <div class="mt-2 flex items-center gap-2 text-sm italic text-(--color-muted)">
+            {calendar.owner.avatarUrl ? (
+              <img class="h-6 w-6 rounded-full border border-(--color-border-strong) object-cover" src={calendar.owner.avatarUrl} alt={calendar.owner.username} />
+            ) : (
+              <span class="grid h-6 w-6 place-items-center rounded-full border border-(--color-border-strong) text-xs not-italic">{calendar.owner.username.slice(0, 1)}</span>
+            )}
+            <span>@{calendar.owner.username}</span>
+          </div>
         </div>
         <div class="border-t border-(--color-border) pt-6">
           <div class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) sm:text-base">
@@ -54,9 +62,56 @@ export default createRoute(async (c) => {
         </div>
       </section>
 
-      <section class="grid gap-6 sm:grid-cols-[10rem_1fr">
+      <section class="mb-12 grid gap-6 sm:grid-cols-[10rem_1fr">
         <div>
           <p class="text-5xl font-light leading-none">02 /</p>
+          <p class="mt-2 text-sm italic text-(--color-muted)">Calendar</p>
+        </div>
+        <div>
+          <div class="grid grid-cols-7 border-l border-t border-(--color-border)">
+            {weekdayLabels.map((label) => (
+              <div class="border-b border-r border-(--color-border) px-2 py-2 text-center text-xs font-semibold text-(--color-muted)">{label}</div>
+            ))}
+            {slots.map((slot) => {
+              const day = slot.scheduledDate ? new Date(`${slot.scheduledDate}T00:00:00.000Z`).getUTCDate() : slot.position
+              return (
+                <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface) p-2">
+                  {slot.userId ? (
+                    <div class="flex h-full flex-col justify-between gap-3">
+                      <div>
+                        <p class="text-2xl font-light leading-none">{day}</p>
+                        <p class="mt-1 text-xs text-(--color-muted)">{slot.scheduledDate}</p>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        {slot.avatarUrl ? (
+                          <img class="h-7 w-7 rounded-full border border-(--color-border-strong) object-cover" src={slot.avatarUrl} alt={slot.displayName ?? slot.username ?? 'user'} />
+                        ) : (
+                          <span class="grid h-7 w-7 place-items-center rounded-full border border-(--color-border-strong) text-xs font-semibold text-(--color-muted)">{(slot.displayName ?? slot.username ?? '?').slice(0, 1)}</span>
+                        )}
+                        <span class="min-w-0 truncate text-sm font-semibold">{slot.displayName ?? slot.username}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <form method="post" action={`/api/slots/${slot.id}/join`} class="h-full">
+                      <button class="flex h-full w-full flex-col justify-between gap-3 text-left hover:text-(--color-accent)" type="submit">
+                        <span>
+                          <span class="block text-2xl font-light leading-none">{day}</span>
+                          <span class="mt-1 block text-xs text-(--color-muted)">{slot.scheduledDate}</span>
+                        </span>
+                        <span class="text-sm font-semibold text-(--color-accent)">参加する</span>
+                      </button>
+                    </form>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section class="grid gap-6 sm:grid-cols-[10rem_1fr">
+        <div>
+          <p class="text-5xl font-light leading-none">03 /</p>
           <p class="mt-2 text-sm italic text-(--color-muted)">Slots</p>
         </div>
         <div class="border-b border-(--color-border)">
@@ -68,7 +123,14 @@ export default createRoute(async (c) => {
             <div>
               {slot.userId ? (
                 <>
-                  <p class="font-semibold">{slot.displayName}</p>
+                  <div class="flex items-center gap-2">
+                    {slot.avatarUrl ? (
+                      <img class="h-7 w-7 rounded-full border border-(--color-border-strong) object-cover" src={slot.avatarUrl} alt={slot.displayName ?? slot.username ?? 'user'} />
+                    ) : (
+                      <span class="grid h-7 w-7 place-items-center rounded-full border border-(--color-border-strong) text-xs font-semibold text-(--color-muted)">{(slot.displayName ?? slot.username ?? '?').slice(0, 1)}</span>
+                    )}
+                    <p class="font-semibold">{slot.displayName}</p>
+                  </div>
                   {slot.articleUrl ? (
                     <a class="mt-1 block text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.articleUrl} rel="noopener noreferrer" target="_blank">
                       {slot.articleTitle}
