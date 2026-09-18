@@ -11,6 +11,7 @@ export type CalendarRepository = {
   findDetailBySlug(slug: string): Promise<CalendarDetail | null>
   listPublishedPublic(limit: number): Promise<CalendarSummary[]>
   findOwnerId(calendarId: string): Promise<string | null>
+  updateCalendar(input: { calendarId: string; title: string; description: string | null; tagNames: string[]; now: number }): Promise<boolean>
   deleteCalendar(calendarId: string): Promise<boolean>
   joinSlot(slotId: string, userId: string, now: number): Promise<boolean>
   cancelSlot(slotId: string, userId: string, now: number): Promise<boolean>

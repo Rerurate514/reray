@@ -4,7 +4,7 @@ import type { NewCalendar } from '../../../domain/calendar/entities/calendar'
 import type { NewSlot } from '../../../domain/calendar/entities/slot'
 import type { Db } from '../../providers/db/client'
 import { articles, calendars, slots, users } from '../../providers/db/schema'
-import { attachTagsToCalendar, listTagsByCalendarIds } from './calendarTagQueries'
+import { attachTagsToCalendar, listTagsByCalendarIds, replaceCalendarTags } from './calendarTagQueries'
 
 export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
   return {
@@ -84,6 +84,24 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       })
 
       return calendar?.ownerId ?? null
+    },
+
+    async updateCalendar(input) {
+      const result = await db
+        .update(calendars)
+        .set({
+          title: input.title,
+          description: input.description,
+          updatedAt: input.now,
+        })
+        .where(eq(calendars.id, input.calendarId))
+
+      if (result.meta.changes < 1) {
+        return false
+      }
+
+      await replaceCalendarTags(db, input.calendarId, input.tagNames, input.now)
+      return true
     },
 
     async deleteCalendar(calendarId) {

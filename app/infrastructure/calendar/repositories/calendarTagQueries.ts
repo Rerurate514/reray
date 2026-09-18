@@ -31,6 +31,11 @@ export async function attachTagsToCalendar(db: Db, calendarId: string, tagNames:
     .onConflictDoNothing()
 }
 
+export async function replaceCalendarTags(db: Db, calendarId: string, tagNames: string[], now: number) {
+  await db.delete(calendarTags).where(eq(calendarTags.calendarId, calendarId))
+  await attachTagsToCalendar(db, calendarId, tagNames, now)
+}
+
 export async function listTagsByCalendarIds(db: Db, calendarIds: string[]) {
   if (calendarIds.length === 0) {
     return {}

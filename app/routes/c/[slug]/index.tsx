@@ -2,6 +2,7 @@ import { createRoute } from 'honox/factory'
 import { getPublicFirebaseConfig } from '../../../application/auth/firebaseConfig'
 import { getCalendarDetail } from '../../../application/calendar/getCalendarDetail'
 import AuthStatus from '../../../islands/auth-status'
+import CalendarEditor from '../../../islands/calendar-editor'
 import { getCurrentUser } from '../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../infrastructure/providers/db/client'
@@ -32,6 +33,8 @@ export default createRoute(async (c) => {
   const isOwner = currentUser?.id === calendar.ownerId
   const slotError = c.req.query('slot_error')
   const articleError = c.req.query('article_error')
+  const calendarError = c.req.query('calendar_error')
+  const calendarSaved = c.req.query('calendar_saved')
   const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土']
   const firstScheduledDate = slots.find((slot) => slot.scheduledDate)?.scheduledDate
   const leadingBlankDays = firstScheduledDate ? getUtcWeekday(firstScheduledDate) : 0
@@ -53,9 +56,14 @@ export default createRoute(async (c) => {
         </div>
       </header>
 
-      {slotError || articleError ? (
+      {slotError || articleError || calendarError ? (
         <div class="mb-8 border border-(--color-red) px-4 py-3 text-sm font-semibold text-(--color-red)">
-          {translateActionError(slotError ?? articleError ?? '')}
+          {translateActionError(slotError ?? articleError ?? calendarError ?? '')}
+        </div>
+      ) : null}
+      {calendarSaved ? (
+        <div class="mb-8 border border-(--color-green) px-4 py-3 text-sm font-semibold text-(--color-green)">
+          リレーの内容を保存しました。
         </div>
       ) : null}
 
@@ -91,7 +99,9 @@ export default createRoute(async (c) => {
         </div>
       </section>
 
-      <section class="mb-12 grid gap-6">
+      {isOwner ? <CalendarEditor calendar={calendar} /> : null}
+
+      <section class="mb-12 mt-12 grid gap-6">
         <div class="flex items-baseline">
           <span class="text-5xl font-light leading-none">02 /</span>
           <span class="mt-2 text-sm italic text-(--color-muted)">Calendar</span>
@@ -240,6 +250,18 @@ function translateActionError(message: string) {
 
   if (message.startsWith('Only the assigned user')) {
     return '記事を編集できるのは、この枠の担当者だけです。'
+  }
+
+  if (message.startsWith('Only the owner')) {
+    return 'リレーを編集できるのは作成者だけです。'
+  }
+
+  if (message === 'Title is required') {
+    return 'タイトルを入力してください。'
+  }
+
+  if (message.startsWith('Tag must be')) {
+    return 'タグは1つ24文字以内で入力してください。'
   }
 
   return '操作に失敗しました。ページを再読み込みしてもう一度試してください。'
