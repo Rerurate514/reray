@@ -28,6 +28,7 @@ export type CalendarRepository = {
   clearSlot(slotId: string, now: number): Promise<boolean>
   findSlotOwner(slotId: string): Promise<string | null>
   findSlotCalendarOwner(slotId: string): Promise<string | null>
+  findArticleSlotIdByUrl(url: string): Promise<string | null>
   upsertArticle(input: UpsertArticleInput): Promise<void>
   listSlotsByUser(userId: string): Promise<MySlotSummary[]>
 }

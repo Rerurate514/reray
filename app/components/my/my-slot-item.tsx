@@ -1,4 +1,5 @@
 import type { MySlotSummary } from '../../application/calendar/dtos/mySlotSummary'
+import MySlotArticleForm from '../../islands/my-slot-article-form/my-slot-article-form'
 
 export function MySlotItem({ slot }: { slot: MySlotSummary }) {
   return (
@@ -8,7 +9,13 @@ export function MySlotItem({ slot }: { slot: MySlotSummary }) {
         <div>
           <a class="font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href={`/c/${slot.calendarSlug}`}>{slot.calendarTitle}</a>
           {slot.articleUrl ? (
-            <a class="mt-1 block text-sm text-(--color-muted) underline-offset-4 hover:underline" href={slot.articleUrl} target="_blank" rel="noopener noreferrer">{slot.articleTitle}</a>
+            <div class="mt-2 border border-(--color-border) bg-[#fff8ed] p-3">
+              <p class="text-xs font-semibold uppercase text-(--color-subtle)">Registered Article</p>
+              <a class="mt-1 block text-sm font-semibold underline-offset-4 hover:text-(--color-accent) hover:underline" href={slot.articleUrl} target="_blank" rel="noopener noreferrer">
+                {slot.articleTitle}
+              </a>
+              <p class="mt-1 truncate text-xs text-(--color-muted)">{slot.articleUrl}</p>
+            </div>
           ) : (
             <p class="mt-1 text-sm text-(--color-muted)">記事未登録</p>
           )}
@@ -17,11 +24,7 @@ export function MySlotItem({ slot }: { slot: MySlotSummary }) {
           <button class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" type="submit">キャンセル</button>
         </form>
       </div>
-      <form method="post" action={`/api/slots/${slot.id}/article`} class="grid gap-3 sm:grid-cols-[1fr_1.4fr_auto]">
-        <input class="reray-input px-3 py-3" name="title" value={slot.articleTitle ?? ''} placeholder="記事タイトル（空ならURLから自動）" />
-        <input class="reray-input px-3 py-3" name="url" value={slot.articleUrl ?? ''} placeholder="https://example.com/article" required />
-        <button class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">記事を保存</button>
-      </form>
+      <MySlotArticleForm action={`/api/slots/${slot.id}/article`} articleTitle={slot.articleTitle ?? ''} articleUrl={slot.articleUrl ?? ''} />
     </article>
   )
 }

@@ -11,6 +11,10 @@ export function translateMyPageError(message: string) {
     return '記事を編集できるのは、この枠の担当者だけです。'
   }
 
+  if (message === 'Article URL is already registered') {
+    return 'このURLはすでに別の担当枠に登録されています。'
+  }
+
   if (message === 'Display name is required') {
     return '表示名を入力してください。'
   }

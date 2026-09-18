@@ -193,6 +193,17 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return row[0]?.ownerId ?? null
     },
 
+    async findArticleSlotIdByUrl(url) {
+      const article = await db.query.articles.findFirst({
+        columns: {
+          slotId: true,
+        },
+        where: eq(articles.url, url),
+      })
+
+      return article?.slotId ?? null
+    },
+
     async upsertArticle(input) {
       await db
         .insert(articles)
