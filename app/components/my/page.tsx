@@ -1,0 +1,41 @@
+import type { PublicFirebaseConfig } from '../../application/auth/firebaseConfig'
+import type { CalendarSummary } from '../../application/calendar/dtos/calendarSummary'
+import type { MySlotSummary } from '../../application/calendar/dtos/mySlotSummary'
+import type { AuthenticatedUser } from '../../domain/user/entities/user'
+import { FeedbackMessage } from '../shared/feedback-message'
+import { PageHeader } from '../shared/page-header'
+import { SectionNumber } from '../shared/section-number'
+import { SignedInContent } from './signed-in-content'
+import { translateMyPageError } from './translate-my-page-error'
+
+type MyPageProps = {
+  articleError: string | undefined
+  firebaseConfig: PublicFirebaseConfig | null
+  myCalendars: CalendarSummary[]
+  mySlots: MySlotSummary[]
+  profileError: string | undefined
+  profileSaved: string | undefined
+  slotError: string | undefined
+  user: AuthenticatedUser | null
+}
+
+export function MyPage({ articleError, firebaseConfig, myCalendars, mySlots, profileError, profileSaved, slotError, user }: MyPageProps) {
+  const error = slotError ?? articleError ?? profileError
+
+  return (
+    <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
+      <title>自分の予定 - Reray</title>
+      <PageHeader firebaseConfig={firebaseConfig} />
+      {error ? <FeedbackMessage tone="error">{translateMyPageError(error)}</FeedbackMessage> : null}
+      {profileSaved ? <FeedbackMessage tone="success">表示名を保存しました。</FeedbackMessage> : null}
+      <section class="grid gap-10">
+        <SectionNumber number="01 /" label="My Schedule" large />
+        <div class="border-t border-(--color-border) pt-6">
+          <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page)">自分の予定</div>
+          {user ? <SignedInContent firebaseConfig={firebaseConfig} myCalendars={myCalendars} mySlots={mySlots} user={user} /> : <p class="sr-only">ログイン後に自分の予定を表示します。</p>}
+          <div class="reray-rule mt-8" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        </div>
+      </section>
+    </main>
+  )
+}
