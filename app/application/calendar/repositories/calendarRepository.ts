@@ -15,7 +15,6 @@ export type PublicCalendarFilters = {
 }
 
 export type CalendarRepository = {
-  findSlugsByPrefix(baseSlug: string): Promise<string[]>
   createWithSlots(calendar: NewCalendar, slots: NewSlot[], tagNames: string[]): Promise<void>
   findDetailBySlug(slug: string): Promise<CalendarDetail | null>
   listPublishedPublic(limit: number, filters?: PublicCalendarFilters): Promise<CalendarSummary[]>

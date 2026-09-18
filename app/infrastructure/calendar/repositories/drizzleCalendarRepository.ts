@@ -8,15 +8,6 @@ import { attachTagsToCalendar, listTagsByCalendarIds, replaceCalendarTags } from
 
 export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
   return {
-    async findSlugsByPrefix(baseSlug) {
-      const rows = await db
-        .select({ slug: calendars.slug })
-        .from(calendars)
-        .where(sql`${calendars.slug} = ${baseSlug} OR ${calendars.slug} LIKE ${`${baseSlug}-%`}`)
-
-      return rows.map((row) => row.slug)
-    },
-
     async createWithSlots(calendar: NewCalendar, slotRows: NewSlot[], tagNames: string[]) {
       await db.insert(calendars).values(calendar)
       for (let index = 0; index < slotRows.length; index += 10) {
