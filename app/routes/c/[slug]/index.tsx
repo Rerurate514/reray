@@ -3,6 +3,7 @@ import { getPublicFirebaseConfig } from '../../../application/auth/firebaseConfi
 import { getCalendarDetail } from '../../../application/calendar/getCalendarDetail'
 import AuthStatus from '../../../islands/auth-status'
 import CalendarEditor from '../../../islands/calendar-editor'
+import DeleteCalendar from '../../../islands/delete-calendar'
 import { getCurrentUser } from '../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../infrastructure/providers/db/client'
@@ -47,11 +48,7 @@ export default createRoute(async (c) => {
         <div class="flex flex-wrap items-center gap-2">
           <a class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href="/">一覧</a>
           <a class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href="/new">作成</a>
-          {isOwner ? (
-            <form method="post" action={`/api/calendars/${calendar.id}/delete`}>
-              <button class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold text-(--color-red) hover:border-(--color-red)" type="submit">削除</button>
-            </form>
-          ) : null}
+          {isOwner ? <DeleteCalendar calendar={calendar} /> : null}
           <AuthStatus config={firebaseConfig} />
         </div>
       </header>
