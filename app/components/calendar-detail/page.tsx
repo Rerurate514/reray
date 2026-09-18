@@ -33,7 +33,6 @@ export function CalendarDetailPage({
 
   return (
     <main class="mx-auto min-h-screen w-full max-w-6xl px-5 py-6 sm:px-8">
-      <title>{calendar.title} - Reray</title>
       <PageHeader actions={<HeaderActions calendar={calendar} isOwner={isOwner} />} firebaseConfig={firebaseConfig} />
       {error ? <FeedbackMessage tone="error">{translateCalendarActionError(error)}</FeedbackMessage> : null}
       {calendarSaved ? <FeedbackMessage tone="success">リレーの内容を保存しました。</FeedbackMessage> : null}

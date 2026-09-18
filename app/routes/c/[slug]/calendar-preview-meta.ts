@@ -1,80 +1,38 @@
-import { createRoute } from 'honox/factory'
-import { getPublicFirebaseConfig } from '../../../application/auth/firebaseConfig'
 import type { CalendarDetail } from '../../../application/calendar/dtos/calendarDetail'
-import { getCalendarDetail } from '../../../application/calendar/getCalendarDetail'
-import { CalendarDetailPage } from '../../../components/calendar-detail/page'
-import { getCurrentUser } from '../../../infrastructure/auth/currentUser'
-import { createDrizzleCalendarRepository } from '../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
-import { createDb } from '../../../infrastructure/providers/db/client'
 
 const ogImage = {
+  path: '/og-image.png',
   width: 1200,
   height: 630,
+  alt: 'Reray Article Relay Calendar',
 }
 
-export default createRoute(async (c) => {
-  const slug = c.req.param('slug')
+type CalendarForPreview = CalendarDetail['calendar']
 
-  if (!slug) {
-    c.status(404)
-    return c.render('Calendar not found')
-  }
-
-  if (!c.env.DB) {
-    c.status(500)
-    return c.render('D1 database binding is not configured')
-  }
-
-  const detail = await getCalendarDetail(createDrizzleCalendarRepository(createDb(c.env.DB)), slug)
-
-  if (!detail) {
-    c.status(404)
-    return c.render('Calendar not found')
-  }
-
-  const { calendar, slots } = detail
-  const firebaseConfig = getPublicFirebaseConfig(c.env)
-  const currentUser = await getCurrentUser(c).catch(() => null)
-  const slotError = c.req.query('slot_error')
-  const articleError = c.req.query('article_error')
-  const calendarError = c.req.query('calendar_error')
-  const calendarSaved = c.req.query('calendar_saved')
-  const calendarUrl = new URL(`/c/${calendar.slug}`, c.req.url).toString()
-  const imageUrl = new URL('/og-image.png', c.req.url).toString()
+export function createCalendarPreviewMeta(calendar: CalendarForPreview, requestUrl: string) {
+  const calendarUrl = new URL(`/c/${calendar.slug}`, requestUrl).toString()
+  const imageUrl = new URL(ogImage.path, requestUrl).toString()
   const description = createCalendarPreviewDescription(calendar)
   const title = `${calendar.title} - Reray`
 
-  return c.render(
-    <CalendarDetailPage
-      calendar={calendar}
-      calendarError={calendarError}
-      calendarSaved={calendarSaved}
-      currentUser={currentUser}
-      firebaseConfig={firebaseConfig}
-      slots={slots}
-      slotError={slotError ?? articleError}
-    />,
-    {
-      title,
-      description,
-      url: calendarUrl,
-      image: {
-        url: imageUrl,
-        width: ogImage.width,
-        height: ogImage.height,
-        alt: 'Reray Article Relay Calendar',
-      },
-      discordComponentEmbed: createDiscordComponentEmbed({
-        calendar,
-        description,
-        imageUrl,
-        url: calendarUrl,
-      }),
+  return {
+    title,
+    description,
+    url: calendarUrl,
+    image: {
+      url: imageUrl,
+      width: ogImage.width,
+      height: ogImage.height,
+      alt: ogImage.alt,
     },
-  )
-})
-
-type CalendarForPreview = CalendarDetail['calendar']
+    discordComponentEmbed: createDiscordComponentEmbed({
+      calendar,
+      description,
+      imageUrl,
+      url: calendarUrl,
+    }),
+  }
+}
 
 function createCalendarPreviewDescription(calendar: CalendarForPreview) {
   const parts = [
