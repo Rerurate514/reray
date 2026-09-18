@@ -78,7 +78,11 @@ export default createRoute(async (c) => {
                     ))}
                   </div>
                 ) : (
-                  <p class="mt-5 max-w-2xl leading-8 text-(--color-muted)">まだ作成したリレーはありません。</p>
+                  <div class="mt-4 border-y border-dashed border-(--color-border-strong) py-8">
+                    <h3 class="text-xl font-semibold tracking-tight">まだ作成したリレーはありません</h3>
+                    <p class="mt-3 max-w-2xl text-sm leading-7 text-(--color-muted)">テーマと期間を決めると、投稿枠を自動で作成できます。公開リレーにも限定共有リレーにもできます。</p>
+                    <a class="mt-5 inline-block bg-(--color-text) px-5 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" href="/new">リレーを作る</a>
+                  </div>
                 )}
               </section>
               <section class="mt-10">
@@ -112,13 +116,17 @@ export default createRoute(async (c) => {
                   ))}
                 </div>
               ) : (
-                <p class="mt-5 max-w-2xl leading-8 text-(--color-muted)">まだ担当している枠はありません。公開リレーや共有された限定リレーの空き枠から参加できます。</p>
+                <div class="mt-4 border-y border-dashed border-(--color-border-strong) py-8">
+                  <h3 class="text-xl font-semibold tracking-tight">まだ担当している枠はありません</h3>
+                  <p class="mt-3 max-w-2xl text-sm leading-7 text-(--color-muted)">公開リレーや共有された限定リレーの空き枠に参加すると、ここで記事URLを管理できます。</p>
+                  <a class="mt-5 inline-block border border-(--color-border-strong) px-5 py-3 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href="/">公開リレーを見る</a>
+                </div>
               )}
               </section>
               <DeleteAccount config={firebaseConfig} />
             </>
           ) : (
-            <p class="mt-5 max-w-2xl leading-8 text-(--color-muted)">Firebase 認証の接続後、自分が担当している枠をここに表示します。</p>
+            <p class="sr-only">ログイン後に自分の予定を表示します。</p>
           )}
           <div class="reray-rule mt-8" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
         </div>
