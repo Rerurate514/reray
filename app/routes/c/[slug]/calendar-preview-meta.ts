@@ -29,7 +29,6 @@ export function createCalendarPreviewMeta(calendar: CalendarForPreview, slots: S
     },
     discordComponentEmbed: createDiscordComponentEmbed({
       calendar,
-      description,
       imageUrl,
       nextOpenSlotText,
       url: calendarUrl,
@@ -57,47 +56,49 @@ function createDateRangeText(calendar: CalendarForPreview) {
 
 function createDiscordComponentEmbed({
   calendar,
-  description,
   imageUrl,
   nextOpenSlotText,
   url,
 }: {
   calendar: CalendarForPreview
-  description: string
   imageUrl: string
-  nextOpenSlotText: string | null
+  nextOpenSlotText: { label: string; value: string } | null
   url: string
 }) {
-  const ownerText = `by ${calendar.owner.displayName}`
-  const content = [
-    `# **[${escapeDiscordMarkdown(calendar.title)}](${url})**`,
-    nextOpenSlotText,
-    description,
-    ownerText,
-  ]
-    .filter(Boolean)
-    .join('\n')
+  const summaryItems = [
+    nextOpenSlotText ? `**${nextOpenSlotText.label}**\n${nextOpenSlotText.value}` : null,
+    createDateRangeText(calendar) ? `**期間**\n${createDateRangeText(calendar)}` : null,
+    `**作成者**\n${escapeDiscordMarkdown(calendar.owner.displayName)}`,
+  ].filter(Boolean)
+  const tagText = createTagText(calendar)
+  const descriptionText = calendar.description?.trim()
+
+  const components = [
+    {
+      type: 9,
+      components: [{ type: 10, content: `# [${escapeDiscordMarkdown(calendar.title)}](${url})` }],
+      accessory: {
+        type: 2,
+        style: 5,
+        url,
+        label: 'カレンダーを見る',
+      },
+    },
+    { type: 10, content: trimUtf8(summaryItems.join('\n\n'), 650) },
+    descriptionText ? { type: 14, spacing: 1 } : null,
+    descriptionText ? { type: 10, content: trimUtf8(descriptionText, 260) } : null,
+    tagText ? { type: 10, content: tagText } : null,
+    {
+      type: 12,
+      items: [{ media: { url: imageUrl } }],
+    },
+  ].filter((component) => component !== null)
 
   const payload = {
     component: {
       type: 17,
       accent_color: 2105373,
-      components: [
-        {
-          type: 9,
-          components: [{ type: 10, content: trimUtf8(content, 900) }],
-          accessory: {
-            type: 2,
-            style: 5,
-            url,
-            label: 'カレンダーを見る',
-          },
-        },
-        {
-          type: 12,
-          items: [{ media: { url: imageUrl } }],
-        },
-      ],
+      components,
     },
   }
 
@@ -127,10 +128,24 @@ function createNextOpenSlotText(slots: SlotForPreview[]) {
     })[0]
 
   if (!openSlot) {
-    return '直近の空き枠: ありません'
+    return {
+      label: '直近の空き枠',
+      value: 'ありません',
+    }
   }
 
-  return `直近の空き枠: ${openSlot.scheduledDate ?? `#${openSlot.position}`}`
+  return {
+    label: '直近の空き枠',
+    value: openSlot.scheduledDate ?? `#${openSlot.position}`,
+  }
+}
+
+function createTagText(calendar: CalendarForPreview) {
+  if (calendar.tags.length === 0) {
+    return null
+  }
+
+  return calendar.tags.map((tag) => `\`${escapeDiscordMarkdown(tag.name)}\``).join(' ')
 }
 
 function trimUtf8(value: string, maxBytes: number) {
