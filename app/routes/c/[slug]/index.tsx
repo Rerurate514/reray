@@ -45,6 +45,6 @@ export default createRoute(async (c) => {
       slots={slots}
       slotError={slotError ?? articleError}
     />,
-    createCalendarPreviewMeta(calendar, c.req.url),
+    createCalendarPreviewMeta(calendar, slots, c.req.url),
   )
 })

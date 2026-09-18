@@ -8,11 +8,13 @@ const ogImage = {
 }
 
 type CalendarForPreview = CalendarDetail['calendar']
+type SlotForPreview = CalendarDetail['slots'][number]
 
-export function createCalendarPreviewMeta(calendar: CalendarForPreview, requestUrl: string) {
+export function createCalendarPreviewMeta(calendar: CalendarForPreview, slots: SlotForPreview[], requestUrl: string) {
   const calendarUrl = new URL(`/c/${calendar.slug}`, requestUrl).toString()
   const imageUrl = new URL(ogImage.path, requestUrl).toString()
   const description = createCalendarPreviewDescription(calendar)
+  const nextOpenSlotText = createNextOpenSlotText(slots)
   const title = `${calendar.title} - Reray`
 
   return {
@@ -29,6 +31,7 @@ export function createCalendarPreviewMeta(calendar: CalendarForPreview, requestU
       calendar,
       description,
       imageUrl,
+      nextOpenSlotText,
       url: calendarUrl,
     }),
   }
@@ -56,15 +59,22 @@ function createDiscordComponentEmbed({
   calendar,
   description,
   imageUrl,
+  nextOpenSlotText,
   url,
 }: {
   calendar: CalendarForPreview
   description: string
   imageUrl: string
+  nextOpenSlotText: string | null
   url: string
 }) {
   const ownerText = `by ${calendar.owner.displayName}`
-  const content = [`# **[${escapeDiscordMarkdown(calendar.title)}](${url})**`, description, ownerText]
+  const content = [
+    `# **[${escapeDiscordMarkdown(calendar.title)}](${url})**`,
+    nextOpenSlotText,
+    description,
+    ownerText,
+  ]
     .filter(Boolean)
     .join('\n')
 
@@ -95,6 +105,32 @@ function createDiscordComponentEmbed({
     .replace(/<\//g, '<\\/')
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029')
+}
+
+function createNextOpenSlotText(slots: SlotForPreview[]) {
+  const openSlot = slots
+    .filter((slot) => !slot.userId)
+    .sort((a, b) => {
+      if (a.scheduledDate && b.scheduledDate) {
+        return a.scheduledDate.localeCompare(b.scheduledDate) || a.position - b.position
+      }
+
+      if (a.scheduledDate) {
+        return -1
+      }
+
+      if (b.scheduledDate) {
+        return 1
+      }
+
+      return a.position - b.position
+    })[0]
+
+  if (!openSlot) {
+    return '直近の空き枠: ありません'
+  }
+
+  return `直近の空き枠: ${openSlot.scheduledDate ?? `#${openSlot.position}`}`
 }
 
 function trimUtf8(value: string, maxBytes: number) {
