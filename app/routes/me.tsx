@@ -1,5 +1,6 @@
 import { createRoute } from 'honox/factory'
 import { getPublicFirebaseConfig } from '../application/auth/firebaseConfig'
+import { listMyCalendars } from '../application/calendar/listMyCalendars'
 import { listMySlots } from '../application/calendar/listMySlots'
 import AuthStatus from '../islands/auth-status'
 import DeleteAccount from '../islands/delete-account'
@@ -10,7 +11,9 @@ import { createDb } from '../infrastructure/providers/db/client'
 export default createRoute(async (c) => {
   const firebaseConfig = getPublicFirebaseConfig(c.env)
   const user = await getCurrentUser(c).catch(() => null)
-  const mySlots = user && c.env.DB ? await listMySlots(createDrizzleCalendarRepository(createDb(c.env.DB)), user.id) : []
+  const calendarRepository = c.env.DB ? createDrizzleCalendarRepository(createDb(c.env.DB)) : null
+  const mySlots = user && calendarRepository ? await listMySlots(calendarRepository, user.id) : []
+  const myCalendars = user && calendarRepository ? await listMyCalendars(calendarRepository, user.id) : []
   const slotError = c.req.query('slot_error')
   const articleError = c.req.query('article_error')
   const profileError = c.req.query('profile_error')
@@ -50,6 +53,38 @@ export default createRoute(async (c) => {
                 </label>
                 <button class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">保存</button>
               </form>
+              <section class="mt-8">
+                <div class="flex items-center justify-between gap-4 border-b border-(--color-border) pb-3">
+                  <h2 class="text-lg font-semibold tracking-tight">作成したリレー</h2>
+                  <a class="text-sm font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href="/new">新規作成</a>
+                </div>
+                {myCalendars.length > 0 ? (
+                  <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    {myCalendars.map((calendar) => (
+                      <a class="grid min-h-40 border border-(--color-border) p-4 transition hover:bg-(--color-surface-muted)" href={`/c/${calendar.slug}`}>
+                        <div class="flex flex-wrap items-center gap-2 text-xs font-semibold text-(--color-muted)">
+                          <span class="border border-(--color-border) px-2 py-1">{calendar.visibility === 'private' ? '限定共有' : '公開'}</span>
+                          <span>{calendar.startDate} - {calendar.endDate}</span>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold tracking-tight">{calendar.title}</h3>
+                        {calendar.tags.length > 0 ? (
+                          <div class="mt-4 flex flex-wrap gap-2">
+                            {calendar.tags.map((tag) => (
+                              <span class="border border-(--color-border) px-2 py-1 text-xs text-(--color-muted)">#{tag.name}</span>
+                            ))}
+                          </div>
+                        ) : null}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p class="mt-5 max-w-2xl leading-8 text-(--color-muted)">まだ作成したリレーはありません。</p>
+                )}
+              </section>
+              <section class="mt-10">
+                <div class="border-b border-(--color-border) pb-3">
+                  <h2 class="text-lg font-semibold tracking-tight">参加している枠</h2>
+                </div>
               {mySlots.length > 0 ? (
                 <div class="mt-8 border-b border-(--color-border)">
                   {mySlots.map((slot) => (
@@ -77,8 +112,9 @@ export default createRoute(async (c) => {
                   ))}
                 </div>
               ) : (
-                <p class="mt-5 max-w-2xl leading-8 text-(--color-muted)">まだ担当している枠はありません。公開リレーの空き枠から参加できます。</p>
+                <p class="mt-5 max-w-2xl leading-8 text-(--color-muted)">まだ担当している枠はありません。公開リレーや共有された限定リレーの空き枠から参加できます。</p>
               )}
+              </section>
               <DeleteAccount config={firebaseConfig} />
             </>
           ) : (

@@ -75,6 +75,19 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return calendarRows.map((calendar) => ({ ...calendar, tags: tagsByCalendarId[calendar.id] ?? [] }))
     },
 
+    async listCalendarsByOwner(userId) {
+      const calendarRows = await db.query.calendars.findMany({
+        where: eq(calendars.ownerId, userId),
+        orderBy: (table, { desc }) => [desc(table.createdAt)],
+        with: {
+          owner: true,
+        },
+      })
+      const tagsByCalendarId = await listTagsByCalendarIds(db, calendarRows.map((calendar) => calendar.id))
+
+      return calendarRows.map((calendar) => ({ ...calendar, tags: tagsByCalendarId[calendar.id] ?? [] }))
+    },
+
     async findOwnerId(calendarId) {
       const calendar = await db.query.calendars.findFirst({
         columns: {

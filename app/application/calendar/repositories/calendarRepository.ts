@@ -10,6 +10,7 @@ export type CalendarRepository = {
   createWithSlots(calendar: NewCalendar, slots: NewSlot[], tagNames: string[]): Promise<void>
   findDetailBySlug(slug: string): Promise<CalendarDetail | null>
   listPublishedPublic(limit: number): Promise<CalendarSummary[]>
+  listCalendarsByOwner(userId: string): Promise<CalendarSummary[]>
   findOwnerId(calendarId: string): Promise<string | null>
   updateCalendar(input: { calendarId: string; title: string; description: string | null; visibility: 'public' | 'private'; tagNames: string[]; now: number }): Promise<boolean>
   deleteCalendar(calendarId: string): Promise<boolean>
