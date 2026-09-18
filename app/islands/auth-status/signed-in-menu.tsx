@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth'
-import { MenuLink, MenuShell } from './menu'
+import { MenuLink, MenuShell, SignedInTrigger } from './menu'
 import type { SessionUser } from './auth-status'
 
 export function SignedInMenu({
@@ -15,16 +15,17 @@ export function SignedInMenu({
 }) {
   const avatarUrl = sessionUser?.avatarUrl ?? firebaseUser.photoURL
   const displayName = sessionUser?.displayName ?? firebaseUser.displayName ?? sessionUser?.username ?? 'signed_in'
+  const username = sessionUser?.username ?? displayName
 
   return (
-    <MenuShell>
+    <MenuShell trigger={<SignedInTrigger avatarUrl={avatarUrl} displayName={displayName} username={username} />}>
       <div class="flex items-center gap-2 border-b border-(--color-border) px-3 py-3">
         {avatarUrl ? (
           <img class="h-7 w-7 rounded-full border border-(--color-border-strong) object-cover" src={avatarUrl} alt={displayName} />
         ) : (
           <span class="grid h-7 w-7 place-items-center rounded-full border border-(--color-border-strong) text-xs font-semibold text-(--color-muted)">{displayName.slice(0, 1)}</span>
         )}
-        <span class="min-w-0 truncate text-sm font-semibold">@{sessionUser?.username ?? displayName}</span>
+        <span class="min-w-0 truncate text-sm font-semibold">@{username}</span>
       </div>
       <MenuLink href="/me" icon="◎" label="自分の予定" />
       <MenuLink href="/new" icon="＋" label="リレーを作る" />

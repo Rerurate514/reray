@@ -1,4 +1,4 @@
-import { MenuButton, MenuLink, MenuShell } from './menu'
+import { MenuButton, MenuShell, SignedOutTrigger } from './menu'
 import type { AuthProviderName } from './auth-providers'
 
 export function SignedOutMenu({
@@ -11,7 +11,7 @@ export function SignedOutMenu({
   status: 'idle' | 'loading' | 'error'
 }) {
   return (
-    <MenuShell>
+    <MenuShell trigger={<SignedOutTrigger />}>
       <MenuButton icon="G" label="Google でログイン" loading={status === 'loading'} onClick={() => onLogin('google')} />
       <MenuButton icon="◖" label="GitHub でログイン" loading={status === 'loading'} onClick={() => onLogin('github')} />
       {status === 'loading' ? <p class="px-3 pb-3 text-xs text-(--color-subtle)">処理中...</p> : null}
