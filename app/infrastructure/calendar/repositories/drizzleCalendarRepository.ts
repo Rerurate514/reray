@@ -92,6 +92,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         .set({
           title: input.title,
           description: input.description,
+          visibility: input.visibility,
           updatedAt: input.now,
         })
         .where(eq(calendars.id, input.calendarId))

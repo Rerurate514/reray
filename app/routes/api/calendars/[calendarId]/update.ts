@@ -23,6 +23,7 @@ export const POST = createRoute(async (c) => {
       userId: user.id,
       title: String(body.title ?? ''),
       description: String(body.description ?? ''),
+      visibility: String(body.visibility ?? ''),
       tags: String(body.tags ?? ''),
     })
 

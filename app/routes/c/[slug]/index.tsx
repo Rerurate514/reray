@@ -85,6 +85,7 @@ export default createRoute(async (c) => {
         <div class="border-t border-(--color-border) pt-6">
           <div class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) sm:text-base">
             {calendar.startDate} - {calendar.endDate}
+            {calendar.visibility === 'private' ? <span class="ml-3 border border-(--color-page) px-2 py-1 text-xs">限定共有</span> : null}
           </div>
           <h1 class="mt-8 max-w-4xl text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{calendar.title}</h1>
           {calendar.tags.length > 0 ? (

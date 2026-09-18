@@ -4,6 +4,7 @@ import { generateCalendarSlug } from '../../domain/calendar/services/generateCal
 import { generateSlots } from '../../domain/calendar/services/generateSlots'
 import { normalizeCalendarDescription } from '../../domain/calendar/services/normalizeCalendarDescription'
 import { normalizeCalendarTitle } from '../../domain/calendar/services/normalizeCalendarTitle'
+import { normalizeCalendarVisibility } from '../../domain/calendar/services/normalizeCalendarVisibility'
 import { normalizeTagNames } from '../../domain/tag/services/normalizeTagNames'
 import { createId } from '../../domain/shared/services/createId'
 
@@ -14,6 +15,7 @@ export type CreateCalendarInput = {
   startDate: string
   endDate: string
   frequency: SlotFrequency
+  visibility?: string
   tags?: string
 }
 
@@ -35,7 +37,7 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
       description: normalizeCalendarDescription(input.description),
       startDate: input.startDate,
       endDate: input.endDate,
-      visibility: 'public',
+      visibility: normalizeCalendarVisibility(input.visibility),
       status: 'published',
       createdAt: now,
       updatedAt: now,

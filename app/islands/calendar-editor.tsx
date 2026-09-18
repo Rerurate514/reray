@@ -5,6 +5,7 @@ type Props = {
     id: string
     title: string
     description: string | null
+    visibility: 'public' | 'private'
     tags: Array<{ name: string }>
   }
 }
@@ -53,6 +54,23 @@ export default function CalendarEditor({ calendar }: Props) {
           <input class="reray-input px-3 py-3" name="tags" value={calendar.tags.map((tag) => tag.name).join(', ')} maxlength={200} />
           <span class="text-xs text-(--color-muted)">カンマ区切りで最大8個まで設定できます。</span>
         </label>
+        <fieldset class="grid gap-3 border-t border-(--color-border) pt-5">
+          <legend class="text-sm font-semibold">公開範囲</legend>
+          <label class="flex items-start gap-3 text-sm">
+            <input class="mt-1 accent-(--color-accent)" type="radio" name="visibility" value="public" checked={calendar.visibility === 'public'} />
+            <span>
+              <span class="block font-semibold">公開</span>
+              <span class="block text-(--color-muted)">トップページの開催中リレーに表示します。</span>
+            </span>
+          </label>
+          <label class="flex items-start gap-3 text-sm">
+            <input class="mt-1 accent-(--color-accent)" type="radio" name="visibility" value="private" checked={calendar.visibility === 'private'} />
+            <span>
+              <span class="block font-semibold">限定共有</span>
+              <span class="block text-(--color-muted)">一覧には表示せず、URLを知っている人だけ見られます。</span>
+            </span>
+          </label>
+        </fieldset>
         <button class="w-fit bg-(--color-text) px-5 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">内容を保存</button>
       </form>
     </section>
