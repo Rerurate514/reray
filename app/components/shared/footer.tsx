@@ -39,7 +39,8 @@ export function Footer() {
                 </a>
               ))}
             </nav>
-            <p class="mt-8 border-t border-[#f6efe266] pt-4 text-sm font-semibold text-[#d7cbbb]">
+            <div class="reray-rule mt-10" aria-hidden="true"><span></span><span></span><span></span></div>
+            <p class="pt-4 text-sm font-semibold text-[#d7cbbb]">
               2026 © Reurate_514, All Rights Reserved
             </p>
           </div>
