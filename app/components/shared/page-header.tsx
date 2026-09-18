@@ -1,5 +1,5 @@
 import type { PublicFirebaseConfig } from '../../application/auth/firebaseConfig'
-import AuthStatus from '../../islands/auth-status'
+import AuthStatus from '../../islands/auth-status/auth-status'
 
 export function PageHeader({
   actions,

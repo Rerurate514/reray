@@ -1,6 +1,6 @@
 import type { PublicFirebaseConfig } from '../../application/auth/firebaseConfig'
 import type { CalendarSummary } from '../../application/calendar/dtos/calendarSummary'
-import AuthStatus from '../../islands/auth-status'
+import AuthStatus from '../../islands/auth-status/auth-status'
 import { HeroSection } from './hero-section'
 import { PublicCalendarsSection } from './public-calendars-section'
 
