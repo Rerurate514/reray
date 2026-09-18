@@ -1,3 +1,4 @@
+import CalendarShare from '../../islands/calendar-share/calendar-share'
 import { RerayRule } from '../shared/reray-rule'
 import { SectionNumber } from '../shared/section-number'
 import { TagList } from '../shared/tag-list'
@@ -19,6 +20,7 @@ export function OverviewSection({ calendar }: { calendar: Calendar }) {
         <h1 class="mt-8 max-w-4xl text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{calendar.title}</h1>
         <TagList tags={calendar.tags} />
         {calendar.description ? <p class="mt-6 max-w-2xl whitespace-pre-wrap leading-8 text-(--color-muted)">{calendar.description}</p> : null}
+        <CalendarShare calendar={calendar} />
         <RerayRule class="mt-8" />
       </div>
     </section>
