@@ -16,7 +16,7 @@ export function Footer() {
       <div class="mx-auto w-full max-w-6xl px-5 pt-8 sm:px-8">
         <div class="grid gap-10 pb-10 sm:grid-cols-[minmax(0,1.35fr)_minmax(220px,.65fr)] sm:items-end">
           <div>
-            <p class="font-['Reray_Futura'] text-5xl font-medium leading-none tracking-tight text-(--color-page) sm:text-7xl">
+            <p class="font-['Reray_Futura'] text-5xl font-bold leading-none tracking-tight text-(--color-page) sm:text-7xl">
               Project Code
             </p>
             <p class="reray-wordmark mt-6 text-4xl font-medium leading-none tracking-tight sm:text-6xl">Reray</p>
