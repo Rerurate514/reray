@@ -1,3 +1,4 @@
+import { RerayRule } from '../shared/reray-rule'
 import { CalendarBasicsFields } from './fields'
 import { FrequencyFields } from './frequency-fields'
 import { ScheduleFields } from './schedule-fields'
@@ -9,7 +10,7 @@ export function CreateCalendarForm() {
       <div>
         <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page)">記事リレーを作成</div>
         <p class="mt-5 max-w-xl text-sm leading-7 text-(--color-muted)">テーマと期間を決めると、投稿枠を自動生成します。</p>
-        <div class="reray-rule mt-6" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <RerayRule class="mt-6" />
       </div>
       <CalendarBasicsFields />
       <VisibilityFields />

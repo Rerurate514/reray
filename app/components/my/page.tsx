@@ -5,6 +5,7 @@ import type { AuthenticatedUser } from '../../domain/user/entities/user'
 import { FeedbackMessage } from '../shared/feedback-message'
 import { Footer } from '../shared/footer'
 import { PageHeader } from '../shared/page-header'
+import { RerayRule } from '../shared/reray-rule'
 import { SectionNumber } from '../shared/section-number'
 import { SignedInContent } from './signed-in-content'
 import { SignedOutState } from './signed-out-state'
@@ -35,7 +36,7 @@ export function MyPage({ articleError, firebaseConfig, myCalendars, mySlots, pro
         <div class="border-t border-(--color-border) pt-6">
           <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page)">自分の予定</div>
           {user ? <SignedInContent firebaseConfig={firebaseConfig} myCalendars={myCalendars} mySlots={mySlots} user={user} /> : <SignedOutState />}
-          <div class="reray-rule mt-8" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <RerayRule class="mt-8" />
         </div>
       </section>
       <Footer />

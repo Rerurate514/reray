@@ -1,3 +1,4 @@
+import { RerayRule } from '../shared/reray-rule'
 import { SectionNumber } from '../shared/section-number'
 
 export function HeroSection() {
@@ -15,7 +16,7 @@ export function HeroSection() {
           Reray は Zenn、Qiita、note、個人ブログなどの外部記事 URL を集めるための進行管理サービスです。
           カレンダーを作成して共有すれば、参加者は空き枠を選んで記事を登録できます。
         </p>
-        <div class="reray-rule mt-10" aria-hidden="true"><span></span><span></span><span></span></div>
+        <RerayRule class="mt-10" />
       </div>
     </section>
   )

@@ -1,3 +1,5 @@
+import { RerayRule } from './reray-rule'
+
 const footerLinks = [
   { href: '/', label: '一覧' },
   { href: '/new', label: 'リレー作成' },
@@ -14,8 +16,7 @@ export function Footer() {
   return (
     <footer class="relative left-1/2 mt-20 -mb-6 w-screen -translate-x-1/2 bg-(--color-text) text-(--color-page)">
       <div class="mx-auto w-full max-w-6xl px-5 pt-7 sm:px-8">
-        <div class="reray-rule" aria-hidden="true"><span></span><span></span><span></span></div>
-        <div class="grid gap-10 border-b border-[#f6efe240] py-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(260px,.55fr)] sm:items-start sm:py-12">
+        <div class="grid gap-10 py-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(260px,.55fr)] sm:items-start sm:py-12">
           <div class="min-w-0">
             <p class="font-['Reray_Futura'] text-[clamp(4rem,12vw,9.5rem)] font-medium leading-[.82] tracking-tight text-(--color-page)">
               Project Code
@@ -49,8 +50,9 @@ export function Footer() {
             </nav>
           </div>
         </div>
+        <RerayRule />
         <div class="py-5 text-xs font-semibold text-[#d7cbbb]">
-          <p　class="text-right">2026 © Reurate_514, rerurate.com, All Rights Reserved</p>
+          <p class="text-right">2026 © Reurate_514, rerurate.com, All Rights Reserved</p>
         </div>
       </div>
     </footer>
