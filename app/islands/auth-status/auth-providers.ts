@@ -1,6 +1,6 @@
-import { GithubAuthProvider, GoogleAuthProvider, TwitterAuthProvider } from 'firebase/auth'
+import { GithubAuthProvider, GoogleAuthProvider } from 'firebase/auth'
 
-export type AuthProviderName = 'google' | 'github' | 'twitter'
+export type AuthProviderName = 'google' | 'github'
 
 export function createAuthProvider(providerName: AuthProviderName) {
   if (providerName === 'google') {
@@ -10,6 +10,4 @@ export function createAuthProvider(providerName: AuthProviderName) {
   if (providerName === 'github') {
     return new GithubAuthProvider()
   }
-
-  return new TwitterAuthProvider()
 }

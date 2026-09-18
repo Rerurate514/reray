@@ -28,8 +28,6 @@ export function SignedInMenu({
       </div>
       <MenuLink href="/me" icon="◎" label="自分の予定" />
       <MenuLink href="/new" icon="＋" label="リレーを作る" />
-      <MenuLink href="/" icon="◴" label="過去のカレンダー" />
-      <MenuLink href="/" icon="？" label="ヘルプ" />
       <button class="flex w-full items-center gap-3 border-t border-(--color-border) px-3 py-3 text-left text-sm text-(--color-muted) hover:bg-(--color-surface-muted) hover:text-(--color-text) disabled:opacity-60" type="button" disabled={status === 'loading'} onClick={onLogout}>
         <span class="w-5 text-center text-base">↪</span>
         <span>ログアウト</span>
