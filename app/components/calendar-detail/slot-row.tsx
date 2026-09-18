@@ -5,10 +5,12 @@ import { SlotActions } from './slot-actions'
 import type { Slot } from './types'
 
 export function SlotRow({
+  calendarTitle,
   currentUser,
   isOwner,
   slot,
 }: {
+  calendarTitle: string
   currentUser: AuthenticatedUser | null
   isOwner: boolean
   slot: Slot
@@ -21,7 +23,7 @@ export function SlotRow({
         <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
       </div>
       <div>
-        {slot.userId ? <AssignedSlot slot={slot} isCurrentUserSlot={isCurrentUserSlot} /> : <EmptySlot />}
+        {slot.userId ? <AssignedSlot slot={slot} isCurrentUserSlot={isCurrentUserSlot} /> : <EmptySlot calendarTitle={calendarTitle} slot={slot} />}
       </div>
       <SlotActions currentUser={currentUser} isCurrentUserSlot={isCurrentUserSlot} isOwner={isOwner} slot={slot} />
     </article>
