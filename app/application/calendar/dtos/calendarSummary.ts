@@ -7,6 +7,7 @@ export type CalendarSummary = {
   tags: Array<{ name: string }>
   owner: {
     username: string
+    displayName: string
     avatarUrl: string | null
   }
 }
