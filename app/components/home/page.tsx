@@ -1,6 +1,7 @@
 import type { PublicFirebaseConfig } from '../../application/auth/firebaseConfig'
 import type { CalendarSummary } from '../../application/calendar/dtos/calendarSummary'
 import AuthStatus from '../../islands/auth-status/auth-status'
+import { Footer } from '../shared/footer'
 import { HeroSection } from './hero-section'
 import { PublicCalendarsSection } from './public-calendars-section'
 
@@ -11,6 +12,7 @@ export function HomePage({ calendars, firebaseConfig }: { calendars: CalendarSum
       <HomeHeader firebaseConfig={firebaseConfig} />
       <HeroSection />
       <PublicCalendarsSection calendars={calendars} />
+      <Footer />
     </main>
   )
 }

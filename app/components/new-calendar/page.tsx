@@ -1,5 +1,6 @@
 import type { PublicFirebaseConfig } from '../../application/auth/firebaseConfig'
 import { FeedbackMessage } from '../shared/feedback-message'
+import { Footer } from '../shared/footer'
 import { PageHeader } from '../shared/page-header'
 import { CreateCalendarSection } from './create-calendar-section'
 import { translateCreateError } from './translate-create-error'
@@ -17,6 +18,7 @@ export function NewCalendarPage({
       <PageHeader firebaseConfig={firebaseConfig} />
       {createError ? <FeedbackMessage tone="error">{translateCreateError(createError)}</FeedbackMessage> : null}
       <CreateCalendarSection />
+      <Footer />
     </main>
   )
 }

@@ -3,6 +3,7 @@ import type { AuthenticatedUser } from '../../domain/user/entities/user'
 import CalendarEditor from '../../islands/calendar-editor/calendar-editor'
 import DeleteCalendar from '../../islands/delete-calendar/delete-calendar'
 import { FeedbackMessage } from '../shared/feedback-message'
+import { Footer } from '../shared/footer'
 import { PageHeader } from '../shared/page-header'
 import { CalendarGrid } from './calendar-grid'
 import { OverviewSection } from './overview-section'
@@ -40,6 +41,7 @@ export function CalendarDetailPage({
       {isOwner ? <CalendarEditor calendar={calendar} /> : null}
       <CalendarGrid currentUser={currentUser} slots={slots} />
       <SlotsSection currentUser={currentUser} isOwner={isOwner} slots={slots} />
+      <Footer />
     </main>
   )
 }

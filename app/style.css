@@ -1,5 +1,12 @@
 @import 'tailwindcss' source('../app');
 
+@font-face {
+  font-family: 'Reray Futura';
+  src: url('./assets/fonts/Futura Medium.otf') format('opentype');
+  font-display: swap;
+  font-weight: 500;
+}
+
 :root {
   --color-page: #f6efe2;
   --color-surface: #f6efe2;
@@ -17,6 +24,8 @@
 }
 
 body {
+  margin: 0;
+  overflow-x: clip;
   background: var(--color-page);
   color: var(--color-text);
   font-family: Futura, 'Trebuchet MS', 'Helvetica Neue', 'Yu Gothic', 'YuGothic', 'Hiragino Sans', sans-serif;

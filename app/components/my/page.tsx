@@ -3,6 +3,7 @@ import type { CalendarSummary } from '../../application/calendar/dtos/calendarSu
 import type { MySlotSummary } from '../../application/calendar/dtos/mySlotSummary'
 import type { AuthenticatedUser } from '../../domain/user/entities/user'
 import { FeedbackMessage } from '../shared/feedback-message'
+import { Footer } from '../shared/footer'
 import { PageHeader } from '../shared/page-header'
 import { SectionNumber } from '../shared/section-number'
 import { SignedInContent } from './signed-in-content'
@@ -37,6 +38,7 @@ export function MyPage({ articleError, firebaseConfig, myCalendars, mySlots, pro
           <div class="reray-rule mt-8" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
         </div>
       </section>
+      <Footer />
     </main>
   )
 }
