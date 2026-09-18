@@ -1,27 +1,33 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "reray",
-  "main": "./dist/index.js",
-  "compatibility_date": "2026-09-17",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "assets": {
-    "directory": "./dist"
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "reray",
-      "database_id": "local-reray",
-      "migrations_dir": "drizzle"
-    }
-  ],
-  "vars": {
-    "FIREBASE_PROJECT_ID": "reray-83ad4",
-    "PUBLIC_FIREBASE_API_KEY": "AIzaSyCl6lHxOUi2O3BbxfZtxGB9Lci8VxphYNI",
-    "PUBLIC_FIREBASE_AUTH_DOMAIN": "reray-83ad4.firebaseapp.com",
-    "PUBLIC_FIREBASE_PROJECT_ID": "reray-83ad4",
-    "PUBLIC_FIREBASE_APP_ID": "1:315256441491:web:b181de62cfac5f5790db66"
-  }
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "reray",
+	"main": "./dist/index.js",
+	"compatibility_date": "2026-09-17",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": "./dist"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "reray",
+			"database_id": "local-reray",
+			"migrations_dir": "drizzle"
+		},
+		{
+			"binding": "reray",
+			"database_name": "reray",
+			"database_id": "63282f30-6fb4-4c71-b1ec-672f4791336a",
+			"remote": true
+		}
+	],
+	"vars": {
+		"FIREBASE_PROJECT_ID": "reray-83ad4",
+		"PUBLIC_FIREBASE_API_KEY": "AIzaSyCl6lHxOUi2O3BbxfZtxGB9Lci8VxphYNI",
+		"PUBLIC_FIREBASE_AUTH_DOMAIN": "reray-83ad4.firebaseapp.com",
+		"PUBLIC_FIREBASE_PROJECT_ID": "reray-83ad4",
+		"PUBLIC_FIREBASE_APP_ID": "1:315256441491:web:b181de62cfac5f5790db66"
+	}
 }
