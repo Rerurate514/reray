@@ -1,10 +1,30 @@
 ```txt
 pnpm install
+pnpm run db:migrate:local
 pnpm run dev
 ```
 
 ```txt
+pnpm run db:migrate:remote
 pnpm run deploy
+```
+
+## D1 database
+
+The Worker binding is `DB` in both local and deployed environments.
+
+Use the local D1 database for day-to-day development:
+
+```txt
+pnpm run db:migrate:local
+pnpm run preview
+```
+
+Use the remote D1 database for production migration checks:
+
+```txt
+pnpm run db:migrate:remote
+pnpm run preview:remote
 ```
 
 ## Firebase Authentication

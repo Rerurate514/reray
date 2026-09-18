@@ -5,6 +5,9 @@
     "dev": "vite",
     "build": "vite build --mode client && vite build",
     "preview": "wrangler dev",
+    "preview:remote": "wrangler dev --remote",
+    "db:migrate:local": "wrangler d1 migrations apply reray --local",
+    "db:migrate:remote": "wrangler d1 migrations apply reray --remote",
     "deploy": "pnpm run build && wrangler deploy",
     "deb": "pnpm run build && pnpm run preview"
   },
