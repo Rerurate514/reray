@@ -15,7 +15,9 @@ export type CalendarRepository = {
   deleteCalendar(calendarId: string): Promise<boolean>
   joinSlot(slotId: string, userId: string, now: number): Promise<boolean>
   cancelSlot(slotId: string, userId: string, now: number): Promise<boolean>
+  clearSlot(slotId: string, now: number): Promise<boolean>
   findSlotOwner(slotId: string): Promise<string | null>
+  findSlotCalendarOwner(slotId: string): Promise<string | null>
   upsertArticle(input: UpsertArticleInput): Promise<void>
   listSlotsByUser(userId: string): Promise<MySlotSummary[]>
 }

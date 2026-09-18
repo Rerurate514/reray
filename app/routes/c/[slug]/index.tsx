@@ -204,11 +204,18 @@ export default createRoute(async (c) => {
               </div>
               <div>
                 {slot.userId ? (
-                  isCurrentUserSlot ? (
-                    <form method="post" action={`/api/slots/${slot.id}/cancel`}>
-                      <button class="border border-(--color-border-strong) px-4 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" type="submit">キャンセル</button>
-                    </form>
-                  ) : null
+                  <div class="flex flex-wrap gap-2">
+                    {isCurrentUserSlot ? (
+                      <form method="post" action={`/api/slots/${slot.id}/cancel`}>
+                        <button class="border border-(--color-border-strong) px-4 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" type="submit">キャンセル</button>
+                      </form>
+                    ) : null}
+                    {isOwner && !isCurrentUserSlot ? (
+                      <form method="post" action={`/api/slots/${slot.id}/clear`}>
+                        <button class="border border-(--color-red) px-4 py-2 text-sm font-semibold text-(--color-red) hover:bg-(--color-red) hover:text-(--color-page)" type="submit">担当を外す</button>
+                      </form>
+                    ) : null}
+                  </div>
                 ) : currentUser ? (
                   <form method="post" action={`/api/slots/${slot.id}/join`}>
                     <button class="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed]" type="submit">この日に参加する</button>
@@ -248,12 +255,20 @@ function translateActionError(message: string) {
     return 'この枠はすでに参加済みです。ページを再読み込みしてください。'
   }
 
+  if (message === 'Slot is already empty') {
+    return 'この枠はすでに空き枠です。ページを再読み込みしてください。'
+  }
+
+  if (message === 'Slot not found') {
+    return '対象の枠が見つかりませんでした。'
+  }
+
   if (message.startsWith('Only the assigned user')) {
     return '記事を編集できるのは、この枠の担当者だけです。'
   }
 
   if (message.startsWith('Only the owner')) {
-    return 'リレーを編集できるのは作成者だけです。'
+    return 'この操作ができるのはリレーの作成者だけです。'
   }
 
   if (message === 'Title is required') {

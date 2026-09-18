@@ -119,6 +119,11 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return result.meta.changes > 0
     },
 
+    async clearSlot(slotId, now) {
+      const result = await db.update(slots).set({ userId: null, updatedAt: now }).where(and(eq(slots.id, slotId), sql`${slots.userId} IS NOT NULL`))
+      return result.meta.changes > 0
+    },
+
     async findSlotOwner(slotId) {
       const slot = await db.query.slots.findFirst({
         columns: {
@@ -128,6 +133,19 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       })
 
       return slot?.userId ?? null
+    },
+
+    async findSlotCalendarOwner(slotId) {
+      const row = await db
+        .select({
+          ownerId: calendars.ownerId,
+        })
+        .from(slots)
+        .innerJoin(calendars, eq(slots.calendarId, calendars.id))
+        .where(eq(slots.id, slotId))
+        .limit(1)
+
+      return row[0]?.ownerId ?? null
     },
 
     async upsertArticle(input) {
