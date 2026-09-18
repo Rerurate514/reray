@@ -1,17 +1,26 @@
 import type { PublicFirebaseConfig } from '../../application/auth/firebaseConfig'
 import type { CalendarSummary } from '../../application/calendar/dtos/calendarSummary'
+import type { PublicCalendarSearch } from '../../application/calendar/listPublicCalendars'
 import AuthStatus from '../../islands/auth-status/auth-status'
 import { Footer } from '../shared/footer'
 import { HeroSection } from './hero-section'
 import { PublicCalendarsSection } from './public-calendars-section'
 
-export function HomePage({ calendars, firebaseConfig }: { calendars: CalendarSummary[]; firebaseConfig: PublicFirebaseConfig | null }) {
+export function HomePage({
+  calendars,
+  firebaseConfig,
+  search,
+}: {
+  calendars: CalendarSummary[]
+  firebaseConfig: PublicFirebaseConfig | null
+  search: PublicCalendarSearch
+}) {
   return (
     <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8">
       <title>Reray</title>
       <HomeHeader firebaseConfig={firebaseConfig} />
       <HeroSection />
-      <PublicCalendarsSection calendars={calendars} />
+      <PublicCalendarsSection calendars={calendars} search={search} />
       <Footer />
     </main>
   )

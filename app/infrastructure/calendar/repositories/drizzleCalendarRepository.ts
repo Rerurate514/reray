@@ -1,9 +1,9 @@
-import { and, asc, eq, isNull, sql } from 'drizzle-orm'
+import { and, asc, eq, gt, isNull, lt, lte, gte, sql } from 'drizzle-orm'
 import type { CalendarRepository } from '../../../application/calendar/repositories/calendarRepository'
 import type { NewCalendar } from '../../../domain/calendar/entities/calendar'
 import type { NewSlot } from '../../../domain/calendar/entities/slot'
 import type { Db } from '../../providers/db/client'
-import { articles, calendars, slots, users } from '../../providers/db/schema'
+import { articles, calendars, calendarTags, slots, tags, users } from '../../providers/db/schema'
 import { attachTagsToCalendar, listTagsByCalendarIds, replaceCalendarTags } from './calendarTagQueries'
 
 export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
@@ -61,9 +61,40 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return { calendar: { ...calendar, tags: calendarTagRows[calendar.id] ?? [] }, slots: slotRows }
     },
 
-    async listPublishedPublic(limit) {
+    async listPublishedPublic(limit, filters) {
+      const conditions = [eq(calendars.visibility, 'public'), eq(calendars.status, 'published')]
+      const query = filters?.query?.trim()
+      const tag = filters?.tag?.trim()
+      const today = filters?.today
+
+      if (query) {
+        conditions.push(sql`lower(${calendars.title}) LIKE ${`%${escapeLike(query.toLowerCase())}%`} ESCAPE '\\'`)
+      }
+
+      if (tag) {
+        conditions.push(sql`exists (
+          select 1
+          from ${calendarTags}
+          inner join ${tags} on ${calendarTags.tagId} = ${tags.id}
+          where ${calendarTags.calendarId} = ${calendars.id}
+            and ${tags.name} = ${tag}
+        )`)
+      }
+
+      if (today && filters?.status === 'open') {
+        conditions.push(lte(calendars.startDate, today), gte(calendars.endDate, today))
+      }
+
+      if (today && filters?.status === 'upcoming') {
+        conditions.push(gt(calendars.startDate, today))
+      }
+
+      if (today && filters?.status === 'ended') {
+        conditions.push(lt(calendars.endDate, today))
+      }
+
       const calendarRows = await db.query.calendars.findMany({
-        where: and(eq(calendars.visibility, 'public'), eq(calendars.status, 'published')),
+        where: and(...conditions),
         orderBy: (table, { desc }) => [desc(table.createdAt)],
         limit,
         with: {
@@ -201,4 +232,8 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         .orderBy(asc(slots.scheduledDate), asc(slots.position))
     },
   }
+}
+
+function escapeLike(value: string) {
+  return value.replace(/[\\%_]/g, (match) => `\\${match}`)
 }
