@@ -10,12 +10,12 @@
 		"directory": "./dist"
 	},
 	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "reray",
-			"database_id": "local-reray",
-			"migrations_dir": "drizzle"
-		},
+		// {
+		// 	"binding": "DB",
+		// 	"database_name": "reray",
+		// 	"database_id": "local-reray",
+		// 	"migrations_dir": "drizzle"
+		// },
 		{
 			"binding": "reray",
 			"database_name": "reray",
