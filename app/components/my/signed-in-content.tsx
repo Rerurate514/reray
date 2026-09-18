@@ -7,6 +7,7 @@ import { GettingStartedPanel } from './getting-started-panel'
 import { MyCalendarsSection } from './my-calendars-section'
 import { MySlotsSection } from './my-slots-section'
 import { ProfileForm } from './profile-form'
+import { SlotReminderPanel } from './slot-reminder-panel'
 
 export function SignedInContent({
   firebaseConfig,
@@ -26,6 +27,7 @@ export function SignedInContent({
       <p class="mt-5 max-w-2xl leading-8 text-(--color-muted)">@{user.username} としてログインしています。</p>
       <ProfileForm user={user} />
       {isEmpty ? <GettingStartedPanel /> : null}
+      <SlotReminderPanel slots={mySlots} />
       <MyCalendarsSection calendars={myCalendars} />
       <MySlotsSection slots={mySlots} />
       <DeleteAccount config={firebaseConfig} />
