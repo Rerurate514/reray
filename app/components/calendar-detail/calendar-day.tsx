@@ -1,5 +1,6 @@
 import type { AuthenticatedUser } from '../../domain/user/entities/user'
 import { SlotDate } from './slot-date'
+import { SlotArticle } from './slot-article'
 import { SlotUser } from './slot-user'
 import type { Slot } from './types'
 import { getUtcDate } from './utc-date'
@@ -12,7 +13,10 @@ export function CalendarDay({ currentUser, slot }: { currentUser: AuthenticatedU
       <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface) p-2">
         <div class="flex h-full flex-col justify-between gap-3">
           <SlotDate day={day} scheduledDate={slot.scheduledDate} />
-          <SlotUser slot={slot} compact />
+          <div class="grid gap-2">
+            <SlotUser slot={slot} compact />
+            <SlotArticle slot={slot} compact />
+          </div>
         </div>
       </div>
     )
