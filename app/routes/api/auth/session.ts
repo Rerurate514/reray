@@ -1,15 +1,17 @@
 import { deleteCookie, setCookie } from 'hono/cookie'
 import { createRoute } from 'honox/factory'
+import { getFirebaseProjectId } from '../../../application/auth/firebaseConfig'
 import { verifyFirebaseIdToken } from '../../../infrastructure/auth/firebaseToken'
 
 export const POST = createRoute(async (c) => {
   const { idToken } = await c.req.json<{ idToken?: string }>()
+  const projectId = getFirebaseProjectId(c.env)
 
-  if (!idToken || !c.env.FIREBASE_PROJECT_ID) {
+  if (!idToken || !projectId) {
     return c.json({ error: 'authentication_required' }, 401)
   }
 
-  await verifyFirebaseIdToken(idToken, c.env.FIREBASE_PROJECT_ID)
+  await verifyFirebaseIdToken(idToken, projectId)
 
   setCookie(c, 'reray_id_token', idToken, {
     httpOnly: true,

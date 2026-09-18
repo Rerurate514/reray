@@ -19,32 +19,9 @@
   ],
   "vars": {
     "FIREBASE_PROJECT_ID": "reray-83ad4",
+    "PUBLIC_FIREBASE_API_KEY": "AIzaSyCl6lHxOUi2O3BbxfZtxGB9Lci8VxphYNI",
     "PUBLIC_FIREBASE_AUTH_DOMAIN": "reray-83ad4.firebaseapp.com",
-    "PUBLIC_FIREBASE_PROJECT_ID": "reray-83ad4"
+    "PUBLIC_FIREBASE_PROJECT_ID": "reray-83ad4",
+    "PUBLIC_FIREBASE_APP_ID": "1:315256441491:web:b181de62cfac5f5790db66"
   }
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "MY_KV_NAMESPACE",
-  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
-  // "r2_buckets": [
-  //   {
-  //     "binding": "MY_BUCKET",
-  //     "bucket_name": "my-bucket"
-  //   }
-  // ],
-  // "d1_databases": [
-  //   {
-  //     "binding": "MY_DB",
-  //     "database_name": "my-database",
-  //     "database_id": ""
-  //   }
-  // ],
-  // "ai": {
-  //   "binding": "AI"
-  // }
 }

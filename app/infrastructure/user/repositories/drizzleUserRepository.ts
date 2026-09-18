@@ -29,6 +29,25 @@ export function createDrizzleUserRepository(db: Db): UserRepository {
       await db.insert(users).values(user)
       return toAuthenticatedUser(user)
     },
+
+    async updateProfile(input) {
+      const updatedUsers = await db
+        .update(users)
+        .set({
+          displayName: input.displayName,
+          updatedAt: input.updatedAt,
+        })
+        .where(eq(users.id, input.userId))
+        .returning()
+
+      const user = updatedUsers[0]
+      return user ? toAuthenticatedUser(user) : null
+    },
+
+    async delete(userId) {
+      const result = await db.delete(users).where(eq(users.id, userId))
+      return result.meta.changes > 0
+    },
   }
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'hono/jsx'
-import { getApps, initializeApp, type FirebaseOptions } from 'firebase/app'
+import { FirebaseError, getApps, initializeApp, type FirebaseOptions } from 'firebase/app'
 import { GithubAuthProvider, GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
 import type { PublicFirebaseConfig } from '../application/auth/firebaseConfig'
 
@@ -17,6 +17,7 @@ export default function AuthStatus({ config }: Props) {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null)
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(null)
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const auth = useMemo(() => {
     if (!config || typeof window === 'undefined') {
       return null
@@ -38,14 +39,25 @@ export default function AuthStatus({ config }: Props) {
         return
       }
 
-      const idToken = await user.getIdToken()
-      await fetch('/api/auth/session', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({ idToken }),
-      })
+      try {
+        const idToken = await user.getIdToken()
+        const sessionResponse = await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ idToken }),
+        })
+
+        if (!sessionResponse.ok) {
+          throw new Error('session_failed')
+        }
+      } catch (error) {
+        console.error(error)
+        setErrorMessage('ログイン後のセッション作成に失敗しました。')
+        setStatus('error')
+        return
+      }
 
       const response = await fetch('/api/auth/me')
       const body = await response.json<{ user: SessionUser | null }>()
@@ -63,11 +75,14 @@ export default function AuthStatus({ config }: Props) {
     }
 
     setStatus('loading')
+    setErrorMessage(null)
     try {
       const provider = providerName === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider()
       await signInWithPopup(auth, provider)
       setStatus('idle')
-    } catch {
+    } catch (error) {
+      console.error(error)
+      setErrorMessage(translateFirebaseError(error))
       setStatus('error')
     }
   }
@@ -115,7 +130,31 @@ export default function AuthStatus({ config }: Props) {
         GitHub
       </button>
       {status === 'loading' ? <span class="text-xs text-(--color-subtle)">処理中...</span> : null}
-      {status === 'error' ? <span class="text-xs text-(--color-accent)">ログインに失敗しました</span> : null}
+      {status === 'error' ? <span class="text-xs text-(--color-accent)">{errorMessage ?? 'ログインに失敗しました'}</span> : null}
     </div>
   )
+}
+
+function translateFirebaseError(error: unknown) {
+  if (!(error instanceof FirebaseError)) {
+    return 'ログインに失敗しました'
+  }
+
+  if (error.code === 'auth/account-exists-with-different-credential') {
+    return '同じメールアドレスの別ログイン方法が既に使われています。'
+  }
+
+  if (error.code === 'auth/unauthorized-domain') {
+    return 'このドメインが Firebase Auth で許可されていません。'
+  }
+
+  if (error.code === 'auth/operation-not-allowed') {
+    return 'Firebase Auth で GitHub ログインが有効になっていません。'
+  }
+
+  if (error.code === 'auth/popup-closed-by-user') {
+    return 'ログイン画面が閉じられました。'
+  }
+
+  return `ログインに失敗しました: ${error.code}`
 }
