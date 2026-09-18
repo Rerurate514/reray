@@ -10,17 +10,11 @@
 		"directory": "./dist"
 	},
 	"d1_databases": [
-		// {
-		// 	"binding": "DB",
-		// 	"database_name": "reray",
-		// 	"database_id": "local-reray",
-		// 	"migrations_dir": "drizzle"
-		// },
 		{
-			"binding": "reray",
+			"binding": "DB",
 			"database_name": "reray",
 			"database_id": "63282f30-6fb4-4c71-b1ec-672f4791336a",
-			"remote": true
+			"migrations_dir": "drizzle"
 		}
 	],
 	"vars": {
