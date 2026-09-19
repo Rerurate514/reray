@@ -6,7 +6,6 @@ import DeleteAccount from '../../../islands/delete-account/delete-account'
 import { GettingStartedPanel } from '../getting-started-panel/index'
 import { MyCalendarsSection } from '../my-calendars-section/index'
 import { MySlotsSection } from '../my-slots-section/index'
-import { ProfileForm } from '../profile-form/index'
 import { SlotReminderPanel } from '../slot-reminder-panel/index'
 
 export function SignedInContent({
@@ -24,8 +23,13 @@ export function SignedInContent({
 
   return (
     <>
-      <p class="mt-5 max-w-2xl leading-8 text-(--color-muted)">@{user.username} としてログインしています。</p>
-      <ProfileForm user={user} />
+      <div class="mt-5 flex flex-col gap-3 border border-(--color-border) bg-[#fff8ed] p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="min-w-0">
+          <p class="text-sm font-semibold text-(--color-muted)">ログイン中</p>
+          <p class="mt-1 truncate text-lg font-semibold">@{user.username}</p>
+        </div>
+        <a class="inline-block border border-(--color-border-strong) px-4 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href={`/u/${user.username}`}>公開アカウントを見る</a>
+      </div>
       {isEmpty ? <GettingStartedPanel /> : null}
       <SlotReminderPanel slots={mySlots} />
       <MyCalendarsSection calendars={myCalendars} />

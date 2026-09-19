@@ -27,14 +27,14 @@ export function MyPage({ articleError, firebaseConfig, myCalendars, mySlots, pro
 
   return (
     <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
-      <title>自分の予定 - Reray</title>
+      <title>マイスケジュール - Reray</title>
       <PageHeader firebaseConfig={firebaseConfig} />
       {error ? <FeedbackMessage tone="error">{translateMyPageError(error)}</FeedbackMessage> : null}
       {profileSaved ? <FeedbackMessage tone="success">表示名を保存しました。</FeedbackMessage> : null}
       <section class="grid gap-10">
         <SectionNumber number="01 /" label="My Schedule" large />
         <div class="border-t border-(--color-border) pt-6">
-          <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page)">自分の予定</div>
+          <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page)">マイスケジュール</div>
           {user ? <SignedInContent firebaseConfig={firebaseConfig} myCalendars={myCalendars} mySlots={mySlots} user={user} /> : <SignedOutState />}
           <RerayRule class="mt-8" />
         </div>

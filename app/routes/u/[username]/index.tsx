@@ -4,6 +4,7 @@ import { listPublicProfileCalendars } from '../../../application/calendar/listPu
 import { listPublicProfileSlots } from '../../../application/calendar/listPublicProfileSlots'
 import { getUserByUsername } from '../../../application/user/getUserByUsername'
 import { AccountProfilePage } from '../../../components/account-profile/page'
+import { getCurrentUser } from '../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../infrastructure/providers/db/client'
 import { createDrizzleUserRepository } from '../../../infrastructure/user/repositories/drizzleUserRepository'
@@ -30,6 +31,7 @@ export default createRoute(async (c) => {
   }
 
   const calendarRepository = createDrizzleCalendarRepository(db)
+  const currentUser = await getCurrentUser(c).catch(() => null)
   const [calendars, slots] = await Promise.all([
     listPublicProfileCalendars(calendarRepository, profileUser.id),
     listPublicProfileSlots(calendarRepository, profileUser.id),
@@ -38,7 +40,10 @@ export default createRoute(async (c) => {
   return c.render(
     <AccountProfilePage
       calendars={calendars}
+      currentUser={currentUser}
       firebaseConfig={getPublicFirebaseConfig(c.env)}
+      profileError={c.req.query('profile_error')}
+      profileSaved={c.req.query('profile_saved')}
       profileUser={profileUser}
       slots={slots}
     />,

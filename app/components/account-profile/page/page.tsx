@@ -4,6 +4,9 @@ import type { PublicFirebaseConfig } from '../../../application/auth/firebaseCon
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
 import { CalendarCard } from '../../home/calendar-card/index'
 import { EmptyState } from '../../my/empty-state/index'
+import { ProfileForm } from '../../my/profile-form/index'
+import { translateMyPageError } from '../../my/translate-my-page-error/index'
+import { FeedbackMessage } from '../../shared/feedback-message/index'
 import { Footer } from '../../shared/footer/index'
 import { PageHeader } from '../../shared/page-header/index'
 import { RerayRule } from '../../shared/reray-rule/index'
@@ -11,20 +14,28 @@ import { SectionNumber } from '../../shared/section-number/index'
 
 type AccountProfilePageProps = {
   calendars: CalendarSummary[]
+  currentUser: AuthenticatedUser | null
   firebaseConfig: PublicFirebaseConfig | null
+  profileError: string | undefined
+  profileSaved: string | undefined
   profileUser: AuthenticatedUser
   slots: MySlotSummary[]
 }
 
-export function AccountProfilePage({ calendars, firebaseConfig, profileUser, slots }: AccountProfilePageProps) {
+export function AccountProfilePage({ calendars, currentUser, firebaseConfig, profileError, profileSaved, profileUser, slots }: AccountProfilePageProps) {
+  const isOwnAccount = currentUser?.id === profileUser.id
+
   return (
     <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
       <title>{profileUser.displayName} - Reray</title>
       <PageHeader firebaseConfig={firebaseConfig} />
+      {profileError ? <FeedbackMessage tone="error">{translateMyPageError(profileError)}</FeedbackMessage> : null}
+      {profileSaved ? <FeedbackMessage tone="success">表示名を保存しました。</FeedbackMessage> : null}
       <section class="grid gap-10">
         <SectionNumber number="01 /" label="Account" large />
         <div class="border-t border-(--color-border) pt-6">
           <ProfileHero user={profileUser} />
+          {isOwnAccount ? <ProfileForm user={profileUser} /> : null}
           <RerayRule class="mt-8" />
           <CreatedCalendarsSection calendars={calendars} />
           <JoinedSlotsSection slots={slots} />

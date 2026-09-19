@@ -18,10 +18,12 @@ export const POST = createRoute(async (c) => {
       displayName,
     })
 
-    return c.redirect('/my-schedule?profile_saved=1')
+    const url = new URL(c.req.header('referer') ?? `/u/${user.username}`, c.req.url)
+    url.searchParams.set('profile_saved', '1')
+    return c.redirect(url.toString(), 303)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to update profile'
-    const url = new URL('/my-schedule', c.req.url)
+    const url = new URL(c.req.header('referer') ?? '/my-schedule', c.req.url)
     url.searchParams.set('profile_error', message)
     return c.redirect(url.toString(), 303)
   }
