@@ -24,7 +24,23 @@ export function createDateRangeText(calendar: Calendar) {
 }
 
 export function createNextOpenSlotText(slots: Slot[]): NextOpenSlotText {
-  const openSlot = slots
+  const openSlot = findNextOpenSlot(slots)
+
+  if (!openSlot) {
+    return {
+      label: '直近の空き枠',
+      value: 'ありません',
+    }
+  }
+
+  return {
+    label: '直近の空き枠',
+    value: openSlot.scheduledDate ?? `#${openSlot.position}`,
+  }
+}
+
+export function findNextOpenSlot(slots: Slot[]) {
+  return slots
     .filter((slot) => !slot.userId)
     .sort((a, b) => {
       if (a.scheduledDate && b.scheduledDate) {
@@ -41,18 +57,6 @@ export function createNextOpenSlotText(slots: Slot[]): NextOpenSlotText {
 
       return a.position - b.position
     })[0]
-
-  if (!openSlot) {
-    return {
-      label: '直近の空き枠',
-      value: 'ありません',
-    }
-  }
-
-  return {
-    label: '直近の空き枠',
-    value: openSlot.scheduledDate ?? `#${openSlot.position}`,
-  }
 }
 
 export function createTagText(calendar: Calendar) {

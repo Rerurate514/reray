@@ -47,7 +47,7 @@ export function SlotDetailPage({
           </p>
           <h1 class="mt-5 text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{slotLabel}</h1>
           <p class="mt-4 text-(--color-muted)">この枠の担当、告知文、記事を管理できます。</p>
-          <SlotShare calendarTitle={calendar.title} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} showOpenLink={false} />
+          {!slot.userId ? <SlotShare calendarTitle={calendar.title} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} showOpenLink={false} /> : null}
         </div>
 
         <div class="grid min-w-0 gap-6">

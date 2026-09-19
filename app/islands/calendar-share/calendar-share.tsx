@@ -5,6 +5,7 @@ type Props = {
     title: string
     startDate: string | null
     endDate: string | null
+    tags: Array<{ name: string }>
     visibility: 'public' | 'private'
   }
 }
@@ -83,5 +84,17 @@ function createDiscordMessage(calendar: Props['calendar'], url: string) {
 
 function createXMessage(calendar: Props['calendar'], url: string) {
   const dateRange = calendar.startDate && calendar.endDate ? ` (${calendar.startDate} - ${calendar.endDate})` : ''
-  return `「${calendar.title}」の参加者を募集しています${dateRange}\n${url}`
+  const hashtags = createXHashtags(calendar.tags)
+  const parts = [`「${calendar.title}」の参加者を募集しています${dateRange}`, hashtags, url].filter(Boolean)
+
+  return parts.join('\n')
+}
+
+function createXHashtags(tags: Array<{ name: string }>) {
+  const hashtags = tags
+    .map((tag) => tag.name.trim().replace(/^#/, '').replace(/\s+/g, ''))
+    .filter(Boolean)
+    .map((tagName) => `#${tagName}`)
+
+  return ['#Reray', ...hashtags].join(' ')
 }

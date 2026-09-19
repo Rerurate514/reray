@@ -2,6 +2,7 @@ import { createDiscordComponentEmbed } from './discord-component-embed'
 import {
   createCalendarPreviewDescription,
   createNextOpenSlotText,
+  findNextOpenSlot,
 } from './text'
 import type { Calendar, Slot } from '../types/index'
 
@@ -16,7 +17,9 @@ export function createCalendarPreviewMeta(calendar: Calendar, slots: Slot[], req
   const calendarUrl = new URL(`/c/${calendar.slug}`, requestUrl).toString()
   const imageUrl = new URL(ogImage.path, requestUrl).toString()
   const description = createCalendarPreviewDescription(calendar)
+  const nextOpenSlot = findNextOpenSlot(slots)
   const nextOpenSlotText = createNextOpenSlotText(slots)
+  const nextOpenSlotUrl = nextOpenSlot ? new URL(`/c/${calendar.slug}/slots/${nextOpenSlot.id}`, requestUrl).toString() : null
   const title = `${calendar.title} - Reray`
 
   return {
@@ -32,6 +35,7 @@ export function createCalendarPreviewMeta(calendar: Calendar, slots: Slot[], req
     discordComponentEmbed: createDiscordComponentEmbed({
       calendar,
       imageUrl,
+      nextOpenSlotUrl,
       nextOpenSlotText,
       url: calendarUrl,
     }),

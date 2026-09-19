@@ -10,11 +10,13 @@ import {
 export function createDiscordComponentEmbed({
   calendar,
   imageUrl,
+  nextOpenSlotUrl,
   nextOpenSlotText,
   url,
 }: {
   calendar: Calendar
   imageUrl: string
+  nextOpenSlotUrl: string | null
   nextOpenSlotText: NextOpenSlotText
   url: string
 }) {
@@ -38,6 +40,7 @@ export function createDiscordComponentEmbed({
       },
     },
     { type: 10, content: trimUtf8(summaryItems.join('\n\n'), 650) },
+    nextOpenSlotUrl ? createNextOpenSlotButton(nextOpenSlotUrl) : null,
     descriptionText ? { type: 14, spacing: 1 } : null,
     descriptionText ? { type: 10, content: trimUtf8(descriptionText, 260) } : null,
     tagText ? { type: 10, content: tagText } : null,
@@ -59,4 +62,18 @@ export function createDiscordComponentEmbed({
     .replace(/<\//g, '<\\/')
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029')
+}
+
+function createNextOpenSlotButton(url: string) {
+  return {
+    type: 1,
+    components: [
+      {
+        type: 2,
+        style: 5,
+        url,
+        label: '直近の空き枠を見る',
+      },
+    ],
+  }
 }
