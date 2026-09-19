@@ -46,7 +46,7 @@ function ReminderList({ emptyText, slots, title }: { emptyText: string; slots: M
 
 function ReminderItem({ slot }: { slot: MySlotSummary }) {
   return (
-    <a class="block py-3 hover:text-(--color-accent)" href="/me">
+    <a class="block py-3 hover:text-(--color-accent)" href="/my-schedule">
       <span class="block text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`} / {slot.calendarTitle}</span>
       <span class="mt-1 block text-xs text-(--color-muted)">
         {slot.articleUrl ? slot.articleTitle : '記事URLが未登録です。'}

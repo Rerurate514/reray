@@ -18,10 +18,10 @@ export const POST = createRoute(async (c) => {
       displayName,
     })
 
-    return c.redirect('/me?profile_saved=1')
+    return c.redirect('/my-schedule?profile_saved=1')
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to update profile'
-    const url = new URL('/me', c.req.url)
+    const url = new URL('/my-schedule', c.req.url)
     url.searchParams.set('profile_error', message)
     return c.redirect(url.toString(), 303)
   }

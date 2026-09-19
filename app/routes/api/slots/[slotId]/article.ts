@@ -25,7 +25,7 @@ export const POST = createRoute(async (c) => {
       url: String(body.url ?? ''),
     })
 
-    return c.redirect(c.req.header('referer') ?? '/me')
+    return c.redirect(c.req.header('referer') ?? '/my-schedule')
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to save article'
     return redirectBackWithError(c.req.url, c.req.header('referer'), 'article_error', message)

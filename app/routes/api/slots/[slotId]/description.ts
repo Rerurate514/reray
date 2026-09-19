@@ -24,7 +24,7 @@ export const POST = createRoute(async (c) => {
       description: String(body.description ?? ''),
     })
 
-    const url = new URL(c.req.header('referer') ?? '/me', c.req.url)
+    const url = new URL(c.req.header('referer') ?? '/my-schedule', c.req.url)
     url.searchParams.set('description_saved', '1')
     return Response.redirect(url.toString(), 303)
   } catch (error) {

@@ -14,6 +14,14 @@ export function createDrizzleUserRepository(db: Db): UserRepository {
       return user ? toAuthenticatedUser(user) : null
     },
 
+    async findByUsername(username) {
+      const user = await db.query.users.findFirst({
+        where: eq(users.username, username),
+      })
+
+      return user ? toAuthenticatedUser(user) : null
+    },
+
     async findUsername(username) {
       const user = await db.query.users.findFirst({
         columns: {

@@ -3,7 +3,7 @@ import { RerayRule } from '../reray-rule/index'
 const footerLinks = [
   { href: '/', label: '一覧' },
   { href: '/new', label: 'リレー作成' },
-  { href: '/me', label: '自分の予定' },
+  { href: '/my-schedule', label: '自分の予定' },
 ]
 
 const profileLinks = [

@@ -20,6 +20,7 @@ export type CalendarRepository = {
   findDetailBySlug(slug: string): Promise<CalendarDetail | null>
   findSlotDetail(calendarSlug: string, slotId: string): Promise<SlotDetail | null>
   listPublishedPublic(limit: number, filters?: PublicCalendarFilters): Promise<CalendarSummary[]>
+  listPublishedPublicByOwner(userId: string): Promise<CalendarSummary[]>
   listCalendarsByOwner(userId: string): Promise<CalendarSummary[]>
   findOwnerId(calendarId: string): Promise<string | null>
   updateCalendar(input: { calendarId: string; title: string; description: string | null; visibility: 'public' | 'private'; tagNames: string[]; now: number }): Promise<boolean>
@@ -32,5 +33,6 @@ export type CalendarRepository = {
   findArticleSlotIdByUrl(url: string): Promise<string | null>
   upsertArticle(input: UpsertArticleInput): Promise<void>
   updateSlotDescription(input: { slotId: string; description: string | null; now: number }): Promise<boolean>
+  listPublishedPublicSlotsByUser(userId: string): Promise<MySlotSummary[]>
   listSlotsByUser(userId: string): Promise<MySlotSummary[]>
 }

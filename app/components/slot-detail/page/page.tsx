@@ -113,16 +113,21 @@ function SlotNoticeForm({ description, slotId }: { description: string; slotId: 
 
 function SlotUser({ slot }: { slot: SlotDetail['slot'] }) {
   const displayName = slot.displayName ?? slot.username ?? 'user'
-
-  return (
-    <div class="flex items-center gap-2">
+  const content = (
+    <>
       {slot.avatarUrl ? (
         <img class="h-8 w-8 rounded-full border border-(--color-border-strong) object-cover" src={slot.avatarUrl} alt={displayName} />
       ) : (
         <span class="grid h-8 w-8 place-items-center rounded-full border border-(--color-border-strong) text-xs font-semibold text-(--color-muted)">{displayName.slice(0, 1)}</span>
       )}
       <span class="font-semibold">{displayName}</span>
-    </div>
+    </>
+  )
+
+  return slot.username ? (
+    <a class="flex items-center gap-2 hover:text-(--color-accent)" href={`/u/${slot.username}`}>{content}</a>
+  ) : (
+    <div class="flex items-center gap-2">{content}</div>
   )
 }
 

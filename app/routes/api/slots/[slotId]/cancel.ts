@@ -22,7 +22,7 @@ export const POST = createRoute(async (c) => {
       userId: user.id,
     })
 
-    return c.redirect(c.req.header('referer') ?? '/me')
+    return c.redirect(c.req.header('referer') ?? '/my-schedule')
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to cancel slot'
     return redirectBackWithError(c.req.url, c.req.header('referer'), 'slot_error', message)

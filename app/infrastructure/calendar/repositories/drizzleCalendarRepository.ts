@@ -165,6 +165,19 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return calendarRows.map((calendar) => ({ ...calendar, tags: tagsByCalendarId[calendar.id] ?? [] }))
     },
 
+    async listPublishedPublicByOwner(userId) {
+      const calendarRows = await db.query.calendars.findMany({
+        where: and(eq(calendars.ownerId, userId), eq(calendars.visibility, 'public'), eq(calendars.status, 'published')),
+        orderBy: (table, { desc }) => [desc(table.createdAt)],
+        with: {
+          owner: true,
+        },
+      })
+      const tagsByCalendarId = await listTagsByCalendarIds(db, calendarRows.map((calendar) => calendar.id))
+
+      return calendarRows.map((calendar) => ({ ...calendar, tags: tagsByCalendarId[calendar.id] ?? [] }))
+    },
+
     async findOwnerId(calendarId) {
       const calendar = await db.query.calendars.findFirst({
         columns: {
@@ -299,6 +312,25 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         .innerJoin(calendars, eq(slots.calendarId, calendars.id))
         .leftJoin(articles, eq(articles.slotId, slots.id))
         .where(eq(slots.userId, userId))
+        .orderBy(asc(slots.scheduledDate), asc(slots.position))
+    },
+
+    async listPublishedPublicSlotsByUser(userId) {
+      return db
+        .select({
+          id: slots.id,
+          scheduledDate: slots.scheduledDate,
+          position: slots.position,
+          description: slots.description,
+          calendarSlug: calendars.slug,
+          calendarTitle: calendars.title,
+          articleTitle: articles.title,
+          articleUrl: articles.url,
+        })
+        .from(slots)
+        .innerJoin(calendars, eq(slots.calendarId, calendars.id))
+        .leftJoin(articles, eq(articles.slotId, slots.id))
+        .where(and(eq(slots.userId, userId), eq(calendars.visibility, 'public'), eq(calendars.status, 'published')))
         .orderBy(asc(slots.scheduledDate), asc(slots.position))
     },
   }
