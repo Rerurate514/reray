@@ -1,4 +1,5 @@
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
+import JoinSlotButton from '../../../islands/join-slot-button'
 import type { Slot } from '../types/index'
 
 export function SlotActions({
@@ -19,9 +20,7 @@ export function SlotActions({
   if (currentUser) {
     return (
       <div>
-        <form method="post" action={`/api/slots/${slot.id}/join`}>
-          <button class="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed]" type="submit">この日に参加する</button>
-        </form>
+        <JoinSlotButton className="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed] disabled:opacity-60" label="この日に参加する" slotId={slot.id} />
       </div>
     )
   }

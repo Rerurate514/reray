@@ -1,6 +1,7 @@
 import type { PublicFirebaseConfig } from '../../../application/auth/firebaseConfig'
 import type { SlotDetail } from '../../../application/calendar/dtos/slotDetail'
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
+import JoinSlotButton from '../../../islands/join-slot-button'
 import MySlotArticleForm from '../../../islands/my-slot-article-form/my-slot-article-form'
 import SlotShare from '../../../islands/slot-share/slot-share'
 import { FeedbackMessage } from '../../shared/feedback-message'
@@ -61,7 +62,7 @@ export function SlotDetailPage({
             ) : (
               <div class="grid gap-4">
                 <p class="text-(--color-muted)">この枠はまだ空いています。</p>
-                {currentUser ? <JoinSlotButton slotId={slot.id} /> : <p class="text-sm font-semibold text-(--color-muted)">ログイン後に参加できます。</p>}
+                {currentUser ? <JoinSlotForm slotId={slot.id} /> : <p class="text-sm font-semibold text-(--color-muted)">ログイン後に参加できます。</p>}
               </div>
             )}
           </Panel>
@@ -131,11 +132,9 @@ function SlotUser({ slot }: { slot: SlotDetail['slot'] }) {
   )
 }
 
-function JoinSlotButton({ slotId }: { slotId: string }) {
+function JoinSlotForm({ slotId }: { slotId: string }) {
   return (
-    <form method="post" action={`/api/slots/${slotId}/join`}>
-      <button class="w-full max-w-full border border-(--color-accent) px-4 py-3 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed]" type="submit">この枠に参加する</button>
-    </form>
+    <JoinSlotButton className="w-full max-w-full border border-(--color-accent) px-4 py-3 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed] disabled:opacity-60" label="この枠に参加する" slotId={slotId} />
   )
 }
 

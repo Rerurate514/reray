@@ -22,9 +22,21 @@ export const POST = createRoute(async (c) => {
       userId: user.id,
     })
 
+    if (wantsJson(c.req.header('accept'))) {
+      return c.json({ ok: true })
+    }
+
     return c.redirect(c.req.header('referer') ?? '/my-schedule')
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to join slot'
+    if (wantsJson(c.req.header('accept'))) {
+      return c.json({ error: message }, 400)
+    }
+
     return redirectBackWithError(c.req.url, c.req.header('referer'), 'slot_error', message)
   }
 })
+
+function wantsJson(acceptHeader: string | undefined) {
+  return acceptHeader?.includes('application/json') ?? false
+}

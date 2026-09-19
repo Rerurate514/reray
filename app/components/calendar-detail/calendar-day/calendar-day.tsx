@@ -1,4 +1,5 @@
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
+import JoinSlotButton from '../../../islands/join-slot-button'
 import { SlotDate } from '../slot-date/index'
 import { SlotUser } from '../slot-user/index'
 import type { Slot } from '../types/index'
@@ -25,9 +26,7 @@ export function CalendarDay({ calendarSlug, currentUser, slot }: { calendarSlug:
         <div class="grid h-full content-start gap-2">
           <SlotDate day={day} scheduledDate={slot.scheduledDate} />
           <a class="text-xs font-semibold text-(--color-muted) hover:text-(--color-accent)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細</a>
-          <form method="post" action={`/api/slots/${slot.id}/join`}>
-            <button class="text-left text-sm font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" type="submit">参加する</button>
-          </form>
+          <JoinSlotButton className="text-left text-sm font-semibold text-(--color-accent) hover:text-(--color-accent-hover) disabled:opacity-60" label="参加する" slotId={slot.id} slotUrl={`/c/${calendarSlug}/slots/${slot.id}`} />
         </div>
       </div>
     )

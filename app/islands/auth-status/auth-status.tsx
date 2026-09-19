@@ -85,10 +85,19 @@ export default function AuthStatus({ config }: Props) {
     }
 
     setStatus('loading')
-    await signOut(auth)
-    await fetch('/api/auth/session', { method: 'DELETE' })
+    setFirebaseUser(null)
     setSessionUser(null)
-    setStatus('idle')
+    setErrorMessage(null)
+
+    try {
+      await signOut(auth)
+      await fetch('/api/auth/session', { method: 'DELETE' })
+      setStatus('idle')
+    } catch (error) {
+      console.error(error)
+      setStatus('error')
+      setErrorMessage('ログアウトに失敗しました。もう一度お試しください。')
+    }
   }
 
   if (firebaseUser) {
