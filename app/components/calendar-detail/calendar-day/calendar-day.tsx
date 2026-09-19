@@ -5,7 +5,7 @@ import { SlotUser } from '../slot-user/index'
 import type { Slot } from '../types/index'
 import { getUtcDate } from '../utc-date/index'
 
-export function CalendarDay({ currentUser, slot }: { currentUser: AuthenticatedUser | null; slot: Slot }) {
+export function CalendarDay({ calendarSlug, currentUser, slot }: { calendarSlug: string; currentUser: AuthenticatedUser | null; slot: Slot }) {
   const day = slot.scheduledDate ? getUtcDate(slot.scheduledDate) : slot.position
 
   if (slot.userId) {
@@ -16,6 +16,7 @@ export function CalendarDay({ currentUser, slot }: { currentUser: AuthenticatedU
           <div class="grid gap-2">
             <SlotUser slot={slot} compact />
             <SlotArticle slot={slot} compact />
+            <a class="text-xs font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細</a>
           </div>
         </div>
       </div>
@@ -25,6 +26,7 @@ export function CalendarDay({ currentUser, slot }: { currentUser: AuthenticatedU
   if (currentUser) {
     return (
       <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface) p-2">
+        <a class="mb-2 inline-block text-xs font-semibold text-(--color-muted) hover:text-(--color-accent)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細</a>
         <form method="post" action={`/api/slots/${slot.id}/join`} class="h-full">
           <button class="flex h-full w-full flex-col justify-between gap-3 text-left hover:text-(--color-accent)" type="submit">
             <SlotDate day={day} scheduledDate={slot.scheduledDate} />
@@ -39,7 +41,7 @@ export function CalendarDay({ currentUser, slot }: { currentUser: AuthenticatedU
     <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface) p-2">
       <div class="flex h-full flex-col justify-between gap-3 text-(--color-muted)">
         <SlotDate day={day} scheduledDate={slot.scheduledDate} />
-        <span class="text-sm font-semibold">ログイン後に参加できます</span>
+        <a class="text-sm font-semibold text-(--color-accent)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細を見る</a>
       </div>
     </div>
   )

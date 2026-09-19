@@ -4,7 +4,7 @@ import { CalendarDay } from '../calendar-day/index'
 import type { Slot } from '../types/index'
 import { getUtcWeekday } from '../utc-date/index'
 
-export function CalendarGrid({ currentUser, slots }: { currentUser: AuthenticatedUser | null; slots: Slot[] }) {
+export function CalendarGrid({ calendarSlug, currentUser, slots }: { calendarSlug: string; currentUser: AuthenticatedUser | null; slots: Slot[] }) {
   const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土']
   const firstScheduledDate = slots.find((slot) => slot.scheduledDate)?.scheduledDate
   const leadingBlankDays = firstScheduledDate ? getUtcWeekday(firstScheduledDate) : 0
@@ -20,7 +20,7 @@ export function CalendarGrid({ currentUser, slots }: { currentUser: Authenticate
           {Array.from({ length: leadingBlankDays }).map(() => (
             <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface-muted) opacity-55" aria-hidden="true"></div>
           ))}
-          {slots.map((slot) => <CalendarDay currentUser={currentUser} slot={slot} />)}
+          {slots.map((slot) => <CalendarDay calendarSlug={calendarSlug} currentUser={currentUser} slot={slot} />)}
         </div>
       </div>
     </section>

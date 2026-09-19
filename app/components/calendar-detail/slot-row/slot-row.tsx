@@ -6,11 +6,13 @@ import type { Slot } from '../types/index'
 
 export function SlotRow({
   calendarTitle,
+  calendarSlug,
   currentUser,
   isOwner,
   slot,
 }: {
   calendarTitle: string
+  calendarSlug: string
   currentUser: AuthenticatedUser | null
   isOwner: boolean
   slot: Slot
@@ -23,7 +25,7 @@ export function SlotRow({
         <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
       </div>
       <div>
-        {slot.userId ? <AssignedSlot slot={slot} isCurrentUserSlot={isCurrentUserSlot} /> : <EmptySlot calendarTitle={calendarTitle} slot={slot} />}
+        {slot.userId ? <AssignedSlot slot={slot} isCurrentUserSlot={isCurrentUserSlot} /> : <EmptySlot calendarSlug={calendarSlug} calendarTitle={calendarTitle} slot={slot} />}
       </div>
       <SlotActions currentUser={currentUser} isCurrentUserSlot={isCurrentUserSlot} isOwner={isOwner} slot={slot} />
     </article>

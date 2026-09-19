@@ -3,15 +3,16 @@ import { useEffect, useState } from 'hono/jsx'
 type Props = {
   calendarTitle: string
   slotLabel: string
+  slotUrl?: string
 }
 
-export default function SlotShare({ calendarTitle, slotLabel }: Props) {
+export default function SlotShare({ calendarTitle, slotLabel, slotUrl }: Props) {
   const [url, setUrl] = useState('')
   const [notice, setNotice] = useState('')
 
   useEffect(() => {
-    setUrl(`${window.location.origin}${window.location.pathname}`)
-  }, [])
+    setUrl(slotUrl ? new URL(slotUrl, window.location.origin).toString() : `${window.location.origin}${window.location.pathname}`)
+  }, [slotUrl])
 
   async function copy() {
     if (!navigator.clipboard || !url) {
@@ -29,6 +30,11 @@ export default function SlotShare({ calendarTitle, slotLabel }: Props) {
       <button class="border border-(--color-border-strong) px-3 py-2 text-xs font-semibold text-(--color-muted) hover:border-(--color-accent) hover:text-(--color-accent)" type="button" onClick={copy}>
         この空き枠を共有
       </button>
+      {slotUrl ? (
+        <a class="border border-(--color-border-strong) px-3 py-2 text-xs font-semibold text-(--color-muted) hover:border-(--color-accent) hover:text-(--color-accent)" href={slotUrl}>
+          枠ページを開く
+        </a>
+      ) : null}
       {notice ? <span class="text-xs text-(--color-muted)">{notice}</span> : null}
     </div>
   )

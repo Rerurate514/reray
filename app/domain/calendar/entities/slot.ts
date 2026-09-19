@@ -7,6 +7,8 @@ export type NewSlot = {
   calendarId: CalendarId
   userId: UserId | null
   scheduledDate: string | null
+  description: string | null
+  url: string | null
   position: number
   createdAt: number
   updatedAt: number

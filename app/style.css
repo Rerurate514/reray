@@ -23,6 +23,12 @@
   --color-yellow: #ba8530;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   overflow-x: clip;

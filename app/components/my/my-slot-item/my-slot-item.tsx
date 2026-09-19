@@ -8,6 +8,13 @@ export function MySlotItem({ slot }: { slot: MySlotSummary }) {
         <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
         <div>
           <a class="font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href={`/c/${slot.calendarSlug}`}>{slot.calendarTitle}</a>
+          <a class="ml-3 text-sm font-semibold text-(--color-muted) underline-offset-4 hover:text-(--color-accent) hover:underline" href={`/c/${slot.calendarSlug}/slots/${slot.id}`}>枠を開く</a>
+          {slot.description ? <p class="mt-2 whitespace-pre-wrap text-sm leading-7 text-(--color-muted)">{slot.description}</p> : null}
+          {slot.url ? (
+            <a class="mt-2 block truncate text-sm font-semibold text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.url} target="_blank" rel="noopener noreferrer">
+              {slot.url}
+            </a>
+          ) : null}
           {slot.articleUrl ? (
             <div class="mt-2 border border-(--color-border) bg-[#fff8ed] p-3">
               <p class="text-xs font-semibold uppercase text-(--color-subtle)">Registered Article</p>

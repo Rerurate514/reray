@@ -6,6 +6,12 @@ export function AssignedSlot({ isCurrentUserSlot, slot }: { isCurrentUserSlot: b
   return (
     <>
       <SlotUser slot={slot} />
+      {slot.description ? <p class="mt-2 whitespace-pre-wrap text-sm leading-7 text-(--color-muted)">{slot.description}</p> : null}
+      {slot.url ? (
+        <a class="mt-2 inline-block text-sm font-semibold text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.url} target="_blank" rel="noopener noreferrer">
+          {slot.url}
+        </a>
+      ) : null}
       <SlotArticle slot={slot} />
       {isCurrentUserSlot ? (
         <a class="mt-3 inline-block text-sm font-semibold text-(--color-muted) underline-offset-4 hover:text-(--color-accent) hover:underline" href="/me">自分の予定で編集</a>

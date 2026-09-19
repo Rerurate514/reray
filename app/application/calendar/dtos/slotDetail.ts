@@ -1,31 +1,22 @@
-export type CalendarDetail = {
+export type SlotDetail = {
   calendar: {
     id: string
     ownerId: string
     slug: string
     title: string
-    description: string | null
-    startDate: string | null
-    endDate: string | null
     visibility: 'public' | 'private'
-    tags: Array<{ name: string }>
-    owner: {
-      username: string
-      displayName: string
-      avatarUrl: string | null
-    }
   }
-  slots: Array<{
+  slot: {
     id: string
     scheduledDate: string | null
     position: number
-    userId: string | null
     description: string | null
     url: string | null
+    userId: string | null
     username: string | null
     displayName: string | null
     avatarUrl: string | null
     articleTitle: string | null
     articleUrl: string | null
-  }>
+  }
 }

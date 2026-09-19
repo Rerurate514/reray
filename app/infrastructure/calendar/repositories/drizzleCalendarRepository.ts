@@ -34,6 +34,8 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           id: slots.id,
           scheduledDate: slots.scheduledDate,
           position: slots.position,
+          description: slots.description,
+          url: slots.url,
           userId: slots.userId,
           username: users.username,
           displayName: users.displayName,
@@ -50,6 +52,62 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       const calendarTagRows = await listTagsByCalendarIds(db, [calendar.id])
 
       return { calendar: { ...calendar, tags: calendarTagRows[calendar.id] ?? [] }, slots: slotRows }
+    },
+
+    async findSlotDetail(calendarSlug, slotId) {
+      const rows = await db
+        .select({
+          calendarId: calendars.id,
+          calendarOwnerId: calendars.ownerId,
+          calendarSlug: calendars.slug,
+          calendarTitle: calendars.title,
+          calendarVisibility: calendars.visibility,
+          slotId: slots.id,
+          scheduledDate: slots.scheduledDate,
+          position: slots.position,
+          description: slots.description,
+          url: slots.url,
+          userId: slots.userId,
+          username: users.username,
+          displayName: users.displayName,
+          avatarUrl: users.avatarUrl,
+          articleTitle: articles.title,
+          articleUrl: articles.url,
+        })
+        .from(slots)
+        .innerJoin(calendars, eq(slots.calendarId, calendars.id))
+        .leftJoin(users, eq(slots.userId, users.id))
+        .leftJoin(articles, eq(articles.slotId, slots.id))
+        .where(and(eq(calendars.slug, calendarSlug), eq(slots.id, slotId)))
+        .limit(1)
+
+      const detail = rows[0]
+      if (!detail) {
+        return null
+      }
+
+      return {
+        calendar: {
+          id: detail.calendarId,
+          ownerId: detail.calendarOwnerId,
+          slug: detail.calendarSlug,
+          title: detail.calendarTitle,
+          visibility: detail.calendarVisibility,
+        },
+        slot: {
+          id: detail.slotId,
+          scheduledDate: detail.scheduledDate,
+          position: detail.position,
+          description: detail.description,
+          url: detail.url,
+          userId: detail.userId,
+          username: detail.username,
+          displayName: detail.displayName,
+          avatarUrl: detail.avatarUrl,
+          articleTitle: detail.articleTitle,
+          articleUrl: detail.articleUrl,
+        },
+      }
     },
 
     async listPublishedPublic(limit, filters) {
@@ -216,12 +274,38 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         })
     },
 
+    async updateSlotDescription(input) {
+      const result = await db
+        .update(slots)
+        .set({
+          description: input.description,
+          updatedAt: input.now,
+        })
+        .where(eq(slots.id, input.slotId))
+
+      return result.meta.changes > 0
+    },
+
+    async updateSlotUrl(input) {
+      const result = await db
+        .update(slots)
+        .set({
+          url: input.url,
+          updatedAt: input.now,
+        })
+        .where(eq(slots.id, input.slotId))
+
+      return result.meta.changes > 0
+    },
+
     async listSlotsByUser(userId) {
       return db
         .select({
           id: slots.id,
           scheduledDate: slots.scheduledDate,
           position: slots.position,
+          description: slots.description,
+          url: slots.url,
           calendarSlug: calendars.slug,
           calendarTitle: calendars.title,
           articleTitle: articles.title,
