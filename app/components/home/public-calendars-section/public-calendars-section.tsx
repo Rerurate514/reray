@@ -1,5 +1,6 @@
 import type { CalendarSummary } from '../../../application/calendar/dtos/calendarSummary'
-import type { PublicCalendarSearch, PublicCalendarStatusFilter } from '../../../application/calendar/listPublicCalendars'
+import type { PublicCalendarSearch } from '../../../application/calendar/listPublicCalendars'
+import { PublicCalendarStatusFilter } from '../../../application/calendar/repositories/calendarRepository';
 import { SectionNumber } from '../../shared/section-number/index'
 import { CalendarCard } from '../calendar-card/index'
 
