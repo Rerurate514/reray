@@ -9,12 +9,14 @@ export function SlotRow({
   calendarSlug,
   currentUser,
   isOwner,
+  onJoined,
   slot,
 }: {
   calendarTitle: string
   calendarSlug: string
   currentUser: AuthenticatedUser | null
   isOwner: boolean
+  onJoined?: () => void
   slot: Slot
 }) {
   const isCurrentUserSlot = currentUser?.id === slot.userId
@@ -27,7 +29,7 @@ export function SlotRow({
       <div>
         {slot.userId ? <AssignedSlot calendarSlug={calendarSlug} slot={slot} isCurrentUserSlot={isCurrentUserSlot} /> : <EmptySlot calendarSlug={calendarSlug} calendarTitle={calendarTitle} slot={slot} />}
       </div>
-      <SlotActions currentUser={currentUser} isCurrentUserSlot={isCurrentUserSlot} isOwner={isOwner} slot={slot} />
+      <SlotActions currentUser={currentUser} isCurrentUserSlot={isCurrentUserSlot} isOwner={isOwner} onJoined={onJoined} slot={slot} />
     </article>
   )
 }

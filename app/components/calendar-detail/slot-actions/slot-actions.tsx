@@ -6,11 +6,13 @@ export function SlotActions({
   currentUser,
   isCurrentUserSlot,
   isOwner,
+  onJoined,
   slot,
 }: {
   currentUser: AuthenticatedUser | null
   isCurrentUserSlot: boolean
   isOwner: boolean
+  onJoined?: () => void
   slot: Slot
 }) {
   if (slot.userId) {
@@ -20,7 +22,7 @@ export function SlotActions({
   if (currentUser) {
     return (
       <div>
-        <JoinSlotButton className="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed] disabled:opacity-60" label="この日に参加する" slotId={slot.id} />
+        <JoinSlotButton className="border border-(--color-accent) px-4 py-2 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed] disabled:opacity-60" label="この日に参加する" onJoined={onJoined} slotId={slot.id} />
       </div>
     )
   }

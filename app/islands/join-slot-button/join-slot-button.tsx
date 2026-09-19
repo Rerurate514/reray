@@ -3,13 +3,14 @@ import { useState } from 'hono/jsx'
 type Props = {
   className: string
   label: string
+  onJoined?: () => void
   slotId: string
   slotUrl?: string
 }
 
 type JoinState = 'idle' | 'joining' | 'joined' | 'error'
 
-export default function JoinSlotButton({ className, label, slotId, slotUrl }: Props) {
+export default function JoinSlotButton({ className, label, onJoined, slotId, slotUrl }: Props) {
   const [state, setState] = useState<JoinState>('idle')
 
   async function join() {
@@ -31,6 +32,7 @@ export default function JoinSlotButton({ className, label, slotId, slotUrl }: Pr
     }
 
     setState('joined')
+    onJoined?.()
   }
 
   if (state === 'joined') {
