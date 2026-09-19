@@ -22,11 +22,11 @@ export function SlotRow({
   const isCurrentUserSlot = currentUser?.id === slot.userId
 
   return (
-    <article class="grid gap-3 border-t border-(--color-border) py-4 sm:grid-cols-[7rem_1fr_auto] sm:items-start">
-      <div>
+    <article class="grid gap-3 border-t border-(--color-border) py-4 sm:grid-cols-[7rem_minmax(0,1fr)_7.5rem] sm:items-start">
+      <div class="min-w-0">
         <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
       </div>
-      <div>
+      <div class="min-w-0">
         {slot.userId ? <AssignedSlot calendarSlug={calendarSlug} slot={slot} isCurrentUserSlot={isCurrentUserSlot} /> : <EmptySlot calendarSlug={calendarSlug} calendarTitle={calendarTitle} slot={slot} />}
       </div>
       <SlotActions currentUser={currentUser} isCurrentUserSlot={isCurrentUserSlot} isOwner={isOwner} onJoined={onJoined} slot={slot} />
