@@ -13,7 +13,7 @@
 		{
 			"binding": "DB",
 			"database_name": "reray",
-			"database_id": "63282f30-6fb4-4c71-b1ec-672f4791336a",
+			"database_id": "5bb2cf77-8bdd-4709-be14-268c197e9e17",
 			"migrations_dir": "drizzle"
 		}
 	],
