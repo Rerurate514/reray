@@ -28,7 +28,7 @@ export function SignedInMenu({
         )}
         <span class="min-w-0 truncate text-sm font-semibold">@{username}</span>
       </a>
-      <MenuLink href={accountHref} icon="@" label="公開アカウント" />
+      <MenuLink href={accountHref} icon="@" label="アカウントページ" />
       <MenuLink href="/my-schedule" icon="◎" label="マイスケジュール" />
       <MenuLink href="/new" icon="＋" label="リレーを作る" />
       <button class="flex w-full items-center gap-3 border-t border-(--color-border) px-3 py-3 text-left text-sm text-(--color-muted) hover:bg-(--color-surface-muted) hover:text-(--color-text) disabled:opacity-60" type="button" disabled={status === 'loading'} onClick={onLogout}>
