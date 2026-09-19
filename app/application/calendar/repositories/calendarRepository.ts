@@ -32,6 +32,5 @@ export type CalendarRepository = {
   findArticleSlotIdByUrl(url: string): Promise<string | null>
   upsertArticle(input: UpsertArticleInput): Promise<void>
   updateSlotDescription(input: { slotId: string; description: string | null; now: number }): Promise<boolean>
-  updateSlotUrl(input: { slotId: string; url: string | null; now: number }): Promise<boolean>
   listSlotsByUser(userId: string): Promise<MySlotSummary[]>
 }

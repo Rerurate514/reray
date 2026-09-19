@@ -21,7 +21,6 @@ export type CalendarDetail = {
     position: number
     userId: string | null
     description: string | null
-    url: string | null
     username: string | null
     displayName: string | null
     avatarUrl: string | null

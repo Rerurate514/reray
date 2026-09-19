@@ -12,7 +12,6 @@ export const slots = sqliteTable(
     userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
     scheduledDate: text('scheduled_date'),
     description: text('description'),
-    url: text('url'),
     position: integer('position').notNull(),
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at').notNull(),

@@ -1,6 +1,5 @@
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
 import { SlotDate } from '../slot-date/index'
-import { SlotArticle } from '../slot-article/index'
 import { SlotUser } from '../slot-user/index'
 import type { Slot } from '../types/index'
 import { getUtcDate } from '../utc-date/index'
@@ -15,7 +14,6 @@ export function CalendarDay({ calendarSlug, currentUser, slot }: { calendarSlug:
           <SlotDate day={day} scheduledDate={slot.scheduledDate} />
           <a class="text-xs font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細</a>
           <SlotUser slot={slot} compact />
-          <SlotArticle slot={slot} compact />
         </div>
       </div>
     )

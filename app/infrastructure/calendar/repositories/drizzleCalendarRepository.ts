@@ -35,7 +35,6 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           scheduledDate: slots.scheduledDate,
           position: slots.position,
           description: slots.description,
-          url: slots.url,
           userId: slots.userId,
           username: users.username,
           displayName: users.displayName,
@@ -66,7 +65,6 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           scheduledDate: slots.scheduledDate,
           position: slots.position,
           description: slots.description,
-          url: slots.url,
           userId: slots.userId,
           username: users.username,
           displayName: users.displayName,
@@ -99,7 +97,6 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           scheduledDate: detail.scheduledDate,
           position: detail.position,
           description: detail.description,
-          url: detail.url,
           userId: detail.userId,
           username: detail.username,
           displayName: detail.displayName,
@@ -286,18 +283,6 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return result.meta.changes > 0
     },
 
-    async updateSlotUrl(input) {
-      const result = await db
-        .update(slots)
-        .set({
-          url: input.url,
-          updatedAt: input.now,
-        })
-        .where(eq(slots.id, input.slotId))
-
-      return result.meta.changes > 0
-    },
-
     async listSlotsByUser(userId) {
       return db
         .select({
@@ -305,7 +290,6 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           scheduledDate: slots.scheduledDate,
           position: slots.position,
           description: slots.description,
-          url: slots.url,
           calendarSlug: calendars.slug,
           calendarTitle: calendars.title,
           articleTitle: articles.title,

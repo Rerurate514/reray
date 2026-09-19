@@ -11,7 +11,6 @@ export type SlotDetail = {
     scheduledDate: string | null
     position: number
     description: string | null
-    url: string | null
     userId: string | null
     username: string | null
     displayName: string | null

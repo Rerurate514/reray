@@ -19,12 +19,12 @@ export function MySlotItem({ slot }: { slot: MySlotSummary }) {
             <p class="mt-1 text-sm text-(--color-muted)">記事未登録</p>
           )}
         </div>
-        <form method="post" action={`/api/slots/${slot.id}/cancel`}>
-          <button class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" type="submit">キャンセル</button>
-        </form>
-      </div>
-      <div>
-        <a class="inline-block bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" href={`/c/${slot.calendarSlug}/slots/${slot.id}`}>枠ページで編集</a>
+        <div class="flex flex-wrap gap-2">
+          <a class="inline-block bg-(--color-text) px-4 py-2 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" href={`/c/${slot.calendarSlug}/slots/${slot.id}`}>枠ページで編集</a>
+          <form method="post" action={`/api/slots/${slot.id}/cancel`}>
+            <button class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" type="submit">キャンセル</button>
+          </form>
+        </div>
       </div>
     </article>
   )

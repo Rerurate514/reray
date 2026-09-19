@@ -16,8 +16,6 @@ export function SlotDetailPage({
   detail,
   firebaseConfig,
   slotError,
-  urlError,
-  urlSaved,
 }: {
   articleError: string | undefined
   currentUser: AuthenticatedUser | null
@@ -26,22 +24,19 @@ export function SlotDetailPage({
   detail: SlotDetail
   firebaseConfig: PublicFirebaseConfig | null
   slotError: string | undefined
-  urlError: string | undefined
-  urlSaved: string | undefined
 }) {
   const { calendar, slot } = detail
   const slotLabel = slot.scheduledDate ?? `#${slot.position}`
   const isAssignedUser = currentUser?.id === slot.userId
   const isCalendarOwner = currentUser?.id === calendar.ownerId
   const canEditNotice = isAssignedUser || isCalendarOwner
-  const error = slotError ?? articleError ?? descriptionError ?? urlError
+  const error = slotError ?? articleError ?? descriptionError
 
   return (
     <main class="mx-auto min-h-screen w-full max-w-5xl px-5 py-6 sm:px-8">
       <PageHeader actions={<HeaderActions calendarSlug={calendar.slug} />} firebaseConfig={firebaseConfig} />
       {error ? <FeedbackMessage tone="error">{translateCalendarActionError(error)}</FeedbackMessage> : null}
       {descriptionSaved ? <FeedbackMessage tone="success">告知文を保存しました。</FeedbackMessage> : null}
-      {urlSaved ? <FeedbackMessage tone="success">URLを保存しました。</FeedbackMessage> : null}
 
       <section class="grid gap-8">
         <div class="border-b border-(--color-text) pb-8">
@@ -52,7 +47,7 @@ export function SlotDetailPage({
           </p>
           <h1 class="mt-5 text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{slotLabel}</h1>
           <p class="mt-4 text-(--color-muted)">この枠の担当、告知文、記事を管理できます。</p>
-          <SlotShare calendarTitle={calendar.title} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} />
+          <SlotShare calendarTitle={calendar.title} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} showOpenLink={false} />
         </div>
 
         <div class="grid min-w-0 gap-6">
@@ -78,17 +73,6 @@ export function SlotDetailPage({
               <p class="text-(--color-muted)">まだ告知文はありません。</p>
             )}
             {canEditNotice ? <SlotNoticeForm description={slot.description ?? ''} slotId={slot.id} /> : null}
-          </Panel>
-
-          <Panel title="URL">
-            {slot.url ? (
-              <a class="break-all font-semibold text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.url} target="_blank" rel="noopener noreferrer">
-                {slot.url}
-              </a>
-            ) : (
-              <p class="text-(--color-muted)">まだURLは設定されていません。</p>
-            )}
-            {canEditNotice ? <SlotUrlForm slotId={slot.id} url={slot.url ?? ''} /> : null}
           </Panel>
 
           {isAssignedUser ? (
@@ -122,17 +106,6 @@ function SlotNoticeForm({ description, slotId }: { description: string; slotId: 
       <textarea class="reray-input min-h-32 max-w-full px-3 py-3 leading-7" name="description" placeholder="この枠の告知文、募集内容、記事テーマなど">{description}</textarea>
       <div>
         <button class="max-w-full bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">告知文を保存</button>
-      </div>
-    </form>
-  )
-}
-
-function SlotUrlForm({ slotId, url }: { slotId: string; url: string }) {
-  return (
-    <form method="post" action={`/api/slots/${slotId}/url`} class="grid min-w-0 gap-3 border-t border-(--color-border) pt-4">
-      <input class="reray-input max-w-full px-3 py-3" name="url" value={url} placeholder="https://example.com/" />
-      <div>
-        <button class="max-w-full bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">URLを保存</button>
       </div>
     </form>
   )

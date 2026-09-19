@@ -8,7 +8,7 @@ import type { Calendar } from '../types/index'
 export function OverviewSection({ calendar }: { calendar: Calendar }) {
   return (
     <section class="mb-12 grid gap-10">
-      <div>
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <SectionNumber number="01 /" label="Overview" large />
         <OwnerBadge calendar={calendar} />
       </div>

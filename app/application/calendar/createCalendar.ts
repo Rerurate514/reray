@@ -46,7 +46,6 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
       userId: null,
       scheduledDate: slot.scheduledDate,
       description: null,
-      url: null,
       position: slot.position,
       createdAt: now,
       updatedAt: now,

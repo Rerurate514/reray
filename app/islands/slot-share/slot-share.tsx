@@ -2,11 +2,12 @@ import { useEffect, useState } from 'hono/jsx'
 
 type Props = {
   calendarTitle: string
+  showOpenLink?: boolean
   slotLabel: string
   slotUrl?: string
 }
 
-export default function SlotShare({ calendarTitle, slotLabel, slotUrl }: Props) {
+export default function SlotShare({ calendarTitle, showOpenLink = true, slotLabel, slotUrl }: Props) {
   const [url, setUrl] = useState('')
   const [notice, setNotice] = useState('')
 
@@ -30,7 +31,7 @@ export default function SlotShare({ calendarTitle, slotLabel, slotUrl }: Props) 
       <button class="border border-(--color-border-strong) px-3 py-2 text-xs font-semibold text-(--color-muted) hover:border-(--color-accent) hover:text-(--color-accent)" type="button" onClick={copy}>
         この空き枠を共有
       </button>
-      {slotUrl ? (
+      {slotUrl && showOpenLink ? (
         <a class="border border-(--color-border-strong) px-3 py-2 text-xs font-semibold text-(--color-muted) hover:border-(--color-accent) hover:text-(--color-accent)" href={slotUrl}>
           枠ページを開く
         </a>

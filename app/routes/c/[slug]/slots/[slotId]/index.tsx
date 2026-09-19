@@ -42,8 +42,6 @@ export default createRoute(async (c) => {
       detail={detail}
       firebaseConfig={firebaseConfig}
       slotError={c.req.query('slot_error')}
-      urlError={c.req.query('url_error')}
-      urlSaved={c.req.query('url_saved')}
     />,
     {
       title: `${detail.calendar.title} / ${detail.slot.scheduledDate ?? `#${detail.slot.position}`} - Reray`,
