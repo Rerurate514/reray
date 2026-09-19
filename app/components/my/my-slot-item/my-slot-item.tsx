@@ -1,6 +1,4 @@
 import type { MySlotSummary } from '../../../application/calendar/dtos/mySlotSummary'
-import MySlotArticleForm from '../../../islands/my-slot-article-form/my-slot-article-form'
-
 export function MySlotItem({ slot }: { slot: MySlotSummary }) {
   return (
     <article class="grid gap-4 border-t border-(--color-border) py-5">
@@ -8,13 +6,7 @@ export function MySlotItem({ slot }: { slot: MySlotSummary }) {
         <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
         <div>
           <a class="font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href={`/c/${slot.calendarSlug}`}>{slot.calendarTitle}</a>
-          <a class="ml-3 text-sm font-semibold text-(--color-muted) underline-offset-4 hover:text-(--color-accent) hover:underline" href={`/c/${slot.calendarSlug}/slots/${slot.id}`}>枠を開く</a>
           {slot.description ? <p class="mt-2 whitespace-pre-wrap text-sm leading-7 text-(--color-muted)">{slot.description}</p> : null}
-          {slot.url ? (
-            <a class="mt-2 block truncate text-sm font-semibold text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.url} target="_blank" rel="noopener noreferrer">
-              {slot.url}
-            </a>
-          ) : null}
           {slot.articleUrl ? (
             <div class="mt-2 border border-(--color-border) bg-[#fff8ed] p-3">
               <p class="text-xs font-semibold uppercase text-(--color-subtle)">Registered Article</p>
@@ -31,7 +23,9 @@ export function MySlotItem({ slot }: { slot: MySlotSummary }) {
           <button class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" type="submit">キャンセル</button>
         </form>
       </div>
-      <MySlotArticleForm action={`/api/slots/${slot.id}/article`} articleTitle={slot.articleTitle ?? ''} articleUrl={slot.articleUrl ?? ''} />
+      <div>
+        <a class="inline-block bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" href={`/c/${slot.calendarSlug}/slots/${slot.id}`}>枠ページで編集</a>
+      </div>
     </article>
   )
 }

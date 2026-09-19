@@ -55,51 +55,47 @@ export function SlotDetailPage({
           <SlotShare calendarTitle={calendar.title} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} />
         </div>
 
-        <div class="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,20rem)]">
-          <section class="grid min-w-0 gap-6">
-            <Panel title="告知文">
-              {slot.description ? (
-                <p class="whitespace-pre-wrap leading-8 text-(--color-muted)">{slot.description}</p>
-              ) : (
-                <p class="text-(--color-muted)">まだ告知文はありません。</p>
-              )}
-              {canEditNotice ? <SlotNoticeForm description={slot.description ?? ''} slotId={slot.id} /> : null}
-            </Panel>
+        <div class="grid min-w-0 gap-6">
+          <Panel title="担当">
+            {slot.userId ? (
+              <div class="flex min-w-0 flex-wrap items-center gap-4">
+                <SlotUser slot={slot} />
+                {isAssignedUser ? <CancelSlotButton slotId={slot.id} /> : null}
+                {isCalendarOwner && !isAssignedUser ? <ClearSlotButton slotId={slot.id} /> : null}
+              </div>
+            ) : (
+              <div class="grid gap-4">
+                <p class="text-(--color-muted)">この枠はまだ空いています。</p>
+                {currentUser ? <JoinSlotButton slotId={slot.id} /> : <p class="text-sm font-semibold text-(--color-muted)">ログイン後に参加できます。</p>}
+              </div>
+            )}
+          </Panel>
 
-            <Panel title="URL">
-              {slot.url ? (
-                <a class="font-semibold text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.url} target="_blank" rel="noopener noreferrer">
-                  {slot.url}
-                </a>
-              ) : (
-                <p class="text-(--color-muted)">まだURLは設定されていません。</p>
-              )}
-              {canEditNotice ? <SlotUrlForm slotId={slot.id} url={slot.url ?? ''} /> : null}
-            </Panel>
+          <Panel title="告知文">
+            {slot.description ? (
+              <p class="whitespace-pre-wrap leading-8 text-(--color-muted)">{slot.description}</p>
+            ) : (
+              <p class="text-(--color-muted)">まだ告知文はありません。</p>
+            )}
+            {canEditNotice ? <SlotNoticeForm description={slot.description ?? ''} slotId={slot.id} /> : null}
+          </Panel>
 
-            {isAssignedUser ? (
-              <Panel title="記事">
-                <MySlotArticleForm action={`/api/slots/${slot.id}/article`} articleTitle={slot.articleTitle ?? ''} articleUrl={slot.articleUrl ?? ''} />
-              </Panel>
-            ) : null}
-          </section>
+          <Panel title="URL">
+            {slot.url ? (
+              <a class="break-all font-semibold text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline" href={slot.url} target="_blank" rel="noopener noreferrer">
+                {slot.url}
+              </a>
+            ) : (
+              <p class="text-(--color-muted)">まだURLは設定されていません。</p>
+            )}
+            {canEditNotice ? <SlotUrlForm slotId={slot.id} url={slot.url ?? ''} /> : null}
+          </Panel>
 
-          <aside class="grid min-w-0 content-start gap-4">
-            <Panel title="担当">
-              {slot.userId ? (
-                <div class="grid gap-4">
-                  <SlotUser slot={slot} />
-                  {isAssignedUser ? <CancelSlotButton slotId={slot.id} /> : null}
-                  {isCalendarOwner && !isAssignedUser ? <ClearSlotButton slotId={slot.id} /> : null}
-                </div>
-              ) : (
-                <div class="grid gap-4">
-                  <p class="text-(--color-muted)">この枠はまだ空いています。</p>
-                  {currentUser ? <JoinSlotButton slotId={slot.id} /> : <p class="text-sm font-semibold text-(--color-muted)">ログイン後に参加できます。</p>}
-                </div>
-              )}
+          {isAssignedUser ? (
+            <Panel title="記事">
+              <MySlotArticleForm action={`/api/slots/${slot.id}/article`} articleTitle={slot.articleTitle ?? ''} articleUrl={slot.articleUrl ?? ''} />
             </Panel>
-          </aside>
+          ) : null}
         </div>
       </section>
       <Footer />
