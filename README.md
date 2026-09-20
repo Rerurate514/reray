@@ -1,56 +1,42 @@
-```txt
-pnpm install
-pnpm run db:migrate:local
-pnpm run dev
-```
+# Reray (リレイ) - いつでも作れる記事リレー
 
-```txt
-pnpm run db:migrate:remote
-pnpm run deploy
-```
+「テーマを決めて、枠を配って、記事をつなぐ。」
 
-## D1 database
+Reray は、Zenn、Qiita、note、個人ブログなどの外部記事 URL を集めてリレー形式でつなぐ、記事リレー（アドベントカレンダー型）進行管理サービスです。
 
-The Worker binding is `DB` in both local and deployed environments.
+アドベントカレンダーのように、特定のテーマに沿ってみんなで記事を書き、カレンダーの空き枠を埋めていく楽しさを、**12月に限らずいつでも・どんなテーマでも・自由な期間で**実現できます。
 
-Use the local D1 database for day-to-day development:
+---
 
-```txt
-pnpm run db:migrate:local
-pnpm run preview
-```
+## 🌟 主な特徴
 
-Use the remote D1 database for production migration checks:
+1. **いつでも始められる記事リレー**
+   - 12月に限らず、1年中いつでも好きな時に記事リレー（アドベントカレンダー）を作成できます。
+2. **自由なスケジュール設定**
+   - 開始日と終了日を自由に設定可能。数日間の短期リレーから、30日間の長期チャレンジまで柔軟に対応します。
+   - 枠の自動生成は「毎日（Daily）」だけでなく「平日のみ（Weekdays）」にも対応しています。
+3. **簡単シェア＆豊富な連携（Slack / Discord / X）**
+   - Slack、Discord、X（旧Twitter）に最適化された募集メッセージをワンクリックでコピー可能。参加者集めやコミュニティへの共有を強力にサポートします。
+4. **様々なプラットフォームの記事を統合**
+   - Zenn、Qiita、note、はてなブログ、個人ブログなど、URLがあるすべてのプラットフォームの記事を登録できます。
+5. **公開範囲の設定**
+   - トップページの開催中一覧に掲載する「公開」と、URLを知っているメンバーだけで楽しむ「限定共有（プライベート）」を選択できます。
 
-```txt
-pnpm run db:migrate:remote
-pnpm run preview:remote
-```
+---
 
-## Firebase Authentication
+## 🚀 使い方ガイド
 
-Reray uses Firebase Authentication for identity and stores application users in D1.
-Set these Worker vars before testing login:
+### 1. リレー（カレンダー）を作る
+1. ログイン後、ヘッダーの「作成（New）」ページへ進みます。
+2. リレーの **タイトル**、**説明**、**関連するタグ** を入力します。
+3. リレーの **開始日** と **終了日**、枠を生成する頻度（**毎日** または **平日のみ**）を設定します。
+4. 公開範囲（**公開** または **限定共有**）を選んで「作成する」ボタンを押すと、投稿枠（スロット）が自動生成されたカレンダーが完成します。
 
-```txt
-FIREBASE_PROJECT_ID
-PUBLIC_FIREBASE_API_KEY
-PUBLIC_FIREBASE_AUTH_DOMAIN
-PUBLIC_FIREBASE_PROJECT_ID
-PUBLIC_FIREBASE_APP_ID
-```
+### 2. 参加者を募集する
+- カレンダー詳細ページにある「参加者を招待する（Share）」セクションから、Slack、Discord、X（旧Twitter）用の招待テキストをワンクリックでコピーして、コミュニティやSNSにシェアしましょう。
 
-The public Firebase values are from the Firebase Web App config. Google and GitHub providers should be enabled in Firebase Authentication.
-
-[For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
-
-```txt
-npm run cf-typegen
-```
-
-Pass the `CloudflareBindings` as generics when instantiating `Hono`:
-
-```ts
-// src/index.ts
-const app = new Hono<{ Bindings: CloudflareBindings }>()
-```
+### 3. スロット（枠）に参加して記事を書く
+1. 参加したいリレーのカレンダーを開き、空いている日付（スロット）の「参加する」ボタンを押します。
+2. 担当日に向けて記事を執筆します。
+3. 執筆した記事のURLとタイトルを、割り当てられたスロットに登録します。
+4. 登録された記事はカレンダー上に自動的にリンクとして反映され、みんなの記事がつながっていきます！
