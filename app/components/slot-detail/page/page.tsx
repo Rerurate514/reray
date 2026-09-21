@@ -8,6 +8,7 @@ import { FeedbackMessage } from '../../shared/feedback-message'
 import { Footer } from '../../shared/footer'
 import { PageHeader } from '../../shared/page-header'
 import { translateCalendarActionError } from '../../calendar-detail/translate-calendar-action-error'
+import { AssignedSlot } from '../../calendar-detail/assigned-slot'
 
 export function SlotDetailPage({
   articleError,
@@ -51,6 +52,10 @@ export function SlotDetailPage({
           {!slot.userId ? <SlotShare calendarTitle={calendar.title} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} showOpenLink={false} /> : null}
         </div>
 
+        <Panel title="記事">
+          <AssignedSlot calendarSlug={calendar.slug} slot={slot} isCurrentUserSlot={isAssignedUser} isOnlyArticle={true} />
+        </Panel>
+
         <div class="grid min-w-0 gap-6">
           <Panel title="担当">
             {slot.userId ? (
@@ -77,7 +82,7 @@ export function SlotDetailPage({
           </Panel>
 
           {isAssignedUser ? (
-            <Panel title="記事">
+            <Panel title="記事を入力">
               <MySlotArticleForm action={`/api/slots/${slot.id}/article`} articleTitle={slot.articleTitle ?? ''} articleUrl={slot.articleUrl ?? ''} />
             </Panel>
           ) : null}

@@ -27,7 +27,7 @@ export function SlotRow({
         <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
       </div>
       <div class="min-w-0">
-        {slot.userId ? <AssignedSlot calendarSlug={calendarSlug} slot={slot} isCurrentUserSlot={isCurrentUserSlot} /> : <EmptySlot calendarSlug={calendarSlug} calendarTitle={calendarTitle} slot={slot} />}
+        {slot.userId ? <AssignedSlot calendarSlug={calendarSlug} slot={slot} isCurrentUserSlot={isCurrentUserSlot} isOnlyArticle={false} /> : <EmptySlot calendarSlug={calendarSlug} calendarTitle={calendarTitle} slot={slot} />}
       </div>
       <SlotActions currentUser={currentUser} isCurrentUserSlot={isCurrentUserSlot} isOwner={isOwner} onJoined={onJoined} slot={slot} />
     </article>
