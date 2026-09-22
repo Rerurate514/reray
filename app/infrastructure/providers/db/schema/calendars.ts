@@ -1,4 +1,5 @@
 import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import type { CalendarVisibility } from '../../../../domain/calendar/valueObjects/calendarVisibility'
 import { users } from './users'
 
 export const calendars = sqliteTable(
@@ -13,7 +14,7 @@ export const calendars = sqliteTable(
     description: text('description'),
     startDate: text('start_date'),
     endDate: text('end_date'),
-    visibility: text('visibility').notNull(),
+    visibility: text('visibility').$type<CalendarVisibility>().notNull(),
     status: text('status').notNull(),
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at').notNull(),

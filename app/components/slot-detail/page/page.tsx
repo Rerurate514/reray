@@ -1,3 +1,4 @@
+import type { Child } from 'hono/jsx'
 import type { PublicFirebaseConfig } from '../../../application/auth/firebaseConfig'
 import type { SlotDetail } from '../../../application/calendar/dtos/slotDetail'
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
@@ -97,7 +98,7 @@ function HeaderActions({ calendarSlug }: { calendarSlug: string }) {
   return <a class="border border-(--color-border-strong) px-3 py-2 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" href={`/c/${calendarSlug}`}>カレンダーへ</a>
 }
 
-function Panel({ children, title }: { children: JSX.Element | JSX.Element[]; title: string }) {
+function Panel({ children, title }: { children: Child; title: string }) {
   return (
     <section class="min-w-0 border border-(--color-border) p-5">
       <h2 class="text-lg font-semibold">{title}</h2>

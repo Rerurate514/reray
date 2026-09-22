@@ -1,9 +1,11 @@
+import type { Child } from 'hono/jsx'
+
 export function MenuShell({
   children,
   trigger,
 }: {
-  children: JSX.Element | JSX.Element[]
-  trigger: JSX.Element
+  children: Child
+  trigger: Child
 }) {
   return (
     <details class="relative">

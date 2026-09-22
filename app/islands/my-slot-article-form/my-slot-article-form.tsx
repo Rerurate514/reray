@@ -38,7 +38,7 @@ export default function MySlotArticleForm({ action, articleTitle, articleUrl }: 
           name="title"
           value={title}
           placeholder="記事タイトル（空ならURLから自動）"
-          onInput={(event) => setTitle(event.currentTarget.value)}
+          onInput={(event) => setTitle(readInputValue(event))}
         />
         <input
           class="reray-input px-3 py-3"
@@ -46,7 +46,7 @@ export default function MySlotArticleForm({ action, articleTitle, articleUrl }: 
           value={url}
           placeholder="https://example.com/article"
           required
-          onInput={(event) => setUrl(event.currentTarget.value)}
+          onInput={(event) => setUrl(readInputValue(event))}
           onBlur={() => fetchTitleCandidate(url)}
         />
         <button class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">記事を保存</button>
@@ -54,4 +54,9 @@ export default function MySlotArticleForm({ action, articleTitle, articleUrl }: 
       {status ? <p class="text-xs text-(--color-muted)">{status}</p> : null}
     </form>
   )
+}
+
+function readInputValue(event: Event) {
+  const input = event.currentTarget as HTMLInputElement | null
+  return input?.value ?? ''
 }
