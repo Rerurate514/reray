@@ -3,7 +3,7 @@ import { SectionNumber } from '../../shared/section-number/index'
 
 export function HeroSection() {
   return (
-    <section class="grid gap-10 py-12 sm:py-16">
+    <section class="grid gap-10 py-6 sm:py-8">
       <SectionNumber number="01 /" label="Relay Boards" large />
       <div>
         <div class="bg-(--color-text) px-4 py-3 text-xl font-semibold tracking-tight text-(--color-page) sm:text-3xl">

@@ -8,7 +8,7 @@ export function PublicCalendarsSection({ calendars, search }: { calendars: Calen
   const hasSearch = Boolean(search.query || search.tag || search.status !== 'all')
 
   return (
-    <section class="grid gap-8 border-t border-(--color-border) py-12">
+    <section class="grid gap-8 py-6">
       <SectionNumber number="02 /" label="Public" />
       <div>
         <div class="flex items-center justify-between gap-4 border-b border-(--color-border) pb-4">
