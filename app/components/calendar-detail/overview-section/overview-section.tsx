@@ -1,4 +1,4 @@
-import CalendarShare from '../../../islands/calendar-share/calendar-share'
+import CalendarShare from '../../../islands/calendar-share'
 import { RerayRule } from '../../shared/reray-rule/index'
 import { SectionNumber } from '../../shared/section-number/index'
 import { TagList } from '../../shared/tag-list/index'

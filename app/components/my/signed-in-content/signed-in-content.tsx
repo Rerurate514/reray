@@ -2,7 +2,7 @@ import type { PublicFirebaseConfig } from '../../../application/auth/firebaseCon
 import type { CalendarSummary } from '../../../application/calendar/dtos/calendarSummary'
 import type { MySlotSummary } from '../../../application/calendar/dtos/mySlotSummary'
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
-import DeleteAccount from '../../../islands/delete-account/delete-account'
+import DeleteAccount from '../../../islands/delete-account'
 import { GettingStartedPanel } from '../getting-started-panel/index'
 import { MyCalendarsSection } from '../my-calendars-section/index'
 import { MySlotsSection } from '../my-slots-section/index'

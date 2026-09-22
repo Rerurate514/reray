@@ -1,6 +1,6 @@
 import type { Child } from 'hono/jsx'
 import type { PublicFirebaseConfig } from '../../../application/auth/firebaseConfig'
-import AuthStatus from '../../../islands/auth-status/auth-status'
+import AuthStatus from '../../../islands/auth-status'
 
 export function PageHeader({
   actions,

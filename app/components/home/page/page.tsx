@@ -1,7 +1,7 @@
 import type { PublicFirebaseConfig } from '../../../application/auth/firebaseConfig'
 import type { CalendarSummary } from '../../../application/calendar/dtos/calendarSummary'
 import type { PublicCalendarSearch } from '../../../application/calendar/listPublicCalendars'
-import AuthStatus from '../../../islands/auth-status/auth-status'
+import AuthStatus from '../../../islands/auth-status'
 import { Footer } from '../../shared/footer/index'
 import { HeroSection } from '../hero-section/index'
 import { PublicCalendarsSection } from '../public-calendars-section/index'
