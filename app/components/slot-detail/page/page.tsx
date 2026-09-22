@@ -4,7 +4,7 @@ import type { SlotDetail } from '../../../application/calendar/dtos/slotDetail'
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
 import JoinSlotButton from '../../../islands/join-slot-button'
 import MySlotArticleForm from '../../../islands/my-slot-article-form/my-slot-article-form'
-import SlotShare from '../../../islands/slot-share/slot-share'
+import SlotShareCard from '../../../islands/slot-share-card/slot-share-card'
 import { FeedbackMessage } from '../../shared/feedback-message'
 import { Footer } from '../../shared/footer'
 import { PageHeader } from '../../shared/page-header'
@@ -50,7 +50,6 @@ export function SlotDetailPage({
           </p>
           <h1 class="mt-5 text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{slotLabel}</h1>
           <p class="mt-4 text-(--color-muted)">この枠の担当、告知文、記事を管理できます。</p>
-          {!slot.userId ? <SlotShare calendarTitle={calendar.title} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} showOpenLink={false} /> : null}
         </div>
 
         <Panel title="記事">
@@ -88,6 +87,8 @@ export function SlotDetailPage({
             </Panel>
           ) : null}
         </div>
+
+        <SlotShareCard calendarTitle={calendar.title} isRegistered={Boolean(slot.userId)} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} />
       </section>
       <Footer />
     </main>
