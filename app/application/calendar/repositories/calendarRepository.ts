@@ -61,7 +61,6 @@ export type CalendarRepository = {
     now: number;
   }): Promise<boolean>;
   removeSlotEntry(input: { entryId: string; now: number }): Promise<boolean>;
-  findEntryOwner(entryId: string): Promise<string | null>;
   findEntryCalendarOwner(entryId: string): Promise<string | null>;
   findEntryByUser(input: {
     slotId: string;

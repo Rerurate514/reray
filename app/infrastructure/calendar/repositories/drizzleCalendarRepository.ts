@@ -364,15 +364,6 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return result.meta.changes > 0;
     },
 
-    async findEntryOwner(entryId) {
-      const entry = await db.query.slotEntries.findFirst({
-        columns: { userId: true },
-        where: eq(slotEntries.id, entryId),
-      });
-
-      return entry?.userId ?? null;
-    },
-
     async findEntryCalendarOwner(entryId) {
       const row = await db
         .select({
