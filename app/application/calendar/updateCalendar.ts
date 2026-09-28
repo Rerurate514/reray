@@ -27,12 +27,18 @@ export async function updateCalendar(
     throw new UserFacingError('forbidden', 'Only the owner can edit this calendar')
   }
 
+  const capacity = normalizeSlotCapacity(input.capacity)
+  const maxActiveParticipantCount = await calendarRepository.findMaxActiveParticipantCount(input.calendarId)
+  if (capacity < maxActiveParticipantCount) {
+    throw new UserFacingError('validation', `Capacity must be at least ${maxActiveParticipantCount}`)
+  }
+
   const updated = await calendarRepository.updateCalendar({
     calendarId: input.calendarId,
     title: normalizeCalendarTitle(input.title),
     description: normalizeCalendarDescription(input.description),
     visibility: normalizeCalendarVisibility(input.visibility),
-    capacity: normalizeSlotCapacity(input.capacity),
+    capacity,
     tagNames: normalizeTagNames(input.tags),
     now: Date.now(),
   })

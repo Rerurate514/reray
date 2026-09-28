@@ -43,6 +43,10 @@ export function translateCalendarActionError(message: string) {
     return '説明・告知文は2000文字以内で入力してください。'
   }
 
+  if (message.startsWith('Capacity must be at least')) {
+    return '1枠の定員は、すでに参加している人数以上に設定してください。'
+  }
+
   if (message.startsWith('Tag must be')) {
     return 'タグは1つ24文字以内で入力してください。'
   }

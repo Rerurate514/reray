@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, lt, lte, gte, sql } from 'drizzle-orm'
+import { and, asc, eq, gt, isNotNull, lt, lte, gte, sql } from 'drizzle-orm'
 import type { CalendarRepository } from '../../../application/calendar/repositories/calendarRepository'
 import type { SlotParticipant } from '../../../application/calendar/dtos/slotParticipant'
 import type { NewCalendar } from '../../../domain/calendar/entities/calendar'
@@ -206,6 +206,17 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       })
 
       return calendar?.ownerId ?? null
+    },
+
+    async findMaxActiveParticipantCount(calendarId) {
+      const rows = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(slotEntries)
+        .innerJoin(slots, eq(slots.id, slotEntries.slotId))
+        .where(and(eq(slots.calendarId, calendarId), isNotNull(slotEntries.userId)))
+        .groupBy(slotEntries.slotId)
+
+      return rows.reduce((max, row) => Math.max(max, Number(row.count)), 0)
     },
 
     async updateCalendar(input) {

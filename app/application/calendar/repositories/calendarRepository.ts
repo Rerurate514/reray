@@ -24,6 +24,7 @@ export type CalendarRepository = {
   listPublishedPublicByOwner(userId: string): Promise<CalendarSummary[]>
   listCalendarsByOwner(userId: string): Promise<CalendarSummary[]>
   findOwnerId(calendarId: string): Promise<string | null>
+  findMaxActiveParticipantCount(calendarId: string): Promise<number>
   updateCalendar(input: {
     calendarId: string
     title: string
