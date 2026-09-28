@@ -248,3 +248,114 @@ describe("withdrawn participants", () => {
     ).toBe("joined");
   });
 });
+
+describe("article url uniqueness", () => {
+  it("rejects the same article url within the same calendar", async () => {
+    await insertUser("alice");
+    await insertUser("bob");
+    await insertCalendar({
+      id: "cal",
+      ownerId: "alice",
+      capacity: 1,
+      slotIds: ["slot-1", "slot-2"],
+    });
+    await repository.joinSlot({
+      entryId: "entry-1",
+      slotId: "slot-1",
+      userId: "alice",
+      now,
+    });
+    await repository.joinSlot({
+      entryId: "entry-2",
+      slotId: "slot-2",
+      userId: "bob",
+      now,
+    });
+    await repository.updateSlotArticle({
+      entryId: "entry-1",
+      title: "Article",
+      url: "https://example.com/article",
+      now,
+    });
+
+    await expect(
+      repository.updateSlotArticle({
+        entryId: "entry-2",
+        title: "Article",
+        url: "https://example.com/article",
+        now,
+      }),
+    ).rejects.toThrow();
+  });
+
+  it("allows the same article url across different calendars", async () => {
+    await insertUser("alice");
+    await insertCalendar({
+      id: "cal-a",
+      ownerId: "alice",
+      capacity: 1,
+      slotIds: ["slot-a"],
+    });
+    await insertCalendar({
+      id: "cal-b",
+      ownerId: "alice",
+      capacity: 1,
+      slotIds: ["slot-b"],
+    });
+    await repository.joinSlot({
+      entryId: "entry-a",
+      slotId: "slot-a",
+      userId: "alice",
+      now,
+    });
+    await repository.joinSlot({
+      entryId: "entry-b",
+      slotId: "slot-b",
+      userId: "alice",
+      now,
+    });
+    await repository.updateSlotArticle({
+      entryId: "entry-a",
+      title: "Article",
+      url: "https://example.com/article",
+      now,
+    });
+
+    await expect(
+      repository.updateSlotArticle({
+        entryId: "entry-b",
+        title: "Article",
+        url: "https://example.com/article",
+        now,
+      }),
+    ).resolves.toBe(true);
+  });
+
+  it("allows multiple entries without an article url", async () => {
+    await insertUser("alice");
+    await insertUser("bob");
+    await insertCalendar({
+      id: "cal",
+      ownerId: "alice",
+      capacity: 2,
+      slotIds: ["slot-1"],
+    });
+
+    expect(
+      await repository.joinSlot({
+        entryId: "entry-1",
+        slotId: "slot-1",
+        userId: "alice",
+        now,
+      }),
+    ).toBe("joined");
+    expect(
+      await repository.joinSlot({
+        entryId: "entry-2",
+        slotId: "slot-1",
+        userId: "bob",
+        now,
+      }),
+    ).toBe("joined");
+  });
+});

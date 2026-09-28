@@ -253,9 +253,11 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       const rows = await db
         .select({ count: sql<number>`count(*)` })
         .from(slotEntries)
-        .innerJoin(slots, eq(slots.id, slotEntries.slotId))
         .where(
-          and(eq(slots.calendarId, calendarId), isNotNull(slotEntries.userId)),
+          and(
+            eq(slotEntries.calendarId, calendarId),
+            isNotNull(slotEntries.userId),
+          ),
         )
         .groupBy(slotEntries.slotId);
 
@@ -317,8 +319,8 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       }
 
       const result = await db.run(sql`
-        insert into slot_entries (id, slot_id, user_id, description, article_title, article_url, created_at, updated_at)
-        select ${input.entryId}, ${input.slotId}, ${input.userId}, NULL, NULL, NULL, ${input.now}, ${input.now}
+        insert into slot_entries (id, slot_id, calendar_id, user_id, description, article_title, article_url, created_at, updated_at)
+        select ${input.entryId}, ${input.slotId}, (select calendar_id from slots where id = ${input.slotId}), ${input.userId}, NULL, NULL, NULL, ${input.now}, ${input.now}
         where (
           select count(*) from slot_entries where slot_id = ${input.slotId} and user_id is not null
         ) < (
@@ -383,10 +385,9 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       const rows = await db
         .select({
           id: slotEntries.id,
-          calendarId: slots.calendarId,
+          calendarId: slotEntries.calendarId,
         })
         .from(slotEntries)
-        .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .where(
           and(
             eq(slotEntries.slotId, input.slotId),
@@ -404,11 +405,10 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           id: slotEntries.id,
         })
         .from(slotEntries)
-        .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .where(
           and(
             eq(slotEntries.articleUrl, input.url),
-            eq(slots.calendarId, input.calendarId),
+            eq(slotEntries.calendarId, input.calendarId),
           ),
         )
         .limit(1);
