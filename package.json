@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
+    "@cloudflare/vitest-pool-workers": "0.22.0",
     "@cloudflare/workers-types": "^5.20260712.1",
     "@hono/vite-build": "^1.11.1",
     "@hono/vite-dev-server": "^0.26.1",
@@ -33,7 +34,7 @@
     "drizzle-kit": "^0.31.8",
     "tailwindcss": "^4.3.2",
     "vite": "^8.1.4",
-    "vitest": "^5.0.2",
+    "vitest": "^4.1.11",
     "wrangler": "^4.110.0"
   }
 }
