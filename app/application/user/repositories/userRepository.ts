@@ -11,6 +11,7 @@ export type UserRepository = {
   updateProfile(input: {
     userId: string;
     displayName: string;
+    bio: string | null;
     updatedAt: number;
   }): Promise<AuthenticatedUser | null>;
   delete(userId: string): Promise<boolean>;

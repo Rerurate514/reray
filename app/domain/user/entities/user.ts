@@ -6,6 +6,7 @@ export type AuthenticatedUser = {
   username: string;
   displayName: string;
   avatarUrl: string | null;
+  bio: string | null;
 };
 
 export type NewUser = {

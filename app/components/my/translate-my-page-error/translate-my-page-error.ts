@@ -19,5 +19,9 @@ export function translateMyPageError(message: string) {
     return "表示名を入力してください。";
   }
 
+  if (message === "Bio must be 200 characters or fewer") {
+    return "自己紹介は200文字以内で入力してください。";
+  }
+
   return "操作に失敗しました。ページを再読み込みしてもう一度試してください。";
 }

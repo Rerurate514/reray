@@ -46,6 +46,7 @@ export function createDrizzleUserRepository(db: Db): UserRepository {
         .update(users)
         .set({
           displayName: input.displayName,
+          bio: input.bio,
           updatedAt: input.updatedAt,
         })
         .where(eq(users.id, input.userId))
@@ -69,5 +70,6 @@ function toAuthenticatedUser(user: NewUser): AuthenticatedUser {
     username: user.username,
     displayName: user.displayName,
     avatarUrl: user.avatarUrl,
+    bio: user.bio,
   };
 }

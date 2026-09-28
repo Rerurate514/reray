@@ -14,9 +14,11 @@ export const POST = createRoute(async (c) => {
     const user = await requireCurrentUser(c);
     const formData = await c.req.formData();
     const displayName = String(formData.get("displayName") ?? "");
+    const bio = String(formData.get("bio") ?? "");
     await updateProfile(createDrizzleUserRepository(createDb(c.env.DB)), {
       userId: user.id,
       displayName,
+      bio,
     });
 
     const url = new URL(

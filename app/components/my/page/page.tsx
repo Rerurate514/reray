@@ -44,7 +44,9 @@ export function MyPage({
         </FeedbackMessage>
       ) : null}
       {profileSaved ? (
-        <FeedbackMessage tone="success">表示名を保存しました。</FeedbackMessage>
+        <FeedbackMessage tone="success">
+          プロフィールを保存しました。
+        </FeedbackMessage>
       ) : null}
       <section class="grid gap-10">
         <SectionNumber number="01 /" label="My Schedule" large />
