@@ -25,7 +25,7 @@ export default function DeleteAccount({ config }: Props) {
       return
     }
 
-    const confirmed = window.confirm('アカウントを削除します。作成したリレーは削除され、担当中の枠は空き枠に戻ります。よろしいですか？')
+    const confirmed = window.confirm('アカウントを削除します。作成したリレーは残りますが編集・削除はできなくなり、担当している枠は「退会済み」表示になって空き枠に戻ります。よろしいですか？')
     if (!confirmed) {
       return
     }

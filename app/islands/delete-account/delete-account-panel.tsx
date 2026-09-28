@@ -13,7 +13,7 @@ export function DeleteAccountPanel({
         <div>
           <h2 class="text-lg font-semibold tracking-tight">アカウント削除</h2>
           <p class="mt-2 max-w-2xl text-sm leading-7 text-(--color-muted)">
-            アプリ内のアカウントを削除します。作成したリレーは削除され、担当している枠は空き枠に戻ります。
+            アプリ内のアカウントを削除します。作成したリレーは残りますが編集・削除はできなくなり、担当している枠は「退会済み」表示になって空き枠に戻ります。
           </p>
         </div>
         <button
