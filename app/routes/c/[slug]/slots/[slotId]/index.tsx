@@ -2,6 +2,7 @@ import { createRoute } from "honox/factory";
 import { getPublicFirebaseConfig } from "../../../../../application/auth/firebaseConfig";
 import { getSlotDetail } from "../../../../../application/calendar/getSlotDetail";
 import { SlotDetailPage } from "../../../../../components/slot-detail/page";
+import { createSlotPreviewMeta } from "../../../../../components/slot-detail/preview/meta";
 import { getOptionalCurrentUser } from "../../../../../infrastructure/auth/currentUser";
 import { createDrizzleCalendarRepository } from "../../../../../infrastructure/calendar/repositories/drizzleCalendarRepository";
 import { createDb } from "../../../../../infrastructure/providers/db/client";
@@ -35,7 +36,6 @@ export default createRoute(async (c) => {
 
   const firebaseConfig = getPublicFirebaseConfig(c.env);
   const currentUser = await getOptionalCurrentUser(c);
-  const slotLabel = detail.slot.scheduledDate ?? `#${detail.slot.position}`;
 
   return c.render(
     <SlotDetailPage
@@ -47,14 +47,6 @@ export default createRoute(async (c) => {
       firebaseConfig={firebaseConfig}
       slotError={c.req.query("slot_error")}
     />,
-    {
-      title: `${detail.calendar.title} / ${slotLabel} - Reray`,
-      description: `${detail.calendar.title} の ${slotLabel} の枠です。`,
-      url: new URL(
-        `/c/${detail.calendar.slug}/slots/${detail.slot.id}`,
-        c.req.url,
-      ).toString(),
-      noIndex: detail.calendar.visibility === "private",
-    },
+    createSlotPreviewMeta(detail, c.req.url),
   );
 });
