@@ -38,8 +38,8 @@ export function CalendarDetailPage({
       {calendarSaved ? <FeedbackMessage tone="success">リレーの内容を保存しました。</FeedbackMessage> : null}
       <OverviewSection calendar={calendar} />
       {isOwner ? <CalendarEditor calendar={calendar} /> : null}
-      <CalendarGrid calendarSlug={calendar.slug} currentUser={currentUser} slots={slots} />
-      <SlotsSection calendarSlug={calendar.slug} calendarTitle={calendar.title} currentUser={currentUser} isOwner={isOwner} slots={slots} />
+      <CalendarGrid calendarSlug={calendar.slug} capacity={calendar.capacity} currentUser={currentUser} slots={slots} />
+      <SlotsSection calendarSlug={calendar.slug} calendarTitle={calendar.title} capacity={calendar.capacity} currentUser={currentUser} isOwner={isOwner} slots={slots} />
       <Footer />
     </main>
   )

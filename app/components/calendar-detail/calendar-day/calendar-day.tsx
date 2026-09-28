@@ -5,38 +5,30 @@ import { SlotUser } from '../slot-user/index'
 import type { Slot } from '../types/index'
 import { getUtcDate } from '../utc-date/index'
 
-export function CalendarDay({ calendarSlug, currentUser, slot }: { calendarSlug: string; currentUser: AuthenticatedUser | null; slot: Slot }) {
+export function CalendarDay({ calendarSlug, capacity, currentUser, slot }: { calendarSlug: string; capacity: number; currentUser: AuthenticatedUser | null; slot: Slot }) {
   const day = slot.scheduledDate ? getUtcDate(slot.scheduledDate) : slot.position
-
-  if (slot.userId) {
-    return (
-      <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface) p-2">
-        <div class="grid h-full content-start gap-2">
-          <SlotDate day={day} scheduledDate={slot.scheduledDate} />
-          <a class="text-xs font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細</a>
-          <SlotUser slot={slot} compact />
-        </div>
-      </div>
-    )
-  }
-
-  if (currentUser) {
-    return (
-      <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface) p-2">
-        <div class="grid h-full content-start gap-2">
-          <SlotDate day={day} scheduledDate={slot.scheduledDate} />
-          <a class="text-xs font-semibold text-(--color-muted) hover:text-(--color-accent)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細</a>
-          <JoinSlotButton className="text-left text-sm font-semibold text-(--color-accent) hover:text-(--color-accent-hover) disabled:opacity-60" label="参加する" slotId={slot.id} slotUrl={`/c/${calendarSlug}/slots/${slot.id}`} />
-        </div>
-      </div>
-    )
-  }
+  const hasJoined = currentUser !== null && slot.participants.some((entry) => entry.userId === currentUser.id)
+  const isFull = slot.participants.length >= capacity
+  const [firstParticipant] = slot.participants
 
   return (
     <div class="min-h-28 border-b border-r border-(--color-border) bg-(--color-surface) p-2">
-      <div class="grid h-full content-start gap-2 text-(--color-muted)">
+      <div class="grid h-full content-start gap-2">
         <SlotDate day={day} scheduledDate={slot.scheduledDate} />
-        <a class="text-xs font-semibold text-(--color-accent)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細</a>
+        <div class="flex flex-wrap items-center gap-2">
+          <a class="text-xs font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href={`/c/${calendarSlug}/slots/${slot.id}`}>詳細</a>
+          {capacity > 1 ? <span class="text-xs font-semibold text-(--color-muted)">{slot.participants.length}/{capacity}</span> : null}
+        </div>
+        {firstParticipant ? (
+          <div class="flex min-w-0 items-center gap-1">
+            <SlotUser compact participant={firstParticipant} />
+            {slot.participants.length > 1 ? <span class="shrink-0 text-xs font-semibold text-(--color-muted)">+{slot.participants.length - 1}</span> : null}
+          </div>
+        ) : null}
+        {currentUser && !hasJoined && !isFull ? (
+          <JoinSlotButton className="text-left text-sm font-semibold text-(--color-accent) hover:text-(--color-accent-hover) disabled:opacity-60" label="参加する" slotId={slot.id} slotUrl={`/c/${calendarSlug}/slots/${slot.id}`} />
+        ) : null}
+        {isFull && capacity > 1 ? <span class="text-xs font-semibold text-(--color-muted)">満員</span> : null}
       </div>
     </div>
   )

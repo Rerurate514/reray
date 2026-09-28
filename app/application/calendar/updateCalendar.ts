@@ -1,12 +1,21 @@
 import { normalizeCalendarDescription } from '../../domain/calendar/services/normalizeCalendarDescription'
 import { normalizeCalendarTitle } from '../../domain/calendar/services/normalizeCalendarTitle'
 import { normalizeCalendarVisibility } from '../../domain/calendar/services/normalizeCalendarVisibility'
+import { normalizeSlotCapacity } from '../../domain/calendar/services/normalizeSlotCapacity'
 import { normalizeTagNames } from '../../domain/tag/services/normalizeTagNames'
 import type { CalendarRepository } from './repositories/calendarRepository'
 
 export async function updateCalendar(
   calendarRepository: CalendarRepository,
-  input: { calendarId: string; userId: string; title: string; description?: string; visibility?: string; tags?: string },
+  input: {
+    calendarId: string
+    userId: string
+    title: string
+    description?: string
+    visibility?: string
+    capacity?: string | number
+    tags?: string
+  },
 ) {
   const ownerId = await calendarRepository.findOwnerId(input.calendarId)
   if (!ownerId) {
@@ -22,6 +31,7 @@ export async function updateCalendar(
     title: normalizeCalendarTitle(input.title),
     description: normalizeCalendarDescription(input.description),
     visibility: normalizeCalendarVisibility(input.visibility),
+    capacity: normalizeSlotCapacity(input.capacity),
     tagNames: normalizeTagNames(input.tags),
     now: Date.now(),
   })

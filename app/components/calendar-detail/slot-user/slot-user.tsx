@@ -1,11 +1,11 @@
-import type { Slot } from '../types/index'
+import type { SlotParticipant } from '../types/index'
 
-export function SlotUser({ compact = false, slot }: { compact?: boolean; slot: Slot }) {
-  const displayName = slot.displayName ?? slot.username ?? 'user'
+export function SlotUser({ compact = false, participant }: { compact?: boolean; participant: SlotParticipant }) {
+  const displayName = participant.displayName ?? participant.username ?? 'user'
   const content = (
     <>
-      {slot.avatarUrl ? (
-        <img class="h-7 w-7 rounded-full border border-(--color-border-strong) object-cover" src={slot.avatarUrl} alt={displayName} />
+      {participant.avatarUrl ? (
+        <img class="h-7 w-7 rounded-full border border-(--color-border-strong) object-cover" src={participant.avatarUrl} alt={displayName} />
       ) : (
         <span class="grid h-7 w-7 place-items-center rounded-full border border-(--color-border-strong) text-xs font-semibold text-(--color-muted)">{displayName.slice(0, 1)}</span>
       )}
@@ -13,8 +13,8 @@ export function SlotUser({ compact = false, slot }: { compact?: boolean; slot: S
     </>
   )
 
-  return slot.username ? (
-    <a class="flex min-w-0 items-center gap-2 hover:text-(--color-accent)" href={`/u/${slot.username}`}>{content}</a>
+  return participant.username ? (
+    <a class="flex min-w-0 items-center gap-2 hover:text-(--color-accent)" href={`/u/${participant.username}`}>{content}</a>
   ) : (
     <div class="flex min-w-0 items-center gap-2">{content}</div>
   )

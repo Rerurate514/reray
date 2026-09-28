@@ -19,8 +19,8 @@ export function translateCalendarActionError(message: string) {
     return '対象の枠が見つかりませんでした。'
   }
 
-  if (message.startsWith('Only the assigned user or calendar owner')) {
-    return '編集できるのは、この枠の担当者またはリレーの作成者だけです。'
+  if (message.startsWith('Only the assigned user can edit this notice')) {
+    return '告知文を編集できるのは、この枠の担当者だけです。'
   }
 
   if (message.startsWith('Only the assigned user')) {

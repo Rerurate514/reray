@@ -1,6 +1,5 @@
 import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 import { calendars } from './calendars'
-import { users } from './users'
 
 export const slots = sqliteTable(
   'slots',
@@ -9,9 +8,7 @@ export const slots = sqliteTable(
     calendarId: text('calendar_id')
       .notNull()
       .references(() => calendars.id, { onDelete: 'cascade' }),
-    userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
     scheduledDate: text('scheduled_date'),
-    description: text('description'),
     position: integer('position').notNull(),
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at').notNull(),
@@ -19,7 +16,6 @@ export const slots = sqliteTable(
   (table) => [
     uniqueIndex('slots_calendar_position_unique').on(table.calendarId, table.position),
     index('slots_calendar_id_idx').on(table.calendarId),
-    index('slots_user_id_idx').on(table.userId),
   ],
 )
 

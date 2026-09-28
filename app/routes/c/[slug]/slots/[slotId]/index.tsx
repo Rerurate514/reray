@@ -32,6 +32,7 @@ export default createRoute(async (c) => {
 
   const firebaseConfig = getPublicFirebaseConfig(c.env)
   const currentUser = await getCurrentUser(c).catch(() => null)
+  const slotLabel = detail.slot.scheduledDate ?? `#${detail.slot.position}`
 
   return c.render(
     <SlotDetailPage
@@ -44,8 +45,8 @@ export default createRoute(async (c) => {
       slotError={c.req.query('slot_error')}
     />,
     {
-      title: `${detail.calendar.title} / ${detail.slot.scheduledDate ?? `#${detail.slot.position}`} - Reray`,
-      description: detail.slot.description ?? `${detail.calendar.title} の ${detail.slot.scheduledDate ?? `#${detail.slot.position}`} の枠です。`,
+      title: `${detail.calendar.title} / ${slotLabel} - Reray`,
+      description: `${detail.calendar.title} の ${slotLabel} の枠です。`,
       url: new URL(`/c/${detail.calendar.slug}/slots/${detail.slot.id}`, c.req.url).toString(),
     },
   )

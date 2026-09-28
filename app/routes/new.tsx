@@ -23,6 +23,7 @@ export const POST = createRoute(async (c) => {
       endDate: String(body.endDate ?? ''),
       frequency: body.frequency === 'weekdays' ? 'weekdays' : 'daily',
       visibility: String(body.visibility ?? ''),
+      capacity: String(body.capacity ?? ''),
       tags: String(body.tags ?? ''),
     })
 

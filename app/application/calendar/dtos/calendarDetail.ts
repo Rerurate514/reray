@@ -1,3 +1,5 @@
+import type { SlotParticipant } from './slotParticipant'
+
 export type CalendarDetail = {
   calendar: {
     id: string
@@ -8,6 +10,7 @@ export type CalendarDetail = {
     startDate: string | null
     endDate: string | null
     visibility: 'public' | 'private'
+    capacity: number
     tags: Array<{ name: string }>
     owner: {
       username: string
@@ -19,12 +22,6 @@ export type CalendarDetail = {
     id: string
     scheduledDate: string | null
     position: number
-    userId: string | null
-    description: string | null
-    username: string | null
-    displayName: string | null
-    avatarUrl: string | null
-    articleTitle: string | null
-    articleUrl: string | null
+    participants: SlotParticipant[]
   }>
 }

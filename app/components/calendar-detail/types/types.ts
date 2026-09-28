@@ -2,3 +2,4 @@ import type { CalendarDetail } from '../../../application/calendar/dtos/calendar
 
 export type Calendar = CalendarDetail['calendar']
 export type Slot = CalendarDetail['slots'][number]
+export type SlotParticipant = Slot['participants'][number]

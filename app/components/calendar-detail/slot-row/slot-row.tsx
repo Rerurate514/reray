@@ -5,6 +5,7 @@ import { SlotActions } from '../slot-actions/index'
 import type { Slot } from '../types/index'
 
 export function SlotRow({
+  capacity,
   calendarTitle,
   calendarSlug,
   currentUser,
@@ -12,6 +13,7 @@ export function SlotRow({
   onJoined,
   slot,
 }: {
+  capacity: number
   calendarTitle: string
   calendarSlug: string
   currentUser: AuthenticatedUser | null
@@ -19,17 +21,20 @@ export function SlotRow({
   onJoined?: () => void
   slot: Slot
 }) {
-  const isCurrentUserSlot = currentUser?.id === slot.userId
-
   return (
     <article class="grid gap-3 border-t border-(--color-border) py-4 sm:grid-cols-[7rem_minmax(0,1fr)_7.5rem] sm:items-start">
       <div class="min-w-0">
         <p class="text-sm font-semibold">{slot.scheduledDate ?? `#${slot.position}`}</p>
+        {capacity > 1 ? <p class="mt-1 text-xs text-(--color-muted)">{slot.participants.length} / {capacity} 名</p> : null}
       </div>
       <div class="min-w-0">
-        {slot.userId ? <AssignedSlot calendarSlug={calendarSlug} slot={slot} isCurrentUserSlot={isCurrentUserSlot} isOnlyArticle={false} /> : <EmptySlot calendarSlug={calendarSlug} calendarTitle={calendarTitle} slot={slot} />}
+        {slot.participants.length > 0 ? (
+          <AssignedSlot calendarSlug={calendarSlug} currentUserId={currentUser?.id ?? null} isOwner={isOwner} slot={slot} />
+        ) : (
+          <EmptySlot calendarSlug={calendarSlug} calendarTitle={calendarTitle} capacity={capacity} slot={slot} />
+        )}
       </div>
-      <SlotActions currentUser={currentUser} isCurrentUserSlot={isCurrentUserSlot} isOwner={isOwner} onJoined={onJoined} slot={slot} />
+      <SlotActions capacity={capacity} currentUser={currentUser} onJoined={onJoined} slot={slot} />
     </article>
   )
 }
