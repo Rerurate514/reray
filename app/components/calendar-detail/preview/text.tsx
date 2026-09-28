@@ -1,3 +1,4 @@
+import { countActiveParticipants } from '../../../application/calendar/dtos/slotParticipant'
 import type { Calendar, Slot } from '../types/index'
 
 export type NextOpenSlotText = {
@@ -41,7 +42,7 @@ export function createNextOpenSlotText(slots: Slot[], capacity: number): NextOpe
 
 export function findNextOpenSlot(slots: Slot[], capacity: number) {
   return slots
-    .filter((slot) => slot.participants.length < capacity)
+    .filter((slot) => countActiveParticipants(slot.participants) < capacity)
     .sort((a, b) => {
       if (a.scheduledDate && b.scheduledDate) {
         return a.scheduledDate.localeCompare(b.scheduledDate) || a.position - b.position

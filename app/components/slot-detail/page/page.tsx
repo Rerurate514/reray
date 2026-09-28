@@ -1,6 +1,7 @@
 import type { Child } from 'hono/jsx'
 import type { PublicFirebaseConfig } from '../../../application/auth/firebaseConfig'
 import type { SlotDetail } from '../../../application/calendar/dtos/slotDetail'
+import { countActiveParticipants } from '../../../application/calendar/dtos/slotParticipant'
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
 import JoinSlotButton from '../../../islands/join-slot-button'
 import MySlotArticleForm from '../../../islands/my-slot-article-form'
@@ -32,7 +33,8 @@ export function SlotDetailPage({
   const slotLabel = slot.scheduledDate ?? `#${slot.position}`
   const isCalendarOwner = currentUser?.id === calendar.ownerId
   const ownEntry = currentUser ? slot.participants.find((entry) => entry.userId === currentUser.id) ?? null : null
-  const isFull = slot.participants.length >= calendar.capacity
+  const activeParticipantCount = countActiveParticipants(slot.participants)
+  const isFull = activeParticipantCount >= calendar.capacity
   const error = slotError ?? articleError ?? descriptionError
 
   return (
@@ -49,7 +51,7 @@ export function SlotDetailPage({
             {slotLabel}
           </p>
           <h1 class="mt-5 text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{slotLabel}</h1>
-          <p class="mt-4 text-(--color-muted)">この枠の担当、告知文、記事を管理できます。定員 {calendar.capacity} 名 / 現在 {slot.participants.length} 名。</p>
+          <p class="mt-4 text-(--color-muted)">この枠の担当、告知文、記事を管理できます。定員 {calendar.capacity} 名 / 現在 {activeParticipantCount} 名。</p>
         </div>
 
         <Panel title="担当">
@@ -95,7 +97,7 @@ export function SlotDetailPage({
           </Panel>
         ) : null}
 
-        <SlotShareCard calendarTitle={calendar.title} isRegistered={slot.participants.length > 0} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} />
+        <SlotShareCard calendarTitle={calendar.title} isRegistered={activeParticipantCount > 0} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} />
       </section>
       <Footer />
     </main>

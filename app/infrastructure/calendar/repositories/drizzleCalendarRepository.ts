@@ -256,7 +256,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         insert into slot_entries (id, slot_id, user_id, description, article_title, article_url, created_at, updated_at)
         select ${input.entryId}, ${input.slotId}, ${input.userId}, NULL, NULL, NULL, ${input.now}, ${input.now}
         where (
-          select count(*) from slot_entries where slot_id = ${input.slotId}
+          select count(*) from slot_entries where slot_id = ${input.slotId} and user_id is not null
         ) < (
           select capacity from calendars where id = (select calendar_id from slots where id = ${input.slotId})
         )

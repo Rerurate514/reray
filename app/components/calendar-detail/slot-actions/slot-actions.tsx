@@ -1,4 +1,5 @@
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
+import { countActiveParticipants } from '../../../application/calendar/dtos/slotParticipant'
 import JoinSlotButton from '../../../islands/join-slot-button'
 import type { Slot } from '../types/index'
 
@@ -14,7 +15,7 @@ export function SlotActions({
   slot: Slot
 }) {
   const hasJoined = currentUser !== null && slot.participants.some((entry) => entry.userId === currentUser.id)
-  const isFull = slot.participants.length >= capacity
+  const isFull = countActiveParticipants(slot.participants) >= capacity
 
   if (hasJoined) {
     return (

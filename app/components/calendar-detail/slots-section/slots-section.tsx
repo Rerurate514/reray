@@ -1,4 +1,5 @@
 import type { AuthenticatedUser } from '../../../domain/user/entities/user'
+import { countActiveParticipants } from '../../../application/calendar/dtos/slotParticipant'
 import CalendarSlotRow from '../../../islands/calendar-slot-row'
 import { SectionNumber } from '../../shared/section-number/index'
 import { SlotRow } from '../slot-row/index'
@@ -24,7 +25,7 @@ export function SlotsSection({
       <SectionNumber number="03 /" label="Slots" />
       <div class="border-b border-(--color-border)">
         {slots.map((slot) => (
-          currentUser && slot.participants.length < capacity && !slot.participants.some((entry) => entry.userId === currentUser.id) ? (
+          currentUser && countActiveParticipants(slot.participants) < capacity && !slot.participants.some((entry) => entry.userId === currentUser.id) ? (
             <CalendarSlotRow capacity={capacity} calendarSlug={calendarSlug} calendarTitle={calendarTitle} currentUser={currentUser} isOwner={isOwner} slot={slot} />
           ) : (
             <SlotRow capacity={capacity} calendarSlug={calendarSlug} calendarTitle={calendarTitle} currentUser={currentUser} isOwner={isOwner} slot={slot} />

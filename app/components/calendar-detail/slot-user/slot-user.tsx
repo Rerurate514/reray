@@ -1,7 +1,8 @@
 import type { SlotParticipant } from '../types/index'
 
 export function SlotUser({ compact = false, participant }: { compact?: boolean; participant: SlotParticipant }) {
-  const displayName = participant.displayName ?? participant.username ?? 'user'
+  const isWithdrawn = participant.userId === null
+  const displayName = isWithdrawn ? '退会済み' : participant.displayName ?? participant.username ?? 'user'
   const content = (
     <>
       {participant.avatarUrl ? (

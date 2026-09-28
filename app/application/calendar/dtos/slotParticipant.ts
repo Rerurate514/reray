@@ -8,3 +8,11 @@ export type SlotParticipant = {
   articleTitle: string | null
   articleUrl: string | null
 }
+
+export function isActiveParticipant(participant: SlotParticipant) {
+  return participant.userId !== null
+}
+
+export function countActiveParticipants(participants: SlotParticipant[]) {
+  return participants.filter(isActiveParticipant).length
+}
