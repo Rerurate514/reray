@@ -2,7 +2,7 @@ import { createRoute } from "honox/factory";
 import { getPublicFirebaseConfig } from "../../../../../application/auth/firebaseConfig";
 import { getSlotDetail } from "../../../../../application/calendar/getSlotDetail";
 import { SlotDetailPage } from "../../../../../components/slot-detail/page";
-import { getCurrentUser } from "../../../../../infrastructure/auth/currentUser";
+import { getOptionalCurrentUser } from "../../../../../infrastructure/auth/currentUser";
 import { createDrizzleCalendarRepository } from "../../../../../infrastructure/calendar/repositories/drizzleCalendarRepository";
 import { createDb } from "../../../../../infrastructure/providers/db/client";
 
@@ -34,7 +34,7 @@ export default createRoute(async (c) => {
   }
 
   const firebaseConfig = getPublicFirebaseConfig(c.env);
-  const currentUser = await getCurrentUser(c).catch(() => null);
+  const currentUser = await getOptionalCurrentUser(c);
   const slotLabel = detail.slot.scheduledDate ?? `#${detail.slot.position}`;
 
   return c.render(

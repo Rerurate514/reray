@@ -4,7 +4,7 @@ import { listPublicProfileCalendars } from "../../../application/calendar/listPu
 import { listPublicProfileSlots } from "../../../application/calendar/listPublicProfileSlots";
 import { getUserByUsername } from "../../../application/user/getUserByUsername";
 import { AccountProfilePage } from "../../../components/account-profile/page";
-import { getCurrentUser } from "../../../infrastructure/auth/currentUser";
+import { getOptionalCurrentUser } from "../../../infrastructure/auth/currentUser";
 import { createDrizzleCalendarRepository } from "../../../infrastructure/calendar/repositories/drizzleCalendarRepository";
 import { createDb } from "../../../infrastructure/providers/db/client";
 import { createDrizzleUserRepository } from "../../../infrastructure/user/repositories/drizzleUserRepository";
@@ -34,7 +34,7 @@ export default createRoute(async (c) => {
   }
 
   const calendarRepository = createDrizzleCalendarRepository(db);
-  const currentUser = await getCurrentUser(c).catch(() => null);
+  const currentUser = await getOptionalCurrentUser(c);
   const [calendars, slots] = await Promise.all([
     listPublicProfileCalendars(calendarRepository, profileUser.id),
     listPublicProfileSlots(calendarRepository, profileUser.id),

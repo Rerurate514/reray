@@ -3,7 +3,7 @@ import { getPublicFirebaseConfig } from "../../../application/auth/firebaseConfi
 import { getCalendarDetail } from "../../../application/calendar/getCalendarDetail";
 import { CalendarDetailPage } from "../../../components/calendar-detail/page";
 import { createCalendarPreviewMeta } from "../../../components/calendar-detail/preview/meta";
-import { getCurrentUser } from "../../../infrastructure/auth/currentUser";
+import { getOptionalCurrentUser } from "../../../infrastructure/auth/currentUser";
 import { createDrizzleCalendarRepository } from "../../../infrastructure/calendar/repositories/drizzleCalendarRepository";
 import { createDb } from "../../../infrastructure/providers/db/client";
 
@@ -32,7 +32,7 @@ export default createRoute(async (c) => {
 
   const { calendar, slots } = detail;
   const firebaseConfig = getPublicFirebaseConfig(c.env);
-  const currentUser = await getCurrentUser(c).catch(() => null);
+  const currentUser = await getOptionalCurrentUser(c);
   const slotError = c.req.query("slot_error");
   const articleError = c.req.query("article_error");
   const calendarError = c.req.query("calendar_error");

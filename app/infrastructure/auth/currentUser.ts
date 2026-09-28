@@ -21,6 +21,15 @@ export async function getCurrentUser(c: Context) {
   );
 }
 
+export async function getOptionalCurrentUser(c: Context) {
+  try {
+    return await getCurrentUser(c);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 export function getCurrentIdToken(c: Context) {
   return getCookie(c, "reray_id_token") ?? null;
 }

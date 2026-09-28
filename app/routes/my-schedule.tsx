@@ -3,13 +3,13 @@ import { getPublicFirebaseConfig } from "../application/auth/firebaseConfig";
 import { listMyCalendars } from "../application/calendar/listMyCalendars";
 import { listMySlots } from "../application/calendar/listMySlots";
 import { MyPage } from "../components/my/page";
-import { getCurrentUser } from "../infrastructure/auth/currentUser";
+import { getOptionalCurrentUser } from "../infrastructure/auth/currentUser";
 import { createDrizzleCalendarRepository } from "../infrastructure/calendar/repositories/drizzleCalendarRepository";
 import { createDb } from "../infrastructure/providers/db/client";
 
 export default createRoute(async (c) => {
   const firebaseConfig = getPublicFirebaseConfig(c.env);
-  const user = await getCurrentUser(c).catch(() => null);
+  const user = await getOptionalCurrentUser(c);
   const calendarRepository = c.env.DB
     ? createDrizzleCalendarRepository(createDb(c.env.DB))
     : null;
