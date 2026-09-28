@@ -1,21 +1,37 @@
-import { MenuButton, MenuShell, SignedOutTrigger } from './menu'
-import type { AuthProviderName } from './auth-providers'
+import type { AuthProviderName } from "./auth-providers";
+import { MenuButton, MenuShell, SignedOutTrigger } from "./menu";
 
 export function SignedOutMenu({
   errorMessage,
   onLogin,
   status,
 }: {
-  errorMessage: string | null
-  onLogin: (providerName: AuthProviderName) => void
-  status: 'idle' | 'loading' | 'error'
+  errorMessage: string | null;
+  onLogin: (providerName: AuthProviderName) => void;
+  status: "idle" | "loading" | "error";
 }) {
   return (
     <MenuShell trigger={<SignedOutTrigger />}>
-      <MenuButton icon="G" label="Google でログイン" loading={status === 'loading'} onClick={() => onLogin('google')} />
-      <MenuButton icon="◖" label="GitHub でログイン" loading={status === 'loading'} onClick={() => onLogin('github')} />
-      {status === 'loading' ? <p class="px-3 pb-3 text-xs text-(--color-subtle)">処理中...</p> : null}
-      {status === 'error' ? <p class="px-3 pb-3 text-xs leading-5 text-(--color-accent)">{errorMessage ?? 'ログインに失敗しました'}</p> : null}
+      <MenuButton
+        icon="G"
+        label="Google でログイン"
+        loading={status === "loading"}
+        onClick={() => onLogin("google")}
+      />
+      <MenuButton
+        icon="◖"
+        label="GitHub でログイン"
+        loading={status === "loading"}
+        onClick={() => onLogin("github")}
+      />
+      {status === "loading" ? (
+        <p class="px-3 pb-3 text-xs text-(--color-subtle)">処理中...</p>
+      ) : null}
+      {status === "error" ? (
+        <p class="px-3 pb-3 text-xs leading-5 text-(--color-accent)">
+          {errorMessage ?? "ログインに失敗しました"}
+        </p>
+      ) : null}
     </MenuShell>
-  )
+  );
 }

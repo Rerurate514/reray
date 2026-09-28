@@ -1,1 +1,1 @@
-export { default } from './calendar-editor'
+export { default } from "./calendar-editor";

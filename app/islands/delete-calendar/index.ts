@@ -1,1 +1,1 @@
-export { default } from './delete-calendar'
+export { default } from "./delete-calendar";

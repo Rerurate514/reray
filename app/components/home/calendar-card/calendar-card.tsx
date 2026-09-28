@@ -1,5 +1,5 @@
-import type { CalendarSummary } from '../../../application/calendar/dtos/calendarSummary'
-import { TagList } from '../../shared/tag-list/index'
+import type { CalendarSummary } from "../../../application/calendar/dtos/calendarSummary";
+import { TagList } from "../../shared/tag-list/index";
 
 export function CalendarCard({ calendar }: { calendar: CalendarSummary }) {
   return (
@@ -8,24 +8,35 @@ export function CalendarCard({ calendar }: { calendar: CalendarSummary }) {
         class="absolute inset-0"
         href={`/c/${calendar.slug}`}
         aria-label={`${calendar.title}を開く`}
-      />
-      <a
-        class="relative z-10 flex w-fit items-center gap-2 text-sm text-(--color-subtle) hover:text-(--color-accent)"
-        href={`/u/${calendar.owner.username}`}
       >
-        {calendar.owner.avatarUrl ? (
-          <img
-            class="h-6 w-6 rounded-full border border-(--color-border-strong) object-cover"
-            src={calendar.owner.avatarUrl}
-            alt={calendar.owner.displayName}
-          />
-        ) : (
-          <span class="grid h-6 w-6 place-items-center rounded-full border border-(--color-border-strong) text-xs">
-            {calendar.owner.displayName.slice(0, 1)}
-          </span>
-        )}
-        <span>{calendar.owner.displayName}</span>
+        <span class="sr-only">{calendar.title}を開く</span>
       </a>
+      {calendar.owner ? (
+        <a
+          class="relative z-10 flex w-fit items-center gap-2 text-sm text-(--color-subtle) hover:text-(--color-accent)"
+          href={`/u/${calendar.owner.username}`}
+        >
+          {calendar.owner.avatarUrl ? (
+            <img
+              class="h-6 w-6 rounded-full border border-(--color-border-strong) object-cover"
+              src={calendar.owner.avatarUrl}
+              alt={calendar.owner.displayName}
+            />
+          ) : (
+            <span class="grid h-6 w-6 place-items-center rounded-full border border-(--color-border-strong) text-xs">
+              {calendar.owner.displayName.slice(0, 1)}
+            </span>
+          )}
+          <span>{calendar.owner.displayName}</span>
+        </a>
+      ) : (
+        <span class="relative z-10 flex w-fit items-center gap-2 text-sm text-(--color-subtle)">
+          <span class="grid h-6 w-6 place-items-center rounded-full border border-(--color-border-strong) text-xs">
+            退
+          </span>
+          <span>退会済み</span>
+        </span>
+      )}
 
       <h3 class="mt-4 text-xl font-semibold tracking-tight">
         {calendar.title}
@@ -38,5 +49,5 @@ export function CalendarCard({ calendar }: { calendar: CalendarSummary }) {
         {calendar.startDate} - {calendar.endDate}
       </p>
     </article>
-  )
+  );
 }

@@ -1,16 +1,22 @@
-import { normalizeDisplayName } from '../../domain/user/services/normalizeDisplayName'
-import type { UserRepository } from './repositories/userRepository'
+import { UserFacingError } from "../../domain/shared/errors/userFacingError";
+import { normalizeDisplayName } from "../../domain/user/services/normalizeDisplayName";
+import { normalizeProfileBio } from "../../domain/user/services/normalizeProfileBio";
+import type { UserRepository } from "./repositories/userRepository";
 
-export async function updateProfile(userRepository: UserRepository, input: { userId: string; displayName: string }) {
+export async function updateProfile(
+  userRepository: UserRepository,
+  input: { userId: string; displayName: string; bio: string | undefined },
+) {
   const user = await userRepository.updateProfile({
     userId: input.userId,
     displayName: normalizeDisplayName(input.displayName),
+    bio: normalizeProfileBio(input.bio),
     updatedAt: Date.now(),
-  })
+  });
 
   if (!user) {
-    throw new Error('Account not found')
+    throw new UserFacingError("notFound", "Account not found");
   }
 
-  return user
+  return user;
 }

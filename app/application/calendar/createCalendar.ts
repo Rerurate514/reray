@@ -1,32 +1,39 @@
-import type { CalendarRepository } from './repositories/calendarRepository'
-import type { SlotFrequency } from '../../domain/calendar/valueObjects/slotFrequency'
-import { generateSlots } from '../../domain/calendar/services/generateSlots'
-import { normalizeCalendarDescription } from '../../domain/calendar/services/normalizeCalendarDescription'
-import { normalizeCalendarTitle } from '../../domain/calendar/services/normalizeCalendarTitle'
-import { normalizeCalendarVisibility } from '../../domain/calendar/services/normalizeCalendarVisibility'
-import { normalizeSlotCapacity } from '../../domain/calendar/services/normalizeSlotCapacity'
-import { normalizeTagNames } from '../../domain/tag/services/normalizeTagNames'
-import { createId } from '../../domain/shared/services/createId'
+import { generateSlots } from "../../domain/calendar/services/generateSlots";
+import { normalizeCalendarDescription } from "../../domain/calendar/services/normalizeCalendarDescription";
+import { normalizeCalendarTitle } from "../../domain/calendar/services/normalizeCalendarTitle";
+import { normalizeCalendarVisibility } from "../../domain/calendar/services/normalizeCalendarVisibility";
+import { normalizeSlotCapacity } from "../../domain/calendar/services/normalizeSlotCapacity";
+import type { SlotFrequency } from "../../domain/calendar/valueObjects/slotFrequency";
+import { createId } from "../../domain/shared/services/createId";
+import { normalizeTagNames } from "../../domain/tag/services/normalizeTagNames";
+import type { CalendarRepository } from "./repositories/calendarRepository";
 
 export type CreateCalendarInput = {
-  ownerId: string
-  title: string
-  description?: string
-  startDate: string
-  endDate: string
-  frequency: SlotFrequency
-  visibility?: string
-  capacity?: string | number
-  tags?: string
-}
+  ownerId: string;
+  title: string;
+  description?: string;
+  startDate: string;
+  endDate: string;
+  frequency: SlotFrequency;
+  visibility?: string;
+  capacity?: string | number;
+  tags?: string;
+};
 
-export async function createCalendar(calendarRepository: CalendarRepository, input: CreateCalendarInput) {
-  const title = normalizeCalendarTitle(input.title)
-  const now = Date.now()
-  const id = createId('cal')
-  const slug = id
-  const generatedSlots = generateSlots(input.startDate, input.endDate, input.frequency)
-  const tagNames = normalizeTagNames(input.tags)
+export async function createCalendar(
+  calendarRepository: CalendarRepository,
+  input: CreateCalendarInput,
+) {
+  const title = normalizeCalendarTitle(input.title);
+  const now = Date.now();
+  const id = createId("cal");
+  const slug = id;
+  const generatedSlots = generateSlots(
+    input.startDate,
+    input.endDate,
+    input.frequency,
+  );
+  const tagNames = normalizeTagNames(input.tags);
 
   await calendarRepository.createWithSlots(
     {
@@ -39,12 +46,11 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
       endDate: input.endDate,
       visibility: normalizeCalendarVisibility(input.visibility),
       capacity: normalizeSlotCapacity(input.capacity),
-      status: 'published',
       createdAt: now,
       updatedAt: now,
     },
     generatedSlots.map((slot) => ({
-      id: createId('slot'),
+      id: createId("slot"),
       calendarId: id,
       scheduledDate: slot.scheduledDate,
       position: slot.position,
@@ -52,7 +58,7 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
       updatedAt: now,
     })),
     tagNames,
-  )
+  );
 
-  return { id, slug }
+  return { id, slug };
 }

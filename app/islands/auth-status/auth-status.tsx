@@ -1,137 +1,172 @@
-import { useEffect, useMemo, useState } from 'hono/jsx'
-import { FirebaseError, getApps, initializeApp, type FirebaseOptions } from 'firebase/app'
-import { getAuth, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
-import type { PublicFirebaseConfig } from '../../application/auth/firebaseConfig'
-import { SignedInMenu } from './signed-in-menu'
-import { SignedOutMenu } from './signed-out-menu'
-import { createAuthProvider, type AuthProviderName } from './auth-providers'
-import { translateFirebaseError } from './translate-firebase-error'
+import { type FirebaseOptions, getApps, initializeApp } from "firebase/app";
+import {
+  getAuth,
+  onIdTokenChanged,
+  signInWithPopup,
+  signOut,
+  type User,
+} from "firebase/auth";
+import { useEffect, useMemo, useState } from "hono/jsx";
+import type { PublicFirebaseConfig } from "../../application/auth/firebaseConfig";
+import { type AuthProviderName, createAuthProvider } from "./auth-providers";
+import { SignedInMenu } from "./signed-in-menu";
+import { SignedOutMenu } from "./signed-out-menu";
+import { translateFirebaseError } from "./translate-firebase-error";
 
 type Props = {
-  config: PublicFirebaseConfig | null
-}
+  config: PublicFirebaseConfig | null;
+};
 
 export type SessionUser = {
-  username: string
-  displayName: string
-  avatarUrl: string | null
-}
+  username: string;
+  displayName: string;
+  avatarUrl: string | null;
+};
 
 export default function AuthStatus({ config }: Props) {
-  const [firebaseUser, setFirebaseUser] = useState<User | null>(null)
-  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null)
-  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const auth = useMemo(() => {
-    if (!config || typeof window === 'undefined') {
-      return null
+    if (!config || typeof window === "undefined") {
+      return null;
     }
 
-    const app = getApps()[0] ?? initializeApp(config as FirebaseOptions)
-    return getAuth(app)
-  }, [config])
+    const app = getApps()[0] ?? initializeApp(config as FirebaseOptions);
+    return getAuth(app);
+  }, [config]);
 
   useEffect(() => {
     if (!auth) {
-      return
+      return;
     }
 
-    let isInitial = true
+    let isInitial = true;
+    let currentUid: string | null = null;
 
-    return onAuthStateChanged(auth, async (user) => {
-      const isInitialCallback = isInitial
-      isInitial = false
-      setFirebaseUser(user)
+    return onIdTokenChanged(auth, async (user) => {
+      const isInitialCallback = isInitial;
+      isInitial = false;
+
+      const uid = user?.uid ?? null;
+      const identityChanged = uid !== currentUid;
+      currentUid = uid;
+
+      setFirebaseUser(user);
 
       if (!user) {
-        setSessionUser(null)
+        setSessionUser(null);
 
         try {
-          await fetch('/api/auth/session', { method: 'DELETE' })
+          await fetch("/api/auth/session", { method: "DELETE" });
         } catch (error) {
-          console.error(error)
+          console.error(error);
         }
       } else {
         try {
-          await createSession(user)
+          await createSession(user);
         } catch (error) {
-          console.error(error)
-          setErrorMessage('ログイン後のセッション作成に失敗しました。')
-          setStatus('error')
-          return
+          console.error(error);
+          setErrorMessage("ログイン後のセッション作成に失敗しました。");
+          setStatus("error");
+          return;
         }
 
-        const response = await fetch('/api/auth/me')
-        const body = await response.json<{ user: SessionUser | null }>()
-        setSessionUser(body.user)
+        if (isInitialCallback || identityChanged) {
+          try {
+            const response = await fetch("/api/auth/me");
+            const body = await response.json<{ user: SessionUser | null }>();
+            setSessionUser(body.user);
+          } catch (error) {
+            console.error(error);
+            setErrorMessage("セッション情報の取得に失敗しました。");
+            setStatus("error");
+            return;
+          }
+        }
       }
 
-      // マイスケジュール等はサーバー側でログイン状態を描画しているため、
-      // ログイン・ログアウトの変化後はリロードして表示を合わせる。
-      if (!isInitialCallback) {
-        window.location.reload()
+      if (!isInitialCallback && identityChanged) {
+        window.location.reload();
       }
-    })
-  }, [auth])
+    });
+  }, [auth]);
 
   if (!config || !auth) {
-    return <span class="text-xs text-(--color-subtle)">ログイン設定が未完了です</span>
+    return (
+      <span class="text-xs text-(--color-subtle)">
+        ログイン設定が未完了です
+      </span>
+    );
   }
 
   async function login(providerName: AuthProviderName) {
     if (!auth) {
-      return
+      return;
     }
 
-    setStatus('loading')
-    setErrorMessage(null)
+    setStatus("loading");
+    setErrorMessage(null);
     try {
-      await signInWithPopup(auth, createAuthProvider(providerName))
-      setStatus('idle')
+      await signInWithPopup(auth, createAuthProvider(providerName));
+      setStatus("idle");
     } catch (error) {
-      console.error(error)
-      setErrorMessage(translateFirebaseError(error))
-      setStatus('error')
+      console.error(error);
+      setErrorMessage(translateFirebaseError(error));
+      setStatus("error");
     }
   }
 
   async function logout() {
     if (!auth) {
-      return
+      return;
     }
 
-    setStatus('loading')
-    setErrorMessage(null)
+    setStatus("loading");
+    setErrorMessage(null);
 
     try {
-      // セッションCookieの削除と、画面の再読み込みは onAuthStateChanged 側で行う。
-      await signOut(auth)
-      setStatus('idle')
+      await signOut(auth);
+      setStatus("idle");
     } catch (error) {
-      console.error(error)
-      setStatus('error')
-      setErrorMessage('ログアウトに失敗しました。もう一度お試しください。')
+      console.error(error);
+      setStatus("error");
+      setErrorMessage("ログアウトに失敗しました。もう一度お試しください。");
     }
   }
 
   if (firebaseUser) {
-    return <SignedInMenu firebaseUser={firebaseUser} sessionUser={sessionUser} status={status} onLogout={logout} />
+    return (
+      <SignedInMenu
+        firebaseUser={firebaseUser}
+        sessionUser={sessionUser}
+        status={status}
+        onLogout={logout}
+      />
+    );
   }
 
-  return <SignedOutMenu errorMessage={errorMessage} status={status} onLogin={login} />
+  return (
+    <SignedOutMenu
+      errorMessage={errorMessage}
+      status={status}
+      onLogin={login}
+    />
+  );
 }
 
 async function createSession(user: User) {
-  const idToken = await user.getIdToken()
-  const sessionResponse = await fetch('/api/auth/session', {
-    method: 'POST',
+  const idToken = await user.getIdToken();
+  const sessionResponse = await fetch("/api/auth/session", {
+    method: "POST",
     headers: {
-      'content-type': 'application/json',
+      "content-type": "application/json",
     },
     body: JSON.stringify({ idToken }),
-  })
+  });
 
   if (!sessionResponse.ok) {
-    throw new Error('session_failed')
+    throw new Error("session_failed");
   }
 }

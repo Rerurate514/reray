@@ -1,1 +1,1 @@
-export { default } from './calendar-share'
+export { default } from "./calendar-share";

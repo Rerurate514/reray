@@ -1,92 +1,103 @@
-import type { Calendar, Slot } from '../types/index'
+import { countActiveParticipants } from "../../../application/calendar/dtos/slotParticipant";
+import type { Calendar, Slot } from "../types/index";
 
 export type NextOpenSlotText = {
-  label: string
-  value: string
-}
+  label: string;
+  value: string;
+};
 
 export function createCalendarPreviewDescription(calendar: Calendar) {
   const parts = [
     calendar.description?.trim(),
     createDateRangeText(calendar),
-    calendar.tags.length > 0 ? calendar.tags.map((tag) => `#${tag.name}`).join(' ') : null,
-  ].filter(Boolean)
+    calendar.tags.length > 0
+      ? calendar.tags.map((tag) => `#${tag.name}`).join(" ")
+      : null,
+  ].filter(Boolean);
 
-  return trimUtf8(parts.join('\n'), 340)
+  return trimUtf8(parts.join("\n"), 340);
 }
 
 export function createDateRangeText(calendar: Calendar) {
   if (calendar.startDate && calendar.endDate) {
-    return `${calendar.startDate} - ${calendar.endDate}`
+    return `${calendar.startDate} - ${calendar.endDate}`;
   }
 
-  return calendar.startDate ?? calendar.endDate ?? null
+  return calendar.startDate ?? calendar.endDate ?? null;
 }
 
-export function createNextOpenSlotText(slots: Slot[], capacity: number): NextOpenSlotText {
-  const openSlot = findNextOpenSlot(slots, capacity)
+export function createNextOpenSlotText(
+  slots: Slot[],
+  capacity: number,
+): NextOpenSlotText {
+  const openSlot = findNextOpenSlot(slots, capacity);
 
   if (!openSlot) {
     return {
-      label: '直近の空き枠',
-      value: 'ありません',
-    }
+      label: "直近の空き枠",
+      value: "ありません",
+    };
   }
 
   return {
-    label: '直近の空き枠',
+    label: "直近の空き枠",
     value: openSlot.scheduledDate ?? `#${openSlot.position}`,
-  }
+  };
 }
 
 export function findNextOpenSlot(slots: Slot[], capacity: number) {
   return slots
-    .filter((slot) => slot.participants.length < capacity)
+    .filter((slot) => countActiveParticipants(slot.participants) < capacity)
     .sort((a, b) => {
       if (a.scheduledDate && b.scheduledDate) {
-        return a.scheduledDate.localeCompare(b.scheduledDate) || a.position - b.position
+        return (
+          a.scheduledDate.localeCompare(b.scheduledDate) ||
+          a.position - b.position
+        );
       }
 
       if (a.scheduledDate) {
-        return -1
+        return -1;
       }
 
       if (b.scheduledDate) {
-        return 1
+        return 1;
       }
 
-      return a.position - b.position
-    })[0]
+      return a.position - b.position;
+    })[0];
 }
 
 export function createTagText(calendar: Calendar) {
   if (calendar.tags.length === 0) {
-    return null
+    return null;
   }
 
-  return calendar.tags.map((tag) => `\`${escapeDiscordMarkdown(tag.name)}\``).join(' ')
+  return calendar.tags
+    .map((tag) => `\`${escapeDiscordMarkdown(tag.name)}\``)
+    .join(" ");
 }
 
 export function trimUtf8(value: string, maxBytes: number) {
-  const encoder = new TextEncoder()
+  const encoder = new TextEncoder();
 
   if (encoder.encode(value).length <= maxBytes) {
-    return value
+    return value;
   }
 
-  let result = ''
+  let result = "";
 
   for (const char of value) {
-    const next = `${result}${char}`
+    const next = `${result}${char}`;
     if (encoder.encode(`${next}…`).length > maxBytes) {
-      return `${result}…`
+      return `${result}…`;
     }
-    result = next
+    result = next;
   }
 
-  return result
+  return result;
 }
 
 export function escapeDiscordMarkdown(value: string) {
-  return value.replace(/([\\`*_{}[\]()#+\-.!|>])/g, '\\$1')
+  return value.replace(/([\\`*_{}[\]()#+\-.!|>])/g, "\\$1");
 }

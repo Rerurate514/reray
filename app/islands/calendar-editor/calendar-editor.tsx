@@ -1,13 +1,13 @@
-import { useState } from 'hono/jsx'
-import { CalendarEditorForm } from './calendar-editor-form'
-import type { EditableCalendar } from './types'
+import { useState } from "hono/jsx";
+import { CalendarEditorForm } from "./calendar-editor-form";
+import type { EditableCalendar } from "./types";
 
 type Props = {
-  calendar: EditableCalendar
-}
+  calendar: EditableCalendar;
+};
 
 export default function CalendarEditor({ calendar }: Props) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   if (!isOpen) {
     return (
@@ -18,7 +18,7 @@ export default function CalendarEditor({ calendar }: Props) {
       >
         カレンダーを編集する
       </button>
-    )
+    );
   }
 
   return (
@@ -26,7 +26,9 @@ export default function CalendarEditor({ calendar }: Props) {
       <div class="flex items-baseline justify-between gap-4">
         <div class="flex items-baseline">
           <span class="text-5xl font-light leading-none">Edit /</span>
-          <span class="mt-2 text-sm italic text-(--color-muted)">Owner Settings</span>
+          <span class="mt-2 text-sm italic text-(--color-muted)">
+            Owner Settings
+          </span>
         </div>
         <button
           class="border border-(--color-border) px-3 py-2 text-sm font-semibold text-(--color-muted) hover:border-(--color-accent) hover:text-(--color-text)"
@@ -38,5 +40,5 @@ export default function CalendarEditor({ calendar }: Props) {
       </div>
       <CalendarEditorForm calendar={calendar} />
     </section>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import { ParticipantEntry } from '../participant-entry/index'
-import type { Slot } from '../types/index'
+import { ParticipantEntry } from "../participant-entry/index";
+import type { Slot } from "../types/index";
 
 export function AssignedSlot({
   calendarSlug,
@@ -7,10 +7,10 @@ export function AssignedSlot({
   isOwner,
   slot,
 }: {
-  calendarSlug: string
-  currentUserId: string | null
-  isOwner: boolean
-  slot: Slot
+  calendarSlug: string;
+  currentUserId: string | null;
+  isOwner: boolean;
+  slot: Slot;
 }) {
   return (
     <div class="grid gap-3">
@@ -19,10 +19,12 @@ export function AssignedSlot({
           calendarSlug={calendarSlug}
           canRemove={isOwner && entry.userId !== currentUserId}
           entry={entry}
-          isCurrentUser={currentUserId !== null && entry.userId === currentUserId}
+          isCurrentUser={
+            currentUserId !== null && entry.userId === currentUserId
+          }
           slotId={slot.id}
         />
       ))}
     </div>
-  )
+  );
 }

@@ -1,16 +1,12 @@
-import { createRoute } from 'honox/factory'
-import { getCurrentUser } from '../../../infrastructure/auth/currentUser'
+import { createRoute } from "honox/factory";
+import { getOptionalCurrentUser } from "../../../infrastructure/auth/currentUser";
 
 export default createRoute(async (c) => {
-  try {
-    const user = await getCurrentUser(c)
+  const user = await getOptionalCurrentUser(c);
 
-    if (!user) {
-      return c.json({ user: null })
-    }
-
-    return c.json({ user })
-  } catch {
-    return c.json({ user: null })
+  if (!user) {
+    return c.json({ user: null });
   }
-})
+
+  return c.json({ user });
+});

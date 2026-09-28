@@ -1,5 +1,5 @@
-import { SectionNumber } from '../../shared/section-number/index'
-import { CreateCalendarForm } from '../create-calendar-form/index'
+import { SectionNumber } from "../../shared/section-number/index";
+import { CreateCalendarForm } from "../create-calendar-form/index";
 
 export function CreateCalendarSection() {
   return (
@@ -7,5 +7,5 @@ export function CreateCalendarSection() {
       <SectionNumber number="01 /" label="Create Relay" large />
       <CreateCalendarForm />
     </section>
-  )
+  );
 }

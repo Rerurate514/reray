@@ -1,1 +1,1 @@
-export type SlotFrequency = 'daily' | 'weekdays'
+export type SlotFrequency = "daily" | "weekdays";

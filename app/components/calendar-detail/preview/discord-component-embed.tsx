@@ -1,11 +1,11 @@
-import type { Calendar } from '../types/index'
+import type { Calendar } from "../types/index";
 import {
   createDateRangeText,
   createTagText,
   escapeDiscordMarkdown,
   type NextOpenSlotText,
   trimUtf8,
-} from './text'
+} from "./text";
 
 export function createDiscordComponentEmbed({
   calendar,
@@ -14,41 +14,50 @@ export function createDiscordComponentEmbed({
   nextOpenSlotText,
   url,
 }: {
-  calendar: Calendar
-  imageUrl: string
-  nextOpenSlotUrl: string | null
-  nextOpenSlotText: NextOpenSlotText
-  url: string
+  calendar: Calendar;
+  imageUrl: string;
+  nextOpenSlotUrl: string | null;
+  nextOpenSlotText: NextOpenSlotText;
+  url: string;
 }) {
   const summaryItems = [
     `**${nextOpenSlotText.label}**\n${nextOpenSlotText.value}`,
-    createDateRangeText(calendar) ? `**期間**\n${createDateRangeText(calendar)}` : null,
-    `**作成者**\n${escapeDiscordMarkdown(calendar.owner.displayName)}`,
-  ].filter(Boolean)
-  const tagText = createTagText(calendar)
-  const descriptionText = calendar.description?.trim()
+    createDateRangeText(calendar)
+      ? `**期間**\n${createDateRangeText(calendar)}`
+      : null,
+    `**作成者**\n${escapeDiscordMarkdown(calendar.owner?.displayName ?? "退会済み")}`,
+  ].filter(Boolean);
+  const tagText = createTagText(calendar);
+  const descriptionText = calendar.description?.trim();
 
   const components = [
     {
       type: 9,
-      components: [{ type: 10, content: `# [${escapeDiscordMarkdown(calendar.title)}](${url})` }],
+      components: [
+        {
+          type: 10,
+          content: `# [${escapeDiscordMarkdown(calendar.title)}](${url})`,
+        },
+      ],
       accessory: {
         type: 2,
         style: 5,
         url,
-        label: 'カレンダーを見る',
+        label: "カレンダーを見る",
       },
     },
-    { type: 10, content: trimUtf8(summaryItems.join('\n\n'), 650) },
+    { type: 10, content: trimUtf8(summaryItems.join("\n\n"), 650) },
     nextOpenSlotUrl ? createNextOpenSlotButton(nextOpenSlotUrl) : null,
     descriptionText ? { type: 14, spacing: 1 } : null,
-    descriptionText ? { type: 10, content: trimUtf8(descriptionText, 260) } : null,
+    descriptionText
+      ? { type: 10, content: trimUtf8(descriptionText, 260) }
+      : null,
     tagText ? { type: 10, content: tagText } : null,
     {
       type: 12,
       items: [{ media: { url: imageUrl } }],
     },
-  ].filter((component) => component !== null)
+  ].filter((component) => component !== null);
 
   const payload = {
     component: {
@@ -56,12 +65,12 @@ export function createDiscordComponentEmbed({
       accent_color: 2105373,
       components,
     },
-  }
+  };
 
   return JSON.stringify(payload)
-    .replace(/<\//g, '<\\/')
-    .replace(/\u2028/g, '\\u2028')
-    .replace(/\u2029/g, '\\u2029')
+    .replace(/<\//g, "<\\/")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
 }
 
 function createNextOpenSlotButton(url: string) {
@@ -72,8 +81,8 @@ function createNextOpenSlotButton(url: string) {
         type: 2,
         style: 5,
         url,
-        label: '直近の空き枠を見る',
+        label: "直近の空き枠を見る",
       },
     ],
-  }
+  };
 }

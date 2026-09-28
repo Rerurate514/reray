@@ -1,1 +1,1 @@
-export * from './getting-started-panel'
+export * from "./getting-started-panel";

@@ -1,14 +1,24 @@
+import { UserFacingError } from "../../shared/errors/userFacingError";
+
 export function normalizeArticleUrl(url: string) {
-  const normalized = url.trim()
+  const normalized = url.trim();
 
+  let parsed: URL;
   try {
-    const parsed = new URL(normalized)
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-      throw new Error('Article URL must start with http or https')
-    }
-
-    return parsed.toString()
+    parsed = new URL(normalized);
   } catch {
-    throw new Error('Article URL must be a valid http or https URL')
+    throw new UserFacingError(
+      "validation",
+      "Article URL must be a valid http or https URL",
+    );
   }
+
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new UserFacingError(
+      "validation",
+      "Article URL must start with http or https",
+    );
+  }
+
+  return parsed.toString();
 }

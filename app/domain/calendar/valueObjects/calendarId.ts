@@ -1,1 +1,1 @@
-export type CalendarId = string
+export type CalendarId = string;

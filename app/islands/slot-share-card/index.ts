@@ -1,1 +1,1 @@
-export { default } from './slot-share-card'
+export { default } from "./slot-share-card";

@@ -1,4 +1,4 @@
-import type { MySlotSummary } from '../../../application/calendar/dtos/mySlotSummary'
+import type { MySlotSummary } from "../../../application/calendar/dtos/mySlotSummary";
 
 export function MySlotItem({ slot }: { slot: MySlotSummary }) {
   return (
@@ -65,5 +65,5 @@ export function MySlotItem({ slot }: { slot: MySlotSummary }) {
         </form>
       </div>
     </article>
-  )
+  );
 }

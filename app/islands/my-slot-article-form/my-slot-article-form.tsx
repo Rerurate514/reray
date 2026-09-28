@@ -1,33 +1,51 @@
-import { useState } from 'hono/jsx'
+import { useState } from "hono/jsx";
 
 type Props = {
-  action: string
-  articleTitle: string
-  articleUrl: string
-}
+  action: string;
+  articleTitle: string;
+  articleUrl: string;
+};
 
-export default function MySlotArticleForm({ action, articleTitle, articleUrl }: Props) {
-  const [title, setTitle] = useState(articleTitle)
-  const [url, setUrl] = useState(articleUrl)
-  const [status, setStatus] = useState('')
+export default function MySlotArticleForm({
+  action,
+  articleTitle,
+  articleUrl,
+}: Props) {
+  const [title, setTitle] = useState(articleTitle);
+  const [url, setUrl] = useState(articleUrl);
+  const [status, setStatus] = useState("");
 
   async function fetchTitleCandidate(nextUrl: string) {
     if (!nextUrl || title.trim()) {
-      return
+      return;
     }
 
-    setStatus('タイトルを取得しています。')
+    setStatus("タイトルを取得しています。");
 
-    const response = await fetch(`/api/articles/metadata?url=${encodeURIComponent(nextUrl)}`)
-    const metadata = response.ok ? await response.json() as { title: string | null } : { title: null }
+    const response = await fetch(
+      `/api/articles/metadata?url=${encodeURIComponent(nextUrl)}`,
+    );
+
+    if (response.status === 429) {
+      setStatus(
+        "タイトル取得の回数が多すぎます。少し待ってからもう一度お試しください。",
+      );
+      return;
+    }
+
+    const metadata = response.ok
+      ? ((await response.json()) as { title: string | null })
+      : { title: null };
 
     if (metadata.title) {
-      setTitle(metadata.title)
-      setStatus('タイトル候補を入力しました。')
-      return
+      setTitle(metadata.title);
+      setStatus("タイトル候補を入力しました。");
+      return;
     }
 
-    setStatus('タイトルを取得できないURLです。保存時にURLからタイトルを作成します。')
+    setStatus(
+      "タイトルを取得できないURLです。保存時にURLからタイトルを作成します。",
+    );
   }
 
   return (
@@ -49,14 +67,19 @@ export default function MySlotArticleForm({ action, articleTitle, articleUrl }: 
           onInput={(event) => setUrl(readInputValue(event))}
           onBlur={() => fetchTitleCandidate(url)}
         />
-        <button class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">記事を保存</button>
+        <button
+          class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)"
+          type="submit"
+        >
+          記事を保存
+        </button>
       </div>
       {status ? <p class="text-xs text-(--color-muted)">{status}</p> : null}
     </form>
-  )
+  );
 }
 
 function readInputValue(event: Event) {
-  const input = event.currentTarget as HTMLInputElement | null
-  return input?.value ?? ''
+  const input = event.currentTarget as HTMLInputElement | null;
+  return input?.value ?? "";
 }

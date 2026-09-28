@@ -1,25 +1,28 @@
-import { eq } from 'drizzle-orm'
-import type { UserRepository } from '../../../application/user/repositories/userRepository'
-import type { AuthenticatedUser, NewUser } from '../../../domain/user/entities/user'
-import type { Db } from '../../providers/db/client'
-import { users } from '../../providers/db/schema'
+import { eq } from "drizzle-orm";
+import type { UserRepository } from "../../../application/user/repositories/userRepository";
+import type {
+  AuthenticatedUser,
+  NewUser,
+} from "../../../domain/user/entities/user";
+import type { Db } from "../../providers/db/client";
+import { users } from "../../providers/db/schema";
 
 export function createDrizzleUserRepository(db: Db): UserRepository {
   return {
     async findByFirebaseUid(firebaseUid) {
       const user = await db.query.users.findFirst({
         where: eq(users.firebaseUid, firebaseUid),
-      })
+      });
 
-      return user ? toAuthenticatedUser(user) : null
+      return user ? toAuthenticatedUser(user) : null;
     },
 
     async findByUsername(username) {
       const user = await db.query.users.findFirst({
         where: eq(users.username, username),
-      })
+      });
 
-      return user ? toAuthenticatedUser(user) : null
+      return user ? toAuthenticatedUser(user) : null;
     },
 
     async findUsername(username) {
@@ -28,14 +31,14 @@ export function createDrizzleUserRepository(db: Db): UserRepository {
           username: true,
         },
         where: eq(users.username, username),
-      })
+      });
 
-      return user?.username ?? null
+      return user?.username ?? null;
     },
 
     async create(user) {
-      await db.insert(users).values(user)
-      return toAuthenticatedUser(user)
+      await db.insert(users).values(user);
+      return toAuthenticatedUser(user);
     },
 
     async updateProfile(input) {
@@ -43,20 +46,21 @@ export function createDrizzleUserRepository(db: Db): UserRepository {
         .update(users)
         .set({
           displayName: input.displayName,
+          bio: input.bio,
           updatedAt: input.updatedAt,
         })
         .where(eq(users.id, input.userId))
-        .returning()
+        .returning();
 
-      const user = updatedUsers[0]
-      return user ? toAuthenticatedUser(user) : null
+      const user = updatedUsers[0];
+      return user ? toAuthenticatedUser(user) : null;
     },
 
     async delete(userId) {
-      const result = await db.delete(users).where(eq(users.id, userId))
-      return result.meta.changes > 0
+      const result = await db.delete(users).where(eq(users.id, userId));
+      return result.meta.changes > 0;
     },
-  }
+  };
 }
 
 function toAuthenticatedUser(user: NewUser): AuthenticatedUser {
@@ -66,5 +70,6 @@ function toAuthenticatedUser(user: NewUser): AuthenticatedUser {
     username: user.username,
     displayName: user.displayName,
     avatarUrl: user.avatarUrl,
-  }
+    bio: user.bio,
+  };
 }

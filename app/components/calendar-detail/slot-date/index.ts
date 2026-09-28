@@ -1,1 +1,1 @@
-export * from './slot-date'
+export * from "./slot-date";

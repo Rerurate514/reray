@@ -1,1 +1,1 @@
-export { default } from './my-slot-article-form'
+export { default } from "./my-slot-article-form";

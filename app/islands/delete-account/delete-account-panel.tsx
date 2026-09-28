@@ -3,9 +3,9 @@ export function DeleteAccountPanel({
   isDeleting,
   onDelete,
 }: {
-  error: string | null
-  isDeleting: boolean
-  onDelete: () => void
+  error: string | null;
+  isDeleting: boolean;
+  onDelete: () => void;
 }) {
   return (
     <div class="mt-10 border-t border-(--color-border) pt-6">
@@ -13,7 +13,7 @@ export function DeleteAccountPanel({
         <div>
           <h2 class="text-lg font-semibold tracking-tight">アカウント削除</h2>
           <p class="mt-2 max-w-2xl text-sm leading-7 text-(--color-muted)">
-            アプリ内のアカウントを削除します。作成したリレーは削除され、担当している枠は空き枠に戻ります。
+            アプリ内のアカウントを削除します。作成したリレーは残りますが編集・削除はできなくなり、担当している枠は「退会済み」表示になって空き枠に戻ります。
           </p>
         </div>
         <button
@@ -22,10 +22,12 @@ export function DeleteAccountPanel({
           disabled={isDeleting}
           onClick={onDelete}
         >
-          {isDeleting ? '削除中' : 'アカウントを削除'}
+          {isDeleting ? "削除中" : "アカウントを削除"}
         </button>
       </div>
-      {error ? <p class="mt-3 text-sm font-semibold text-(--color-red)">{error}</p> : null}
+      {error ? (
+        <p class="mt-3 text-sm font-semibold text-(--color-red)">{error}</p>
+      ) : null}
     </div>
-  )
+  );
 }

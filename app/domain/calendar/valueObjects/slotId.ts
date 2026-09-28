@@ -1,1 +1,1 @@
-export type SlotId = string
+export type SlotId = string;

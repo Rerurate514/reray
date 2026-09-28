@@ -1,1 +1,1 @@
-export * from './translate-my-page-error'
+export * from "./translate-my-page-error";

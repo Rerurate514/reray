@@ -1,5 +1,8 @@
-import type { CalendarRepository } from './repositories/calendarRepository'
+import type { CalendarRepository } from "./repositories/calendarRepository";
 
-export async function listMySlots(calendarRepository: CalendarRepository, userId: string) {
-  return calendarRepository.listSlotsByUser(userId)
+export async function listMySlots(
+  calendarRepository: CalendarRepository,
+  userId: string,
+) {
+  return calendarRepository.listSlotsByUser(userId);
 }

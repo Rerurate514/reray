@@ -1,1 +1,1 @@
-export { default } from './auth-status'
+export { default } from "./auth-status";

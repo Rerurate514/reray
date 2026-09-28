@@ -1,24 +1,34 @@
-import { and, asc, eq, gt, lt, lte, gte, sql } from 'drizzle-orm'
-import type { CalendarRepository } from '../../../application/calendar/repositories/calendarRepository'
-import type { SlotParticipant } from '../../../application/calendar/dtos/slotParticipant'
-import type { NewCalendar } from '../../../domain/calendar/entities/calendar'
-import type { NewSlot } from '../../../domain/calendar/entities/slot'
-import type { Db } from '../../providers/db/client'
-import { calendars, calendarTags, slotEntries, slots, tags } from '../../providers/db/schema'
-import { attachTagsToCalendar, listTagsByCalendarIds, replaceCalendarTags } from './calendarTagQueries'
+import { and, asc, eq, gt, gte, isNotNull, lt, lte, sql } from "drizzle-orm";
+import type { SlotParticipant } from "../../../application/calendar/dtos/slotParticipant";
+import type { CalendarRepository } from "../../../application/calendar/repositories/calendarRepository";
+import type { NewCalendar } from "../../../domain/calendar/entities/calendar";
+import type { NewSlot } from "../../../domain/calendar/entities/slot";
+import type { Db } from "../../providers/db/client";
+import {
+  calendars,
+  calendarTags,
+  slotEntries,
+  slots,
+  tags,
+} from "../../providers/db/schema";
+import {
+  attachTagsToCalendar,
+  listTagsByCalendarIds,
+  replaceCalendarTags,
+} from "./calendarTagQueries";
 
 type SlotEntryRecord = {
-  id: string
-  userId: string | null
-  description: string | null
-  articleTitle: string | null
-  articleUrl: string | null
+  id: string;
+  userId: string | null;
+  description: string | null;
+  articleTitle: string | null;
+  articleUrl: string | null;
   user: {
-    username: string
-    displayName: string
-    avatarUrl: string | null
-  } | null
-}
+    username: string;
+    displayName: string;
+    avatarUrl: string | null;
+  } | null;
+};
 
 function toParticipant(entry: SlotEntryRecord): SlotParticipant {
   return {
@@ -30,18 +40,22 @@ function toParticipant(entry: SlotEntryRecord): SlotParticipant {
     description: entry.description,
     articleTitle: entry.articleTitle,
     articleUrl: entry.articleUrl,
-  }
+  };
 }
 
 export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
   return {
-    async createWithSlots(calendar: NewCalendar, slotRows: NewSlot[], tagNames: string[]) {
-      await db.insert(calendars).values(calendar)
+    async createWithSlots(
+      calendar: NewCalendar,
+      slotRows: NewSlot[],
+      tagNames: string[],
+    ) {
+      await db.insert(calendars).values(calendar);
       for (let index = 0; index < slotRows.length; index += 10) {
-        await db.insert(slots).values(slotRows.slice(index, index + 10))
+        await db.insert(slots).values(slotRows.slice(index, index + 10));
       }
 
-      await attachTagsToCalendar(db, calendar.id, tagNames, calendar.createdAt)
+      await attachTagsToCalendar(db, calendar.id, tagNames, calendar.createdAt);
     },
 
     async findDetailBySlug(slug) {
@@ -50,10 +64,10 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         with: {
           owner: true,
         },
-      })
+      });
 
       if (!calendar) {
-        return null
+        return null;
       }
 
       const slotRows = await db.query.slots.findMany({
@@ -67,9 +81,9 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
             },
           },
         },
-      })
+      });
 
-      const calendarTagRows = await listTagsByCalendarIds(db, [calendar.id])
+      const calendarTagRows = await listTagsByCalendarIds(db, [calendar.id]);
 
       return {
         calendar: { ...calendar, tags: calendarTagRows[calendar.id] ?? [] },
@@ -79,7 +93,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           position: slot.position,
           participants: slot.entries.map(toParticipant),
         })),
-      }
+      };
     },
 
     async findSlotDetail(calendarSlug, slotId) {
@@ -93,10 +107,10 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           capacity: true,
         },
         where: eq(calendars.slug, calendarSlug),
-      })
+      });
 
       if (!calendar) {
-        return null
+        return null;
       }
 
       const slot = await db.query.slots.findFirst({
@@ -109,10 +123,10 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
             },
           },
         },
-      })
+      });
 
       if (!slot) {
-        return null
+        return null;
       }
 
       return {
@@ -123,17 +137,19 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           position: slot.position,
           participants: slot.entries.map(toParticipant),
         },
-      }
+      };
     },
 
-    async listPublishedPublic(limit, filters) {
-      const conditions = [eq(calendars.visibility, 'public'), eq(calendars.status, 'published')]
-      const query = filters?.query?.trim()
-      const tag = filters?.tag?.trim()
-      const today = filters?.today
+    async listPublishedPublic(limit, filters, offset) {
+      const conditions = [eq(calendars.visibility, "public")];
+      const query = filters?.query?.trim();
+      const tag = filters?.tag?.trim();
+      const today = filters?.today;
 
       if (query) {
-        conditions.push(sql`lower(${calendars.title}) LIKE ${`%${escapeLike(query.toLowerCase())}%`} ESCAPE '\\'`)
+        conditions.push(
+          sql`lower(${calendars.title}) LIKE ${`%${escapeLike(query.toLowerCase())}%`} ESCAPE '\\'`,
+        );
       }
 
       if (tag) {
@@ -143,32 +159,42 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           inner join ${tags} on ${calendarTags.tagId} = ${tags.id}
           where ${calendarTags.calendarId} = ${calendars.id}
             and ${tags.name} = ${tag}
-        )`)
+        )`);
       }
 
-      if (today && filters?.status === 'open') {
-        conditions.push(lte(calendars.startDate, today), gte(calendars.endDate, today))
+      if (today && filters?.status === "open") {
+        conditions.push(
+          lte(calendars.startDate, today),
+          gte(calendars.endDate, today),
+        );
       }
 
-      if (today && filters?.status === 'upcoming') {
-        conditions.push(gt(calendars.startDate, today))
+      if (today && filters?.status === "upcoming") {
+        conditions.push(gt(calendars.startDate, today));
       }
 
-      if (today && filters?.status === 'ended') {
-        conditions.push(lt(calendars.endDate, today))
+      if (today && filters?.status === "ended") {
+        conditions.push(lt(calendars.endDate, today));
       }
 
       const calendarRows = await db.query.calendars.findMany({
         where: and(...conditions),
         orderBy: (table, { desc }) => [desc(table.createdAt)],
         limit,
+        offset,
         with: {
           owner: true,
         },
-      })
-      const tagsByCalendarId = await listTagsByCalendarIds(db, calendarRows.map((calendar) => calendar.id))
+      });
+      const tagsByCalendarId = await listTagsByCalendarIds(
+        db,
+        calendarRows.map((calendar) => calendar.id),
+      );
 
-      return calendarRows.map((calendar) => ({ ...calendar, tags: tagsByCalendarId[calendar.id] ?? [] }))
+      return calendarRows.map((calendar) => ({
+        ...calendar,
+        tags: tagsByCalendarId[calendar.id] ?? [],
+      }));
     },
 
     async listCalendarsByOwner(userId) {
@@ -178,23 +204,38 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         with: {
           owner: true,
         },
-      })
-      const tagsByCalendarId = await listTagsByCalendarIds(db, calendarRows.map((calendar) => calendar.id))
+      });
+      const tagsByCalendarId = await listTagsByCalendarIds(
+        db,
+        calendarRows.map((calendar) => calendar.id),
+      );
 
-      return calendarRows.map((calendar) => ({ ...calendar, tags: tagsByCalendarId[calendar.id] ?? [] }))
+      return calendarRows.map((calendar) => ({
+        ...calendar,
+        tags: tagsByCalendarId[calendar.id] ?? [],
+      }));
     },
 
     async listPublishedPublicByOwner(userId) {
       const calendarRows = await db.query.calendars.findMany({
-        where: and(eq(calendars.ownerId, userId), eq(calendars.visibility, 'public'), eq(calendars.status, 'published')),
+        where: and(
+          eq(calendars.ownerId, userId),
+          eq(calendars.visibility, "public"),
+        ),
         orderBy: (table, { desc }) => [desc(table.createdAt)],
         with: {
           owner: true,
         },
-      })
-      const tagsByCalendarId = await listTagsByCalendarIds(db, calendarRows.map((calendar) => calendar.id))
+      });
+      const tagsByCalendarId = await listTagsByCalendarIds(
+        db,
+        calendarRows.map((calendar) => calendar.id),
+      );
 
-      return calendarRows.map((calendar) => ({ ...calendar, tags: tagsByCalendarId[calendar.id] ?? [] }))
+      return calendarRows.map((calendar) => ({
+        ...calendar,
+        tags: tagsByCalendarId[calendar.id] ?? [],
+      }));
     },
 
     async findOwnerId(calendarId) {
@@ -203,9 +244,24 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           ownerId: true,
         },
         where: eq(calendars.id, calendarId),
-      })
+      });
 
-      return calendar?.ownerId ?? null
+      return calendar?.ownerId ?? null;
+    },
+
+    async findMaxActiveParticipantCount(calendarId) {
+      const rows = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(slotEntries)
+        .where(
+          and(
+            eq(slotEntries.calendarId, calendarId),
+            isNotNull(slotEntries.userId),
+          ),
+        )
+        .groupBy(slotEntries.slotId);
+
+      return rows.reduce((max, row) => Math.max(max, Number(row.count)), 0);
     },
 
     async updateCalendar(input) {
@@ -218,86 +274,97 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           capacity: input.capacity,
           updatedAt: input.now,
         })
-        .where(eq(calendars.id, input.calendarId))
+        .where(eq(calendars.id, input.calendarId));
 
       if (result.meta.changes < 1) {
-        return false
+        return false;
       }
 
-      await replaceCalendarTags(db, input.calendarId, input.tagNames, input.now)
-      return true
+      await replaceCalendarTags(
+        db,
+        input.calendarId,
+        input.tagNames,
+        input.now,
+      );
+      return true;
     },
 
     async deleteCalendar(calendarId) {
-      const result = await db.delete(calendars).where(eq(calendars.id, calendarId))
-      return result.meta.changes > 0
+      const result = await db
+        .delete(calendars)
+        .where(eq(calendars.id, calendarId));
+      return result.meta.changes > 0;
     },
 
     async joinSlot(input) {
       const slot = await db.query.slots.findFirst({
         columns: { id: true },
         where: eq(slots.id, input.slotId),
-      })
+      });
 
       if (!slot) {
-        return 'slotNotFound'
+        return "slotNotFound";
       }
 
       const existing = await db.query.slotEntries.findFirst({
         columns: { id: true },
-        where: and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)),
-      })
+        where: and(
+          eq(slotEntries.slotId, input.slotId),
+          eq(slotEntries.userId, input.userId),
+        ),
+      });
 
       if (existing) {
-        return 'alreadyJoined'
+        return "alreadyJoined";
       }
 
       const result = await db.run(sql`
-        insert into slot_entries (id, slot_id, user_id, description, article_title, article_url, created_at, updated_at)
-        select ${input.entryId}, ${input.slotId}, ${input.userId}, NULL, NULL, NULL, ${input.now}, ${input.now}
+        insert into slot_entries (id, slot_id, calendar_id, user_id, description, article_title, article_url, created_at, updated_at)
+        select ${input.entryId}, ${input.slotId}, (select calendar_id from slots where id = ${input.slotId}), ${input.userId}, NULL, NULL, NULL, ${input.now}, ${input.now}
         where (
-          select count(*) from slot_entries where slot_id = ${input.slotId}
+          select count(*) from slot_entries where slot_id = ${input.slotId} and user_id is not null
         ) < (
           select capacity from calendars where id = (select calendar_id from slots where id = ${input.slotId})
         )
         and not exists (
           select 1 from slot_entries where slot_id = ${input.slotId} and user_id = ${input.userId}
         )
-      `)
+      `);
 
-      const changes = result.meta?.changes ?? 0
+      const changes = result.meta?.changes ?? 0;
       if (changes > 0) {
-        return 'joined'
+        return "joined";
       }
 
       const raced = await db.query.slotEntries.findFirst({
         columns: { id: true },
-        where: and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)),
-      })
+        where: and(
+          eq(slotEntries.slotId, input.slotId),
+          eq(slotEntries.userId, input.userId),
+        ),
+      });
 
-      return raced ? 'alreadyJoined' : 'full'
+      return raced ? "alreadyJoined" : "full";
     },
 
     async cancelSlot(input) {
       const result = await db
         .delete(slotEntries)
-        .where(and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)))
+        .where(
+          and(
+            eq(slotEntries.slotId, input.slotId),
+            eq(slotEntries.userId, input.userId),
+          ),
+        );
 
-      return result.meta.changes > 0
+      return result.meta.changes > 0;
     },
 
     async removeSlotEntry(input) {
-      const result = await db.delete(slotEntries).where(eq(slotEntries.id, input.entryId))
-      return result.meta.changes > 0
-    },
-
-    async findEntryOwner(entryId) {
-      const entry = await db.query.slotEntries.findFirst({
-        columns: { userId: true },
-        where: eq(slotEntries.id, entryId),
-      })
-
-      return entry?.userId ?? null
+      const result = await db
+        .delete(slotEntries)
+        .where(eq(slotEntries.id, input.entryId));
+      return result.meta.changes > 0;
     },
 
     async findEntryCalendarOwner(entryId) {
@@ -309,27 +376,44 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .innerJoin(calendars, eq(slots.calendarId, calendars.id))
         .where(eq(slotEntries.id, entryId))
-        .limit(1)
+        .limit(1);
 
-      return row[0]?.ownerId ?? null
+      return row[0]?.ownerId ?? null;
     },
 
     async findEntryByUser(input) {
-      const entry = await db.query.slotEntries.findFirst({
-        columns: { id: true },
-        where: and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)),
-      })
+      const rows = await db
+        .select({
+          id: slotEntries.id,
+          calendarId: slotEntries.calendarId,
+        })
+        .from(slotEntries)
+        .where(
+          and(
+            eq(slotEntries.slotId, input.slotId),
+            eq(slotEntries.userId, input.userId),
+          ),
+        )
+        .limit(1);
 
-      return entry ?? null
+      return rows[0] ?? null;
     },
 
-    async findArticleEntryIdByUrl(url) {
-      const entry = await db.query.slotEntries.findFirst({
-        columns: { id: true },
-        where: eq(slotEntries.articleUrl, url),
-      })
+    async findArticleEntryIdByUrl(input) {
+      const rows = await db
+        .select({
+          id: slotEntries.id,
+        })
+        .from(slotEntries)
+        .where(
+          and(
+            eq(slotEntries.articleUrl, input.url),
+            eq(slotEntries.calendarId, input.calendarId),
+          ),
+        )
+        .limit(1);
 
-      return entry?.id ?? null
+      return rows[0]?.id ?? null;
     },
 
     async updateSlotArticle(input) {
@@ -340,9 +424,9 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           articleUrl: input.url,
           updatedAt: input.now,
         })
-        .where(eq(slotEntries.id, input.entryId))
+        .where(eq(slotEntries.id, input.entryId));
 
-      return result.meta.changes > 0
+      return result.meta.changes > 0;
     },
 
     async updateSlotDescription(input) {
@@ -352,9 +436,9 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           description: input.description,
           updatedAt: input.now,
         })
-        .where(eq(slotEntries.id, input.entryId))
+        .where(eq(slotEntries.id, input.entryId));
 
-      return result.meta.changes > 0
+      return result.meta.changes > 0;
     },
 
     async listSlotsByUser(userId) {
@@ -373,7 +457,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .innerJoin(calendars, eq(slots.calendarId, calendars.id))
         .where(eq(slotEntries.userId, userId))
-        .orderBy(asc(slots.scheduledDate), asc(slots.position))
+        .orderBy(asc(slots.scheduledDate), asc(slots.position));
     },
 
     async listPublishedPublicSlotsByUser(userId) {
@@ -391,12 +475,17 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         .from(slotEntries)
         .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .innerJoin(calendars, eq(slots.calendarId, calendars.id))
-        .where(and(eq(slotEntries.userId, userId), eq(calendars.visibility, 'public'), eq(calendars.status, 'published')))
-        .orderBy(asc(slots.scheduledDate), asc(slots.position))
+        .where(
+          and(
+            eq(slotEntries.userId, userId),
+            eq(calendars.visibility, "public"),
+          ),
+        )
+        .orderBy(asc(slots.scheduledDate), asc(slots.position));
     },
-  }
+  };
 }
 
 function escapeLike(value: string) {
-  return value.replace(/[\\%_]/g, (match) => `\\${match}`)
+  return value.replace(/[\\%_]/g, (match) => `\\${match}`);
 }
