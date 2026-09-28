@@ -2,6 +2,8 @@ import type { GeneratedSlot } from '../entities/slot'
 import type { SlotFrequency } from '../valueObjects/slotFrequency'
 import { UserFacingError } from '../../shared/errors/userFacingError'
 
+const maxSlotCount = 366
+
 export function generateSlots(startDate: string, endDate: string, frequency: SlotFrequency) {
   const start = parseDate(startDate)
   const end = parseDate(endDate)
@@ -18,6 +20,10 @@ export function generateSlots(startDate: string, endDate: string, frequency: Slo
     const isWeekday = day >= 1 && day <= 5
 
     if (frequency === 'daily' || isWeekday) {
+      if (slots.length >= maxSlotCount) {
+        throw new UserFacingError('validation', `Too many slots: maximum is ${maxSlotCount}`)
+      }
+
       slots.push({
         scheduledDate: formatDate(current),
         position: slots.length + 1,
