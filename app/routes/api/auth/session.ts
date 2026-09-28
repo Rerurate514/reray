@@ -11,7 +11,12 @@ export const POST = createRoute(async (c) => {
     return c.json({ error: "authentication_required" }, 401);
   }
 
-  await verifyFirebaseIdToken(idToken, projectId);
+  try {
+    await verifyFirebaseIdToken(idToken, projectId);
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: "authentication_required" }, 401);
+  }
 
   setCookie(c, "reray_id_token", idToken, {
     httpOnly: true,
