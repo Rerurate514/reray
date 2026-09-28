@@ -12,8 +12,8 @@ export async function updateSlotDescription(
     throw new Error('Slot not found')
   }
 
-  if (ownerId !== input.userId && calendarOwnerId !== input.userId) {
-    throw new Error('Only the assigned user or calendar owner can edit this notice')
+  if (ownerId !== input.userId) {
+    throw new Error('Only the assigned user can edit this notice')
   }
 
   const updated = await calendarRepository.updateSlotDescription({

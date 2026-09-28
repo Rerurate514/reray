@@ -32,7 +32,7 @@ export function SlotDetailPage({
   const slotLabel = slot.scheduledDate ?? `#${slot.position}`
   const isAssignedUser = currentUser?.id === slot.userId
   const isCalendarOwner = currentUser?.id === calendar.ownerId
-  const canEditNotice = isAssignedUser || isCalendarOwner
+  const canEditNotice = isAssignedUser
   const error = slotError ?? articleError ?? descriptionError
 
   return (
