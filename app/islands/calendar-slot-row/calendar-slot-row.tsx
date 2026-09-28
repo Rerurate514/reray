@@ -1,4 +1,5 @@
 import { useState } from "hono/jsx";
+import type { RelayBaton } from "../../application/calendar/dtos/relayBaton";
 import { SlotRow } from "../../components/calendar-detail/slot-row";
 import type { Slot } from "../../components/calendar-detail/types";
 import type { AuthenticatedUser } from "../../domain/user/entities/user";
@@ -9,6 +10,7 @@ type Props = {
   calendarTitle: string;
   currentUser: AuthenticatedUser;
   isOwner: boolean;
+  relay: RelayBaton | null;
   slot: Slot;
 };
 
@@ -18,6 +20,7 @@ export default function CalendarSlotRow({
   calendarTitle,
   currentUser,
   isOwner,
+  relay,
   slot,
 }: Props) {
   const [currentSlot, setCurrentSlot] = useState(slot);
@@ -49,6 +52,7 @@ export default function CalendarSlotRow({
       currentUser={currentUser}
       isOwner={isOwner}
       onJoined={markJoined}
+      relay={relay}
       slot={currentSlot}
     />
   );

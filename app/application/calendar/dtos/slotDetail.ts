@@ -1,3 +1,4 @@
+import type { RelayBaton } from "./relayBaton";
 import type { SlotParticipant } from "./slotParticipant";
 
 export type SlotDetail = {
@@ -16,3 +17,5 @@ export type SlotDetail = {
     participants: SlotParticipant[];
   };
 };
+
+export type SlotDetailView = SlotDetail & { relay: RelayBaton };

@@ -3,6 +3,7 @@ import type { NewSlot } from "../../../domain/calendar/entities/slot";
 import type { CalendarDetail } from "../dtos/calendarDetail";
 import type { CalendarSummary } from "../dtos/calendarSummary";
 import type { MySlotSummary } from "../dtos/mySlotSummary";
+import type { RelayBatonLink } from "../dtos/relayBaton";
 import type { SlotDetail } from "../dtos/slotDetail";
 
 export type PublicCalendarStatusFilter = "all" | "open" | "upcoming" | "ended";
@@ -31,6 +32,7 @@ export type CalendarRepository = {
     calendarSlug: string,
     slotId: string,
   ): Promise<SlotDetail | null>;
+  listRelayLinksByCalendar(calendarId: string): Promise<RelayBatonLink[]>;
   listPublishedPublic(
     limit: number,
     filters?: PublicCalendarFilters,
