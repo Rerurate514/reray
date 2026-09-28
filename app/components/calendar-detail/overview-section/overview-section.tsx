@@ -16,6 +16,7 @@ export function OverviewSection({ calendar }: { calendar: Calendar }) {
         <div class="bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) sm:text-base">
           {calendar.startDate} - {calendar.endDate}
           {calendar.visibility === 'private' ? <span class="ml-3 border border-(--color-page) px-2 py-1 text-xs">限定共有</span> : null}
+          {calendar.capacity > 1 ? <span class="ml-3 border border-(--color-page) px-2 py-1 text-xs">1枠 {calendar.capacity} 名まで</span> : null}
         </div>
         <h1 class="mt-8 max-w-4xl text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{calendar.title}</h1>
         <TagList tags={calendar.tags} />

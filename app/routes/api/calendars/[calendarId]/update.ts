@@ -24,6 +24,7 @@ export const POST = createRoute(async (c) => {
       title: String(body.title ?? ''),
       description: String(body.description ?? ''),
       visibility: String(body.visibility ?? ''),
+      capacity: String(body.capacity ?? ''),
       tags: String(body.tags ?? ''),
     })
 

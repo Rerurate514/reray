@@ -5,11 +5,11 @@ import type { AuthenticatedUser } from '../../../domain/user/entities/user'
 import JoinSlotButton from '../../../islands/join-slot-button'
 import MySlotArticleForm from '../../../islands/my-slot-article-form'
 import SlotShareCard from '../../../islands/slot-share-card'
+import { ParticipantEntry } from '../../calendar-detail/participant-entry'
+import { translateCalendarActionError } from '../../calendar-detail/translate-calendar-action-error'
 import { FeedbackMessage } from '../../shared/feedback-message'
 import { Footer } from '../../shared/footer'
 import { PageHeader } from '../../shared/page-header'
-import { translateCalendarActionError } from '../../calendar-detail/translate-calendar-action-error'
-import { AssignedSlot } from '../../calendar-detail/assigned-slot'
 
 export function SlotDetailPage({
   articleError,
@@ -30,9 +30,9 @@ export function SlotDetailPage({
 }) {
   const { calendar, slot } = detail
   const slotLabel = slot.scheduledDate ?? `#${slot.position}`
-  const isAssignedUser = currentUser?.id === slot.userId
   const isCalendarOwner = currentUser?.id === calendar.ownerId
-  const canEditNotice = isAssignedUser
+  const ownEntry = currentUser ? slot.participants.find((entry) => entry.userId === currentUser.id) ?? null : null
+  const isFull = slot.participants.length >= calendar.capacity
   const error = slotError ?? articleError ?? descriptionError
 
   return (
@@ -49,46 +49,53 @@ export function SlotDetailPage({
             {slotLabel}
           </p>
           <h1 class="mt-5 text-4xl font-medium leading-tight tracking-tight sm:text-6xl">{slotLabel}</h1>
-          <p class="mt-4 text-(--color-muted)">この枠の担当、告知文、記事を管理できます。</p>
+          <p class="mt-4 text-(--color-muted)">この枠の担当、告知文、記事を管理できます。定員 {calendar.capacity} 名 / 現在 {slot.participants.length} 名。</p>
         </div>
 
-        <Panel title="記事">
-          <AssignedSlot calendarSlug={calendar.slug} slot={slot} isCurrentUserSlot={isAssignedUser} isOnlyArticle={true} />
+        <Panel title="担当">
+          {slot.participants.length > 0 ? (
+            <div class="grid gap-4">
+              {slot.participants.map((entry) => (
+                <ParticipantEntry
+                  calendarSlug={calendar.slug}
+                  canRemove={isCalendarOwner && entry.userId !== currentUser?.id}
+                  entry={entry}
+                  isCurrentUser={currentUser !== null && entry.userId === currentUser.id}
+                  showEditLink={false}
+                  slotId={slot.id}
+                />
+              ))}
+            </div>
+          ) : (
+            <p class="text-(--color-muted)">この枠はまだ空いています。</p>
+          )}
+          <div class="grid gap-3 border-t border-(--color-border) pt-4">
+            {ownEntry ? (
+              <CancelSlotButton slotId={slot.id} />
+            ) : currentUser && !isFull ? (
+              <JoinSlotForm slotId={slot.id} />
+            ) : (
+              <p class="text-sm font-semibold text-(--color-muted)">{isFull ? 'この枠は満員です。' : 'ログイン後に参加できます。'}</p>
+            )}
+          </div>
         </Panel>
 
-        <div class="grid min-w-0 gap-6">
-          <Panel title="担当">
-            {slot.userId ? (
-              <div class="flex min-w-0 flex-wrap items-center gap-4">
-                <SlotUser slot={slot} />
-                {isAssignedUser ? <CancelSlotButton slotId={slot.id} /> : null}
-                {isCalendarOwner && !isAssignedUser ? <ClearSlotButton slotId={slot.id} /> : null}
-              </div>
-            ) : (
-              <div class="grid gap-4">
-                <p class="text-(--color-muted)">この枠はまだ空いています。</p>
-                {currentUser ? <JoinSlotForm slotId={slot.id} /> : <p class="text-sm font-semibold text-(--color-muted)">ログイン後に参加できます。</p>}
-              </div>
-            )}
+        <Panel title="告知文">
+          {ownEntry?.description ? (
+            <p class="whitespace-pre-wrap leading-8 text-(--color-muted)">{ownEntry.description}</p>
+          ) : (
+            <p class="text-(--color-muted)">{ownEntry ? 'まだ告知文はありません。' : '参加すると告知文を登録できます。'}</p>
+          )}
+          {ownEntry ? <SlotNoticeForm description={ownEntry.description ?? ''} slotId={slot.id} /> : null}
+        </Panel>
+
+        {ownEntry ? (
+          <Panel title="記事を入力">
+            <MySlotArticleForm action={`/api/slots/${slot.id}/article`} articleTitle={ownEntry.articleTitle ?? ''} articleUrl={ownEntry.articleUrl ?? ''} />
           </Panel>
+        ) : null}
 
-          <Panel title="告知文">
-            {slot.description ? (
-              <p class="whitespace-pre-wrap leading-8 text-(--color-muted)">{slot.description}</p>
-            ) : (
-              <p class="text-(--color-muted)">まだ告知文はありません。</p>
-            )}
-            {canEditNotice ? <SlotNoticeForm description={slot.description ?? ''} slotId={slot.id} /> : null}
-          </Panel>
-
-          {isAssignedUser ? (
-            <Panel title="記事を入力">
-              <MySlotArticleForm action={`/api/slots/${slot.id}/article`} articleTitle={slot.articleTitle ?? ''} articleUrl={slot.articleUrl ?? ''} />
-            </Panel>
-          ) : null}
-        </div>
-
-        <SlotShareCard calendarTitle={calendar.title} isRegistered={Boolean(slot.userId)} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} />
+        <SlotShareCard calendarTitle={calendar.title} isRegistered={slot.participants.length > 0} slotLabel={slotLabel} slotUrl={`/c/${calendar.slug}/slots/${slot.id}`} />
       </section>
       <Footer />
     </main>
@@ -119,26 +126,6 @@ function SlotNoticeForm({ description, slotId }: { description: string; slotId: 
   )
 }
 
-function SlotUser({ slot }: { slot: SlotDetail['slot'] }) {
-  const displayName = slot.displayName ?? slot.username ?? 'user'
-  const content = (
-    <>
-      {slot.avatarUrl ? (
-        <img class="h-8 w-8 rounded-full border border-(--color-border-strong) object-cover" src={slot.avatarUrl} alt={displayName} />
-      ) : (
-        <span class="grid h-8 w-8 place-items-center rounded-full border border-(--color-border-strong) text-xs font-semibold text-(--color-muted)">{displayName.slice(0, 1)}</span>
-      )}
-      <span class="font-semibold">{displayName}</span>
-    </>
-  )
-
-  return slot.username ? (
-    <a class="flex items-center gap-2 hover:text-(--color-accent)" href={`/u/${slot.username}`}>{content}</a>
-  ) : (
-    <div class="flex items-center gap-2">{content}</div>
-  )
-}
-
 function JoinSlotForm({ slotId }: { slotId: string }) {
   return (
     <JoinSlotButton className="w-full max-w-full border border-(--color-accent) px-4 py-3 text-sm font-semibold text-(--color-accent) hover:bg-[#fff3ed] disabled:opacity-60" label="この枠に参加する" slotId={slotId} />
@@ -149,14 +136,6 @@ function CancelSlotButton({ slotId }: { slotId: string }) {
   return (
     <form method="post" action={`/api/slots/${slotId}/cancel`}>
       <button class="w-full max-w-full border border-(--color-border-strong) px-4 py-3 text-sm font-semibold hover:border-(--color-accent) hover:text-(--color-accent)" type="submit">参加をキャンセル</button>
-    </form>
-  )
-}
-
-function ClearSlotButton({ slotId }: { slotId: string }) {
-  return (
-    <form method="post" action={`/api/slots/${slotId}/clear`}>
-      <button class="w-full max-w-full border border-(--color-red) px-4 py-3 text-sm font-semibold text-(--color-red) hover:bg-(--color-red) hover:text-(--color-page)" type="submit">担当を外す</button>
     </form>
   )
 }

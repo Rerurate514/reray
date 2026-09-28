@@ -4,7 +4,6 @@ import type { CalendarDetail } from '../dtos/calendarDetail'
 import type { CalendarSummary } from '../dtos/calendarSummary'
 import type { MySlotSummary } from '../dtos/mySlotSummary'
 import type { SlotDetail } from '../dtos/slotDetail'
-import type { UpsertArticleInput } from '../dtos/upsertArticleInput'
 
 export type PublicCalendarStatusFilter = 'all' | 'open' | 'upcoming' | 'ended'
 
@@ -15,6 +14,8 @@ export type PublicCalendarFilters = {
   today?: string
 }
 
+export type JoinSlotOutcome = 'joined' | 'alreadyJoined' | 'full' | 'slotNotFound'
+
 export type CalendarRepository = {
   createWithSlots(calendar: NewCalendar, slots: NewSlot[], tagNames: string[]): Promise<void>
   findDetailBySlug(slug: string): Promise<CalendarDetail | null>
@@ -23,16 +24,25 @@ export type CalendarRepository = {
   listPublishedPublicByOwner(userId: string): Promise<CalendarSummary[]>
   listCalendarsByOwner(userId: string): Promise<CalendarSummary[]>
   findOwnerId(calendarId: string): Promise<string | null>
-  updateCalendar(input: { calendarId: string; title: string; description: string | null; visibility: 'public' | 'private'; tagNames: string[]; now: number }): Promise<boolean>
+  updateCalendar(input: {
+    calendarId: string
+    title: string
+    description: string | null
+    visibility: 'public' | 'private'
+    capacity: number
+    tagNames: string[]
+    now: number
+  }): Promise<boolean>
   deleteCalendar(calendarId: string): Promise<boolean>
-  joinSlot(slotId: string, userId: string, now: number): Promise<boolean>
-  cancelSlot(slotId: string, userId: string, now: number): Promise<boolean>
-  clearSlot(slotId: string, now: number): Promise<boolean>
-  findSlotOwner(slotId: string): Promise<string | null>
-  findSlotCalendarOwner(slotId: string): Promise<string | null>
-  findArticleSlotIdByUrl(url: string): Promise<string | null>
-  upsertArticle(input: UpsertArticleInput): Promise<void>
-  updateSlotDescription(input: { slotId: string; description: string | null; now: number }): Promise<boolean>
+  joinSlot(input: { entryId: string; slotId: string; userId: string; now: number }): Promise<JoinSlotOutcome>
+  cancelSlot(input: { slotId: string; userId: string; now: number }): Promise<boolean>
+  removeSlotEntry(input: { entryId: string; now: number }): Promise<boolean>
+  findEntryOwner(entryId: string): Promise<string | null>
+  findEntryCalendarOwner(entryId: string): Promise<string | null>
+  findEntryByUser(input: { slotId: string; userId: string }): Promise<{ id: string } | null>
+  findArticleEntryIdByUrl(url: string): Promise<string | null>
+  updateSlotArticle(input: { entryId: string; title: string; url: string; now: number }): Promise<boolean>
+  updateSlotDescription(input: { entryId: string; description: string | null; now: number }): Promise<boolean>
   listPublishedPublicSlotsByUser(userId: string): Promise<MySlotSummary[]>
   listSlotsByUser(userId: string): Promise<MySlotSummary[]>
 }

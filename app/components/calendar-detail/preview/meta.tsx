@@ -17,8 +17,8 @@ export function createCalendarPreviewMeta(calendar: Calendar, slots: Slot[], req
   const calendarUrl = new URL(`/c/${calendar.slug}`, requestUrl).toString()
   const imageUrl = new URL(ogImage.path, requestUrl).toString()
   const description = createCalendarPreviewDescription(calendar)
-  const nextOpenSlot = findNextOpenSlot(slots)
-  const nextOpenSlotText = createNextOpenSlotText(slots)
+  const nextOpenSlot = findNextOpenSlot(slots, calendar.capacity)
+  const nextOpenSlotText = createNextOpenSlotText(slots, calendar.capacity)
   const nextOpenSlotUrl = nextOpenSlot ? new URL(`/c/${calendar.slug}/slots/${nextOpenSlot.id}`, requestUrl).toString() : null
   const title = `${calendar.title} - Reray`
 

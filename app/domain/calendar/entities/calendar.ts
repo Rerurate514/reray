@@ -12,6 +12,7 @@ export type NewCalendar = {
   startDate: string
   endDate: string
   visibility: CalendarVisibility
+  capacity: number
   status: CalendarStatus
   createdAt: number
   updatedAt: number

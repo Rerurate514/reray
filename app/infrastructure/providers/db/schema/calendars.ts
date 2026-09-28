@@ -15,6 +15,7 @@ export const calendars = sqliteTable(
     startDate: text('start_date'),
     endDate: text('end_date'),
     visibility: text('visibility').$type<CalendarVisibility>().notNull(),
+    capacity: integer('capacity').notNull().default(1),
     status: text('status').notNull(),
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at').notNull(),

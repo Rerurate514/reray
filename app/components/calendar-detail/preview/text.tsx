@@ -23,8 +23,8 @@ export function createDateRangeText(calendar: Calendar) {
   return calendar.startDate ?? calendar.endDate ?? null
 }
 
-export function createNextOpenSlotText(slots: Slot[]): NextOpenSlotText {
-  const openSlot = findNextOpenSlot(slots)
+export function createNextOpenSlotText(slots: Slot[], capacity: number): NextOpenSlotText {
+  const openSlot = findNextOpenSlot(slots, capacity)
 
   if (!openSlot) {
     return {
@@ -39,9 +39,9 @@ export function createNextOpenSlotText(slots: Slot[]): NextOpenSlotText {
   }
 }
 
-export function findNextOpenSlot(slots: Slot[]) {
+export function findNextOpenSlot(slots: Slot[], capacity: number) {
   return slots
-    .filter((slot) => !slot.userId)
+    .filter((slot) => slot.participants.length < capacity)
     .sort((a, b) => {
       if (a.scheduledDate && b.scheduledDate) {
         return a.scheduledDate.localeCompare(b.scheduledDate) || a.position - b.position

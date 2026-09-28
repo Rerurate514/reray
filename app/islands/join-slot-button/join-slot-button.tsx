@@ -12,6 +12,7 @@ type JoinState = 'idle' | 'joining' | 'joined' | 'error'
 
 export default function JoinSlotButton({ className, label, onJoined, slotId, slotUrl }: Props) {
   const [state, setState] = useState<JoinState>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
 
   async function join() {
     if (state === 'joining' || state === 'joined') {
@@ -27,6 +28,8 @@ export default function JoinSlotButton({ className, label, onJoined, slotId, slo
     })
 
     if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as { error?: string } | null
+      setErrorMessage(translateJoinError(body?.error))
       setState('error')
       return
     }
@@ -49,7 +52,23 @@ export default function JoinSlotButton({ className, label, onJoined, slotId, slo
       <button class={className} type="button" disabled={state === 'joining'} onClick={join}>
         {state === 'joining' ? '参加中...' : label}
       </button>
-      {state === 'error' ? <span class="text-xs font-semibold text-(--color-red)">参加できませんでした。ページを更新して確認してください。</span> : null}
+      {state === 'error' ? <span class="text-xs font-semibold text-(--color-red)">{errorMessage}</span> : null}
     </span>
   )
+}
+
+function translateJoinError(error: unknown) {
+  if (error === 'Slot is full') {
+    return 'この枠は満員です。'
+  }
+
+  if (error === 'You have already joined this slot') {
+    return 'すでにこの枠に参加しています。'
+  }
+
+  if (error === 'Slot not found') {
+    return 'この枠は見つかりませんでした。'
+  }
+
+  return '参加できませんでした。ページを更新して確認してください。'
 }

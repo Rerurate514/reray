@@ -4,6 +4,7 @@ import { generateSlots } from '../../domain/calendar/services/generateSlots'
 import { normalizeCalendarDescription } from '../../domain/calendar/services/normalizeCalendarDescription'
 import { normalizeCalendarTitle } from '../../domain/calendar/services/normalizeCalendarTitle'
 import { normalizeCalendarVisibility } from '../../domain/calendar/services/normalizeCalendarVisibility'
+import { normalizeSlotCapacity } from '../../domain/calendar/services/normalizeSlotCapacity'
 import { normalizeTagNames } from '../../domain/tag/services/normalizeTagNames'
 import { createId } from '../../domain/shared/services/createId'
 
@@ -15,6 +16,7 @@ export type CreateCalendarInput = {
   endDate: string
   frequency: SlotFrequency
   visibility?: string
+  capacity?: string | number
   tags?: string
 }
 
@@ -36,6 +38,7 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
       startDate: input.startDate,
       endDate: input.endDate,
       visibility: normalizeCalendarVisibility(input.visibility),
+      capacity: normalizeSlotCapacity(input.capacity),
       status: 'published',
       createdAt: now,
       updatedAt: now,
@@ -43,9 +46,7 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
     generatedSlots.map((slot) => ({
       id: createId('slot'),
       calendarId: id,
-      userId: null,
       scheduledDate: slot.scheduledDate,
-      description: null,
       position: slot.position,
       createdAt: now,
       updatedAt: now,

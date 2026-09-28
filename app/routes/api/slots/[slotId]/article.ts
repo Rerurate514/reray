@@ -1,5 +1,5 @@
 import { createRoute } from 'honox/factory'
-import { upsertSlotArticle } from '../../../../application/calendar/upsertSlotArticle'
+import { updateSlotArticle } from '../../../../application/calendar/updateSlotArticle'
 import { requireCurrentUser } from '../../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../../infrastructure/providers/db/client'
@@ -18,7 +18,7 @@ export const POST = createRoute(async (c) => {
 
     const user = await requireCurrentUser(c)
     const body = await c.req.parseBody()
-    await upsertSlotArticle(createDrizzleCalendarRepository(createDb(c.env.DB)), {
+    await updateSlotArticle(createDrizzleCalendarRepository(createDb(c.env.DB)), {
       slotId,
       userId: user.id,
       title: String(body.title ?? ''),

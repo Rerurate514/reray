@@ -1,4 +1,5 @@
 import { RerayRule } from '../../shared/reray-rule/index'
+import { CapacityField } from '../capacity-field/index'
 import { CalendarBasicsFields } from '../fields/index'
 import { FrequencyFields } from '../frequency-fields/index'
 import { ScheduleFields } from '../schedule-fields/index'
@@ -16,6 +17,7 @@ export function CreateCalendarForm() {
       <VisibilityFields />
       <ScheduleFields />
       <FrequencyFields />
+      <CapacityField />
       <button class="bg-(--color-text) px-5 py-3 font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">作成する</button>
     </form>
   )

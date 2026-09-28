@@ -4,6 +4,7 @@ import { SlotRow } from '../../components/calendar-detail/slot-row'
 import type { Slot } from '../../components/calendar-detail/types'
 
 type Props = {
+  capacity: number
   calendarSlug: string
   calendarTitle: string
   currentUser: AuthenticatedUser
@@ -11,23 +12,31 @@ type Props = {
   slot: Slot
 }
 
-export default function CalendarSlotRow({ calendarSlug, calendarTitle, currentUser, isOwner, slot }: Props) {
+export default function CalendarSlotRow({ capacity, calendarSlug, calendarTitle, currentUser, isOwner, slot }: Props) {
   const [currentSlot, setCurrentSlot] = useState(slot)
 
   function markJoined() {
     setCurrentSlot({
       ...currentSlot,
-      userId: currentUser.id,
-      username: currentUser.username,
-      displayName: currentUser.displayName,
-      avatarUrl: currentUser.avatarUrl,
-      articleTitle: null,
-      articleUrl: null,
+      participants: [
+        ...currentSlot.participants,
+        {
+          entryId: '',
+          userId: currentUser.id,
+          username: currentUser.username,
+          displayName: currentUser.displayName,
+          avatarUrl: currentUser.avatarUrl,
+          description: null,
+          articleTitle: null,
+          articleUrl: null,
+        },
+      ],
     })
   }
 
   return (
     <SlotRow
+      capacity={capacity}
       calendarSlug={calendarSlug}
       calendarTitle={calendarTitle}
       currentUser={currentUser}

@@ -2,29 +2,27 @@ import type { CalendarRepository } from './repositories/calendarRepository'
 import { fetchArticleTitle } from '../../domain/article/services/fetchArticleTitle'
 import { normalizeArticleTitle } from '../../domain/article/services/normalizeArticleTitle'
 import { normalizeArticleUrl } from '../../domain/article/services/normalizeArticleUrl'
-import { createId } from '../../domain/shared/services/createId'
 
-export async function upsertSlotArticle(
+export async function updateSlotArticle(
   calendarRepository: CalendarRepository,
   input: { slotId: string; userId: string; title: string; url: string },
 ) {
-  const ownerId = await calendarRepository.findSlotOwner(input.slotId)
-  if (ownerId !== input.userId) {
-    throw new Error('Only the assigned user can edit this article')
+  const entry = await calendarRepository.findEntryByUser({ slotId: input.slotId, userId: input.userId })
+  if (!entry) {
+    throw new Error('Join the slot before registering an article')
   }
 
   const url = normalizeArticleUrl(input.url)
-  const duplicateSlotId = await calendarRepository.findArticleSlotIdByUrl(url)
-  if (duplicateSlotId && duplicateSlotId !== input.slotId) {
+  const duplicateEntryId = await calendarRepository.findArticleEntryIdByUrl(url)
+  if (duplicateEntryId && duplicateEntryId !== entry.id) {
     throw new Error('Article URL is already registered')
   }
 
   const fetchedTitle = input.title.trim() ? null : await fetchArticleTitle(url).catch(() => null)
   const title = normalizeArticleTitle(input.title.trim() || fetchedTitle || createFallbackArticleTitle(url))
 
-  await calendarRepository.upsertArticle({
-    id: createId('article'),
-    slotId: input.slotId,
+  await calendarRepository.updateSlotArticle({
+    entryId: entry.id,
     title,
     url,
     now: Date.now(),

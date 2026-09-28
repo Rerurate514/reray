@@ -1,10 +1,37 @@
-import { and, asc, eq, gt, isNull, lt, lte, gte, sql } from 'drizzle-orm'
+import { and, asc, eq, gt, lt, lte, gte, sql } from 'drizzle-orm'
 import type { CalendarRepository } from '../../../application/calendar/repositories/calendarRepository'
+import type { SlotParticipant } from '../../../application/calendar/dtos/slotParticipant'
 import type { NewCalendar } from '../../../domain/calendar/entities/calendar'
 import type { NewSlot } from '../../../domain/calendar/entities/slot'
 import type { Db } from '../../providers/db/client'
-import { articles, calendars, calendarTags, slots, tags, users } from '../../providers/db/schema'
+import { calendars, calendarTags, slotEntries, slots, tags } from '../../providers/db/schema'
 import { attachTagsToCalendar, listTagsByCalendarIds, replaceCalendarTags } from './calendarTagQueries'
+
+type SlotEntryRecord = {
+  id: string
+  userId: string | null
+  description: string | null
+  articleTitle: string | null
+  articleUrl: string | null
+  user: {
+    username: string
+    displayName: string
+    avatarUrl: string | null
+  } | null
+}
+
+function toParticipant(entry: SlotEntryRecord): SlotParticipant {
+  return {
+    entryId: entry.id,
+    userId: entry.userId,
+    username: entry.user?.username ?? null,
+    displayName: entry.user?.displayName ?? null,
+    avatarUrl: entry.user?.avatarUrl ?? null,
+    description: entry.description,
+    articleTitle: entry.articleTitle,
+    articleUrl: entry.articleUrl,
+  }
+}
 
 export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
   return {
@@ -29,80 +56,72 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         return null
       }
 
-      const slotRows = await db
-        .select({
-          id: slots.id,
-          scheduledDate: slots.scheduledDate,
-          position: slots.position,
-          description: slots.description,
-          userId: slots.userId,
-          username: users.username,
-          displayName: users.displayName,
-          avatarUrl: users.avatarUrl,
-          articleTitle: articles.title,
-          articleUrl: articles.url,
-        })
-        .from(slots)
-        .leftJoin(users, eq(slots.userId, users.id))
-        .leftJoin(articles, eq(articles.slotId, slots.id))
-        .where(eq(slots.calendarId, calendar.id))
-        .orderBy(asc(slots.position))
+      const slotRows = await db.query.slots.findMany({
+        where: eq(slots.calendarId, calendar.id),
+        orderBy: asc(slots.position),
+        with: {
+          entries: {
+            orderBy: asc(slotEntries.createdAt),
+            with: {
+              user: true,
+            },
+          },
+        },
+      })
 
       const calendarTagRows = await listTagsByCalendarIds(db, [calendar.id])
 
-      return { calendar: { ...calendar, tags: calendarTagRows[calendar.id] ?? [] }, slots: slotRows }
+      return {
+        calendar: { ...calendar, tags: calendarTagRows[calendar.id] ?? [] },
+        slots: slotRows.map((slot) => ({
+          id: slot.id,
+          scheduledDate: slot.scheduledDate,
+          position: slot.position,
+          participants: slot.entries.map(toParticipant),
+        })),
+      }
     },
 
     async findSlotDetail(calendarSlug, slotId) {
-      const rows = await db
-        .select({
-          calendarId: calendars.id,
-          calendarOwnerId: calendars.ownerId,
-          calendarSlug: calendars.slug,
-          calendarTitle: calendars.title,
-          calendarVisibility: calendars.visibility,
-          slotId: slots.id,
-          scheduledDate: slots.scheduledDate,
-          position: slots.position,
-          description: slots.description,
-          userId: slots.userId,
-          username: users.username,
-          displayName: users.displayName,
-          avatarUrl: users.avatarUrl,
-          articleTitle: articles.title,
-          articleUrl: articles.url,
-        })
-        .from(slots)
-        .innerJoin(calendars, eq(slots.calendarId, calendars.id))
-        .leftJoin(users, eq(slots.userId, users.id))
-        .leftJoin(articles, eq(articles.slotId, slots.id))
-        .where(and(eq(calendars.slug, calendarSlug), eq(slots.id, slotId)))
-        .limit(1)
+      const calendar = await db.query.calendars.findFirst({
+        columns: {
+          id: true,
+          ownerId: true,
+          slug: true,
+          title: true,
+          visibility: true,
+          capacity: true,
+        },
+        where: eq(calendars.slug, calendarSlug),
+      })
 
-      const detail = rows[0]
-      if (!detail) {
+      if (!calendar) {
+        return null
+      }
+
+      const slot = await db.query.slots.findFirst({
+        where: and(eq(slots.id, slotId), eq(slots.calendarId, calendar.id)),
+        with: {
+          entries: {
+            orderBy: asc(slotEntries.createdAt),
+            with: {
+              user: true,
+            },
+          },
+        },
+      })
+
+      if (!slot) {
         return null
       }
 
       return {
-        calendar: {
-          id: detail.calendarId,
-          ownerId: detail.calendarOwnerId,
-          slug: detail.calendarSlug,
-          title: detail.calendarTitle,
-          visibility: detail.calendarVisibility,
-        },
+        calendar,
         slot: {
-          id: detail.slotId,
-          scheduledDate: detail.scheduledDate,
-          position: detail.position,
-          description: detail.description,
-          userId: detail.userId,
-          username: detail.username,
-          displayName: detail.displayName,
-          avatarUrl: detail.avatarUrl,
-          articleTitle: detail.articleTitle,
-          articleUrl: detail.articleUrl,
+          id: slot.id,
+          scheduledDate: slot.scheduledDate,
+          position: slot.position,
+          participants: slot.entries.map(toParticipant),
         },
       }
     },
@@ -196,6 +215,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           title: input.title,
           description: input.description,
           visibility: input.visibility,
+          capacity: input.capacity,
           updatedAt: input.now,
         })
         .where(eq(calendars.id, input.calendarId))
@@ -213,85 +233,126 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       return result.meta.changes > 0
     },
 
-    async joinSlot(slotId, userId, now) {
-      const result = await db.update(slots).set({ userId, updatedAt: now }).where(and(eq(slots.id, slotId), isNull(slots.userId)))
-      return result.meta.changes > 0
-    },
-
-    async cancelSlot(slotId, userId, now) {
-      const result = await db.update(slots).set({ userId: null, updatedAt: now }).where(and(eq(slots.id, slotId), eq(slots.userId, userId)))
-      return result.meta.changes > 0
-    },
-
-    async clearSlot(slotId, now) {
-      const result = await db.update(slots).set({ userId: null, updatedAt: now }).where(and(eq(slots.id, slotId), sql`${slots.userId} IS NOT NULL`))
-      return result.meta.changes > 0
-    },
-
-    async findSlotOwner(slotId) {
+    async joinSlot(input) {
       const slot = await db.query.slots.findFirst({
-        columns: {
-          userId: true,
-        },
-        where: eq(slots.id, slotId),
+        columns: { id: true },
+        where: eq(slots.id, input.slotId),
       })
 
-      return slot?.userId ?? null
+      if (!slot) {
+        return 'slotNotFound'
+      }
+
+      const existing = await db.query.slotEntries.findFirst({
+        columns: { id: true },
+        where: and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)),
+      })
+
+      if (existing) {
+        return 'alreadyJoined'
+      }
+
+      const result = await db.run(sql`
+        insert into slot_entries (id, slot_id, user_id, description, article_title, article_url, created_at, updated_at)
+        select ${input.entryId}, ${input.slotId}, ${input.userId}, NULL, NULL, NULL, ${input.now}, ${input.now}
+        where (
+          select count(*) from slot_entries where slot_id = ${input.slotId}
+        ) < (
+          select capacity from calendars where id = (select calendar_id from slots where id = ${input.slotId})
+        )
+        and not exists (
+          select 1 from slot_entries where slot_id = ${input.slotId} and user_id = ${input.userId}
+        )
+      `)
+
+      const changes = result.meta?.changes ?? 0
+      if (changes > 0) {
+        return 'joined'
+      }
+
+      const raced = await db.query.slotEntries.findFirst({
+        columns: { id: true },
+        where: and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)),
+      })
+
+      return raced ? 'alreadyJoined' : 'full'
     },
 
-    async findSlotCalendarOwner(slotId) {
+    async cancelSlot(input) {
+      const result = await db
+        .delete(slotEntries)
+        .where(and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)))
+
+      return result.meta.changes > 0
+    },
+
+    async removeSlotEntry(input) {
+      const result = await db.delete(slotEntries).where(eq(slotEntries.id, input.entryId))
+      return result.meta.changes > 0
+    },
+
+    async findEntryOwner(entryId) {
+      const entry = await db.query.slotEntries.findFirst({
+        columns: { userId: true },
+        where: eq(slotEntries.id, entryId),
+      })
+
+      return entry?.userId ?? null
+    },
+
+    async findEntryCalendarOwner(entryId) {
       const row = await db
         .select({
           ownerId: calendars.ownerId,
         })
-        .from(slots)
+        .from(slotEntries)
+        .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .innerJoin(calendars, eq(slots.calendarId, calendars.id))
-        .where(eq(slots.id, slotId))
+        .where(eq(slotEntries.id, entryId))
         .limit(1)
 
       return row[0]?.ownerId ?? null
     },
 
-    async findArticleSlotIdByUrl(url) {
-      const article = await db.query.articles.findFirst({
-        columns: {
-          slotId: true,
-        },
-        where: eq(articles.url, url),
+    async findEntryByUser(input) {
+      const entry = await db.query.slotEntries.findFirst({
+        columns: { id: true },
+        where: and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)),
       })
 
-      return article?.slotId ?? null
+      return entry ?? null
     },
 
-    async upsertArticle(input) {
-      await db
-        .insert(articles)
-        .values({
-          id: input.id,
-          slotId: input.slotId,
-          title: input.title,
-          url: input.url,
-          createdAt: input.now,
+    async findArticleEntryIdByUrl(url) {
+      const entry = await db.query.slotEntries.findFirst({
+        columns: { id: true },
+        where: eq(slotEntries.articleUrl, url),
+      })
+
+      return entry?.id ?? null
+    },
+
+    async updateSlotArticle(input) {
+      const result = await db
+        .update(slotEntries)
+        .set({
+          articleTitle: input.title,
+          articleUrl: input.url,
           updatedAt: input.now,
         })
-        .onConflictDoUpdate({
-          target: articles.slotId,
-          set: {
-            title: input.title,
-            url: input.url,
-            updatedAt: input.now,
-          },
-        })
+        .where(eq(slotEntries.id, input.entryId))
+
+      return result.meta.changes > 0
     },
 
     async updateSlotDescription(input) {
       const result = await db
-        .update(slots)
+        .update(slotEntries)
         .set({
           description: input.description,
           updatedAt: input.now,
         })
-        .where(eq(slots.id, input.slotId))
+        .where(eq(slotEntries.id, input.entryId))
 
       return result.meta.changes > 0
     },
@@ -302,16 +363,16 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           id: slots.id,
           scheduledDate: slots.scheduledDate,
           position: slots.position,
-          description: slots.description,
+          description: slotEntries.description,
           calendarSlug: calendars.slug,
           calendarTitle: calendars.title,
-          articleTitle: articles.title,
-          articleUrl: articles.url,
+          articleTitle: slotEntries.articleTitle,
+          articleUrl: slotEntries.articleUrl,
         })
-        .from(slots)
+        .from(slotEntries)
+        .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .innerJoin(calendars, eq(slots.calendarId, calendars.id))
-        .leftJoin(articles, eq(articles.slotId, slots.id))
-        .where(eq(slots.userId, userId))
+        .where(eq(slotEntries.userId, userId))
         .orderBy(asc(slots.scheduledDate), asc(slots.position))
     },
 
@@ -321,16 +382,16 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           id: slots.id,
           scheduledDate: slots.scheduledDate,
           position: slots.position,
-          description: slots.description,
+          description: slotEntries.description,
           calendarSlug: calendars.slug,
           calendarTitle: calendars.title,
-          articleTitle: articles.title,
-          articleUrl: articles.url,
+          articleTitle: slotEntries.articleTitle,
+          articleUrl: slotEntries.articleUrl,
         })
-        .from(slots)
+        .from(slotEntries)
+        .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .innerJoin(calendars, eq(slots.calendarId, calendars.id))
-        .leftJoin(articles, eq(articles.slotId, slots.id))
-        .where(and(eq(slots.userId, userId), eq(calendars.visibility, 'public'), eq(calendars.status, 'published')))
+        .where(and(eq(slotEntries.userId, userId), eq(calendars.visibility, 'public'), eq(calendars.status, 'published')))
         .orderBy(asc(slots.scheduledDate), asc(slots.position))
     },
   }

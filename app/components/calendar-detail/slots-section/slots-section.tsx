@@ -5,12 +5,14 @@ import { SlotRow } from '../slot-row/index'
 import type { Slot } from '../types/index'
 
 export function SlotsSection({
+  capacity,
   calendarTitle,
   calendarSlug,
   currentUser,
   isOwner,
   slots,
 }: {
+  capacity: number
   calendarTitle: string
   calendarSlug: string
   currentUser: AuthenticatedUser | null
@@ -22,10 +24,10 @@ export function SlotsSection({
       <SectionNumber number="03 /" label="Slots" />
       <div class="border-b border-(--color-border)">
         {slots.map((slot) => (
-          currentUser && !slot.userId ? (
-            <CalendarSlotRow calendarSlug={calendarSlug} calendarTitle={calendarTitle} currentUser={currentUser} isOwner={isOwner} slot={slot} />
+          currentUser && slot.participants.length < capacity && !slot.participants.some((entry) => entry.userId === currentUser.id) ? (
+            <CalendarSlotRow capacity={capacity} calendarSlug={calendarSlug} calendarTitle={calendarTitle} currentUser={currentUser} isOwner={isOwner} slot={slot} />
           ) : (
-            <SlotRow calendarSlug={calendarSlug} calendarTitle={calendarTitle} currentUser={currentUser} isOwner={isOwner} slot={slot} />
+            <SlotRow capacity={capacity} calendarSlug={calendarSlug} calendarTitle={calendarTitle} currentUser={currentUser} isOwner={isOwner} slot={slot} />
           )
         ))}
       </div>
