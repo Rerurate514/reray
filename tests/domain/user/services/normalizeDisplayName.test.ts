@@ -12,7 +12,13 @@ describe("normalizeDisplayName", () => {
     );
   });
 
-  it("truncates to 40 characters", () => {
-    expect(normalizeDisplayName("a".repeat(50))).toBe("a".repeat(40));
+  it("accepts a display name of exactly 40 characters", () => {
+    expect(normalizeDisplayName("a".repeat(40))).toBe("a".repeat(40));
+  });
+
+  it("rejects a display name longer than 40 characters", () => {
+    expect(() => normalizeDisplayName("a".repeat(41))).toThrow(
+      "Display name must be 40 characters or fewer",
+    );
   });
 });

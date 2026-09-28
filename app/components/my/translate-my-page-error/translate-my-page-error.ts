@@ -19,6 +19,10 @@ export function translateMyPageError(message: string) {
     return "表示名を入力してください。";
   }
 
+  if (message === "Display name must be 40 characters or fewer") {
+    return "表示名は40文字以内で入力してください。";
+  }
+
   if (message === "Bio must be 200 characters or fewer") {
     return "自己紹介は200文字以内で入力してください。";
   }
