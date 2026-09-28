@@ -39,7 +39,6 @@ export async function createCalendar(calendarRepository: CalendarRepository, inp
       endDate: input.endDate,
       visibility: normalizeCalendarVisibility(input.visibility),
       capacity: normalizeSlotCapacity(input.capacity),
-      status: 'published',
       createdAt: now,
       updatedAt: now,
     },

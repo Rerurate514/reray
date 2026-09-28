@@ -1,6 +1,15 @@
 import type { Calendar } from '../types/index'
 
 export function OwnerBadge({ calendar }: { calendar: Calendar }) {
+  if (!calendar.owner) {
+    return (
+      <span class="mt-3 flex items-center gap-2 text-sm italic text-(--color-muted)">
+        <span class="grid h-6 w-6 place-items-center rounded-full border border-(--color-border-strong) text-xs not-italic">退</span>
+        <span>退会済み</span>
+      </span>
+    )
+  }
+
   return (
     <a class="mt-3 flex items-center gap-2 text-sm italic text-(--color-muted) hover:text-(--color-accent)" href={`/u/${calendar.owner.username}`}>
       {calendar.owner.avatarUrl ? (

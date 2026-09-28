@@ -23,7 +23,7 @@ export function createDiscordComponentEmbed({
   const summaryItems = [
     `**${nextOpenSlotText.label}**\n${nextOpenSlotText.value}`,
     createDateRangeText(calendar) ? `**期間**\n${createDateRangeText(calendar)}` : null,
-    `**作成者**\n${escapeDiscordMarkdown(calendar.owner.displayName)}`,
+    `**作成者**\n${escapeDiscordMarkdown(calendar.owner?.displayName ?? '退会済み')}`,
   ].filter(Boolean)
   const tagText = createTagText(calendar)
   const descriptionText = calendar.description?.trim()

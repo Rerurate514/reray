@@ -10,5 +10,5 @@ export type CalendarSummary = {
     username: string
     displayName: string
     avatarUrl: string | null
-  }
+  } | null
 }

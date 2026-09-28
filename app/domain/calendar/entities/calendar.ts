@@ -1,6 +1,5 @@
 import type { UserId } from '../../user/valueObjects/userId'
 import type { CalendarId } from '../valueObjects/calendarId'
-import type { CalendarStatus } from '../valueObjects/calendarStatus'
 import type { CalendarVisibility } from '../valueObjects/calendarVisibility'
 
 export type NewCalendar = {
@@ -13,7 +12,6 @@ export type NewCalendar = {
   endDate: string
   visibility: CalendarVisibility
   capacity: number
-  status: CalendarStatus
   createdAt: number
   updatedAt: number
 }

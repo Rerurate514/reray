@@ -127,7 +127,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
     },
 
     async listPublishedPublic(limit, filters) {
-      const conditions = [eq(calendars.visibility, 'public'), eq(calendars.status, 'published')]
+      const conditions = [eq(calendars.visibility, 'public')]
       const query = filters?.query?.trim()
       const tag = filters?.tag?.trim()
       const today = filters?.today
@@ -186,7 +186,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
 
     async listPublishedPublicByOwner(userId) {
       const calendarRows = await db.query.calendars.findMany({
-        where: and(eq(calendars.ownerId, userId), eq(calendars.visibility, 'public'), eq(calendars.status, 'published')),
+        where: and(eq(calendars.ownerId, userId), eq(calendars.visibility, 'public')),
         orderBy: (table, { desc }) => [desc(table.createdAt)],
         with: {
           owner: true,
@@ -400,7 +400,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         .from(slotEntries)
         .innerJoin(slots, eq(slotEntries.slotId, slots.id))
         .innerJoin(calendars, eq(slots.calendarId, calendars.id))
-        .where(and(eq(slotEntries.userId, userId), eq(calendars.visibility, 'public'), eq(calendars.status, 'published')))
+        .where(and(eq(slotEntries.userId, userId), eq(calendars.visibility, 'public')))
         .orderBy(asc(slots.scheduledDate), asc(slots.position))
     },
   }

@@ -6,9 +6,7 @@ export const calendars = sqliteTable(
   'calendars',
   {
     id: text('id').primaryKey(),
-    ownerId: text('owner_id')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
+    ownerId: text('owner_id').references(() => users.id, { onDelete: 'set null' }),
     slug: text('slug').notNull(),
     title: text('title').notNull(),
     description: text('description'),
@@ -16,7 +14,6 @@ export const calendars = sqliteTable(
     endDate: text('end_date'),
     visibility: text('visibility').$type<CalendarVisibility>().notNull(),
     capacity: integer('capacity').notNull().default(1),
-    status: text('status').notNull(),
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at').notNull(),
   },

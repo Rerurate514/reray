@@ -3,7 +3,7 @@ import type { SlotParticipant } from './slotParticipant'
 export type CalendarDetail = {
   calendar: {
     id: string
-    ownerId: string
+    ownerId: string | null
     slug: string
     title: string
     description: string | null
@@ -16,7 +16,7 @@ export type CalendarDetail = {
       username: string
       displayName: string
       avatarUrl: string | null
-    }
+    } | null
   }
   slots: Array<{
     id: string
