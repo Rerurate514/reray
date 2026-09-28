@@ -18,6 +18,10 @@ export async function getCurrentUser(c: Context) {
   return syncAuthenticatedUser(createDrizzleUserRepository(createDb(c.env.DB)), claims)
 }
 
+export function getCurrentIdToken(c: Context) {
+  return getCookie(c, 'reray_id_token') ?? null
+}
+
 export async function requireCurrentUser(c: Context) {
   const user = await getCurrentUser(c)
   if (!user) {

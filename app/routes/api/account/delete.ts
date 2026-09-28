@@ -1,7 +1,9 @@
 import { deleteCookie } from 'hono/cookie'
 import { createRoute } from 'honox/factory'
 import { deleteAccount } from '../../../application/user/deleteAccount'
-import { requireCurrentUser } from '../../../infrastructure/auth/currentUser'
+import { UserFacingError } from '../../../domain/shared/errors/userFacingError'
+import { getCurrentIdToken, requireCurrentUser } from '../../../infrastructure/auth/currentUser'
+import { deleteFirebaseAccount } from '../../../infrastructure/auth/deleteFirebaseAccount'
 import { createDb } from '../../../infrastructure/providers/db/client'
 import { presentError } from '../../../infrastructure/http/presentError'
 import { createDrizzleUserRepository } from '../../../infrastructure/user/repositories/drizzleUserRepository'
@@ -13,6 +15,14 @@ export const POST = createRoute(async (c) => {
 
   try {
     const user = await requireCurrentUser(c)
+    const idToken = getCurrentIdToken(c)
+    const apiKey = c.env.PUBLIC_FIREBASE_API_KEY
+
+    if (!idToken || !apiKey) {
+      throw new UserFacingError('authenticationRequired', 'Please sign in again before deleting your account')
+    }
+
+    await deleteFirebaseAccount(apiKey, idToken)
     await deleteAccount(createDrizzleUserRepository(createDb(c.env.DB)), {
       userId: user.id,
     })
