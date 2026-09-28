@@ -1,54 +1,61 @@
-import type { GeneratedSlot } from '../entities/slot'
-import type { SlotFrequency } from '../valueObjects/slotFrequency'
-import { UserFacingError } from '../../shared/errors/userFacingError'
+import { UserFacingError } from "../../shared/errors/userFacingError";
+import type { GeneratedSlot } from "../entities/slot";
+import type { SlotFrequency } from "../valueObjects/slotFrequency";
 
-const maxSlotCount = 366
+const maxSlotCount = 366;
 
-export function generateSlots(startDate: string, endDate: string, frequency: SlotFrequency) {
-  const start = parseDate(startDate)
-  const end = parseDate(endDate)
+export function generateSlots(
+  startDate: string,
+  endDate: string,
+  frequency: SlotFrequency,
+) {
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
 
   if (!start || !end || start > end) {
-    throw new UserFacingError('validation', 'Invalid date range')
+    throw new UserFacingError("validation", "Invalid date range");
   }
 
-  const slots: GeneratedSlot[] = []
-  const current = new Date(start)
+  const slots: GeneratedSlot[] = [];
+  const current = new Date(start);
 
   while (current <= end) {
-    const day = current.getUTCDay()
-    const isWeekday = day >= 1 && day <= 5
+    const day = current.getUTCDay();
+    const isWeekday = day >= 1 && day <= 5;
 
-    if (frequency === 'daily' || isWeekday) {
+    if (frequency === "daily" || isWeekday) {
       if (slots.length >= maxSlotCount) {
-        throw new UserFacingError('validation', `Too many slots: maximum is ${maxSlotCount}`)
+        throw new UserFacingError(
+          "validation",
+          `Too many slots: maximum is ${maxSlotCount}`,
+        );
       }
 
       slots.push({
         scheduledDate: formatDate(current),
         position: slots.length + 1,
-      })
+      });
     }
 
-    current.setUTCDate(current.getUTCDate() + 1)
+    current.setUTCDate(current.getUTCDate() + 1);
   }
 
   if (slots.length === 0) {
-    throw new UserFacingError('validation', 'No slots generated')
+    throw new UserFacingError("validation", "No slots generated");
   }
 
-  return slots
+  return slots;
 }
 
 function parseDate(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return null
+    return null;
   }
 
-  const date = new Date(`${value}T00:00:00.000Z`)
-  return Number.isNaN(date.getTime()) ? null : date
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
 function formatDate(date: Date) {
-  return date.toISOString().slice(0, 10)
+  return date.toISOString().slice(0, 10);
 }

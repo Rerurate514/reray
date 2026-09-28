@@ -1,17 +1,28 @@
-import type { CalendarSummary } from '../../../application/calendar/dtos/calendarSummary'
-import { EmptyState } from '../empty-state/index'
-import { MyCalendarCard } from '../my-calendar-card/index'
+import type { CalendarSummary } from "../../../application/calendar/dtos/calendarSummary";
+import { EmptyState } from "../empty-state/index";
+import { MyCalendarCard } from "../my-calendar-card/index";
 
-export function MyCalendarsSection({ calendars }: { calendars: CalendarSummary[] }) {
+export function MyCalendarsSection({
+  calendars,
+}: {
+  calendars: CalendarSummary[];
+}) {
   return (
     <section class="mt-8">
       <div class="flex items-center justify-between gap-4 border-b border-(--color-border) pb-3">
         <h2 class="text-lg font-semibold tracking-tight">作成したリレー</h2>
-        <a class="text-sm font-semibold text-(--color-accent) hover:text-(--color-accent-hover)" href="/new">新規作成</a>
+        <a
+          class="text-sm font-semibold text-(--color-accent) hover:text-(--color-accent-hover)"
+          href="/new"
+        >
+          新規作成
+        </a>
       </div>
       {calendars.length > 0 ? (
         <div class="mt-4 grid gap-4 sm:grid-cols-2">
-          {calendars.map((calendar) => <MyCalendarCard calendar={calendar} />)}
+          {calendars.map((calendar) => (
+            <MyCalendarCard calendar={calendar} />
+          ))}
         </div>
       ) : (
         <EmptyState
@@ -23,5 +34,5 @@ export function MyCalendarsSection({ calendars }: { calendars: CalendarSummary[]
         />
       )}
     </section>
-  )
+  );
 }

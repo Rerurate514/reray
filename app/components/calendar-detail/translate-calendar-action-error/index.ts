@@ -1,1 +1,1 @@
-export * from './translate-calendar-action-error'
+export * from "./translate-calendar-action-error";

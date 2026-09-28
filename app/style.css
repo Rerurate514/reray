@@ -1,8 +1,8 @@
-@import 'tailwindcss' source('../app');
+@import "tailwindcss" source('../app');
 
 @font-face {
-  font-family: 'Reray Futura';
-  src: url('./assets/fonts/Futura Medium.otf') format('opentype');
+  font-family: "Reray Futura";
+  src: url("./assets/fonts/Futura Medium.otf") format("opentype");
   font-display: swap;
   font-weight: 500;
 }
@@ -11,8 +11,8 @@
   --color-page: #f6efe2;
   --color-surface: #f6efe2;
   --color-surface-muted: #efe2ce;
-  --color-border: rgba(32, 25, 25, .42);
-  --color-border-strong: rgba(32, 25, 25, .72);
+  --color-border: rgba(32, 25, 25, 0.42);
+  --color-border-strong: rgba(32, 25, 25, 0.72);
   --color-text: #201919;
   --color-muted: #6f665f;
   --color-subtle: #887b70;
@@ -34,8 +34,10 @@ body {
   overflow-x: clip;
   background: var(--color-page);
   color: var(--color-text);
-  font-family: Futura, 'Trebuchet MS', 'Helvetica Neue', 'Yu Gothic', 'YuGothic', 'Hiragino Sans', sans-serif;
-  font-feature-settings: 'palt';
+  font-family:
+    Futura, "Trebuchet MS", "Helvetica Neue", "Yu Gothic", "YuGothic",
+    "Hiragino Sans", sans-serif;
+  font-feature-settings: "palt";
 }
 
 input,

@@ -1,1 +1,1 @@
-export * from './utc-date'
+export * from "./utc-date";

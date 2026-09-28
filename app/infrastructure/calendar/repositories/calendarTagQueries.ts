@@ -1,44 +1,57 @@
-import { asc, eq, inArray } from 'drizzle-orm'
-import { createId } from '../../../domain/shared/services/createId'
-import type { Db } from '../../providers/db/client'
-import { calendarTags, tags } from '../../providers/db/schema'
+import { asc, eq, inArray } from "drizzle-orm";
+import { createId } from "../../../domain/shared/services/createId";
+import type { Db } from "../../providers/db/client";
+import { calendarTags, tags } from "../../providers/db/schema";
 
-export async function attachTagsToCalendar(db: Db, calendarId: string, tagNames: string[], now: number) {
+export async function attachTagsToCalendar(
+  db: Db,
+  calendarId: string,
+  tagNames: string[],
+  now: number,
+) {
   if (tagNames.length === 0) {
-    return
+    return;
   }
 
   for (const name of tagNames) {
     await db
       .insert(tags)
       .values({
-        id: createId('tag'),
+        id: createId("tag"),
         name,
         createdAt: now,
         updatedAt: now,
       })
-      .onConflictDoNothing({ target: tags.name })
+      .onConflictDoNothing({ target: tags.name });
   }
 
-  const tagRows = await db.select({ id: tags.id }).from(tags).where(inArray(tags.name, tagNames))
+  const tagRows = await db
+    .select({ id: tags.id })
+    .from(tags)
+    .where(inArray(tags.name, tagNames));
   if (tagRows.length === 0) {
-    return
+    return;
   }
 
   await db
     .insert(calendarTags)
     .values(tagRows.map((tag) => ({ calendarId, tagId: tag.id })))
-    .onConflictDoNothing()
+    .onConflictDoNothing();
 }
 
-export async function replaceCalendarTags(db: Db, calendarId: string, tagNames: string[], now: number) {
-  await db.delete(calendarTags).where(eq(calendarTags.calendarId, calendarId))
-  await attachTagsToCalendar(db, calendarId, tagNames, now)
+export async function replaceCalendarTags(
+  db: Db,
+  calendarId: string,
+  tagNames: string[],
+  now: number,
+) {
+  await db.delete(calendarTags).where(eq(calendarTags.calendarId, calendarId));
+  await attachTagsToCalendar(db, calendarId, tagNames, now);
 }
 
 export async function listTagsByCalendarIds(db: Db, calendarIds: string[]) {
   if (calendarIds.length === 0) {
-    return {}
+    return {};
   }
 
   const rows = await db
@@ -49,11 +62,14 @@ export async function listTagsByCalendarIds(db: Db, calendarIds: string[]) {
     .from(calendarTags)
     .innerJoin(tags, eq(calendarTags.tagId, tags.id))
     .where(inArray(calendarTags.calendarId, calendarIds))
-    .orderBy(asc(tags.name))
+    .orderBy(asc(tags.name));
 
-  return rows.reduce<Record<string, Array<{ name: string }>>>((grouped, row) => {
-    grouped[row.calendarId] ??= []
-    grouped[row.calendarId].push({ name: row.name })
-    return grouped
-  }, {})
+  return rows.reduce<Record<string, Array<{ name: string }>>>(
+    (grouped, row) => {
+      grouped[row.calendarId] ??= [];
+      grouped[row.calendarId].push({ name: row.name });
+      return grouped;
+    },
+    {},
+  );
 }

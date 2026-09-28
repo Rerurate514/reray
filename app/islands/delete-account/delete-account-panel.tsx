@@ -3,9 +3,9 @@ export function DeleteAccountPanel({
   isDeleting,
   onDelete,
 }: {
-  error: string | null
-  isDeleting: boolean
-  onDelete: () => void
+  error: string | null;
+  isDeleting: boolean;
+  onDelete: () => void;
 }) {
   return (
     <div class="mt-10 border-t border-(--color-border) pt-6">
@@ -22,10 +22,12 @@ export function DeleteAccountPanel({
           disabled={isDeleting}
           onClick={onDelete}
         >
-          {isDeleting ? '削除中' : 'アカウントを削除'}
+          {isDeleting ? "削除中" : "アカウントを削除"}
         </button>
       </div>
-      {error ? <p class="mt-3 text-sm font-semibold text-(--color-red)">{error}</p> : null}
+      {error ? (
+        <p class="mt-3 text-sm font-semibold text-(--color-red)">{error}</p>
+      ) : null}
     </div>
-  )
+  );
 }

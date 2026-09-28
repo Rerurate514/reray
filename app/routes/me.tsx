@@ -1,3 +1,3 @@
-import { createRoute } from 'honox/factory'
+import { createRoute } from "honox/factory";
 
-export default createRoute((c) => c.redirect('/my-schedule'))
+export default createRoute((c) => c.redirect("/my-schedule"));

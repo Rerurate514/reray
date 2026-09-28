@@ -1,74 +1,98 @@
-import { useState } from 'hono/jsx'
+import { useState } from "hono/jsx";
 
 type Props = {
-  className: string
-  label: string
-  onJoined?: () => void
-  slotId: string
-  slotUrl?: string
-}
+  className: string;
+  label: string;
+  onJoined?: () => void;
+  slotId: string;
+  slotUrl?: string;
+};
 
-type JoinState = 'idle' | 'joining' | 'joined' | 'error'
+type JoinState = "idle" | "joining" | "joined" | "error";
 
-export default function JoinSlotButton({ className, label, onJoined, slotId, slotUrl }: Props) {
-  const [state, setState] = useState<JoinState>('idle')
-  const [errorMessage, setErrorMessage] = useState('')
+export default function JoinSlotButton({
+  className,
+  label,
+  onJoined,
+  slotId,
+  slotUrl,
+}: Props) {
+  const [state, setState] = useState<JoinState>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function join() {
-    if (state === 'joining' || state === 'joined') {
-      return
+    if (state === "joining" || state === "joined") {
+      return;
     }
 
-    setState('joining')
+    setState("joining");
     const response = await fetch(`/api/slots/${slotId}/join`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        accept: 'application/json',
+        accept: "application/json",
       },
-    })
+    });
 
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as { error?: string } | null
-      setErrorMessage(translateJoinError(body?.error))
-      setState('error')
-      return
+      const body = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+      setErrorMessage(translateJoinError(body?.error));
+      setState("error");
+      return;
     }
 
-    setState('joined')
-    onJoined?.()
+    setState("joined");
+    onJoined?.();
   }
 
-  if (state === 'joined') {
+  if (state === "joined") {
     return (
       <span class="inline-flex flex-wrap items-center gap-2 text-sm font-semibold text-(--color-muted)">
         参加済みです
-        {slotUrl ? <a class="text-(--color-accent) hover:text-(--color-accent-hover)" href={slotUrl}>枠ページへ</a> : null}
+        {slotUrl ? (
+          <a
+            class="text-(--color-accent) hover:text-(--color-accent-hover)"
+            href={slotUrl}
+          >
+            枠ページへ
+          </a>
+        ) : null}
       </span>
-    )
+    );
   }
 
   return (
     <span class="inline-grid gap-1">
-      <button class={className} type="button" disabled={state === 'joining'} onClick={join}>
-        {state === 'joining' ? '参加中...' : label}
+      <button
+        class={className}
+        type="button"
+        disabled={state === "joining"}
+        onClick={join}
+      >
+        {state === "joining" ? "参加中..." : label}
       </button>
-      {state === 'error' ? <span class="text-xs font-semibold text-(--color-red)">{errorMessage}</span> : null}
+      {state === "error" ? (
+        <span class="text-xs font-semibold text-(--color-red)">
+          {errorMessage}
+        </span>
+      ) : null}
     </span>
-  )
+  );
 }
 
 function translateJoinError(error: unknown) {
-  if (error === 'Slot is full') {
-    return 'この枠は満員です。'
+  if (error === "Slot is full") {
+    return "この枠は満員です。";
   }
 
-  if (error === 'You have already joined this slot') {
-    return 'すでにこの枠に参加しています。'
+  if (error === "You have already joined this slot") {
+    return "すでにこの枠に参加しています。";
   }
 
-  if (error === 'Slot not found') {
-    return 'この枠は見つかりませんでした。'
+  if (error === "Slot not found") {
+    return "この枠は見つかりませんでした。";
   }
 
-  return '参加できませんでした。ページを更新して確認してください。'
+  return "参加できませんでした。ページを更新して確認してください。";
 }

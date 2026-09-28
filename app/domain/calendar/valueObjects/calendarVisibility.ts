@@ -1,1 +1,1 @@
-export type CalendarVisibility = 'public' | 'private'
+export type CalendarVisibility = "public" | "private";

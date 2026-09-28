@@ -1,6 +1,6 @@
-import type { MySlotSummary } from '../../../application/calendar/dtos/mySlotSummary'
-import { EmptyState } from '../empty-state/index'
-import { MySlotItem } from '../my-slot-item/index'
+import type { MySlotSummary } from "../../../application/calendar/dtos/mySlotSummary";
+import { EmptyState } from "../empty-state/index";
+import { MySlotItem } from "../my-slot-item/index";
 
 export function MySlotsSection({ slots }: { slots: MySlotSummary[] }) {
   return (
@@ -10,7 +10,9 @@ export function MySlotsSection({ slots }: { slots: MySlotSummary[] }) {
       </div>
       {slots.length > 0 ? (
         <div class="mt-8 border-b border-(--color-border)">
-          {slots.map((slot) => <MySlotItem slot={slot} />)}
+          {slots.map((slot) => (
+            <MySlotItem slot={slot} />
+          ))}
         </div>
       ) : (
         <EmptyState
@@ -22,5 +24,5 @@ export function MySlotsSection({ slots }: { slots: MySlotSummary[] }) {
         />
       )}
     </section>
-  )
+  );
 }

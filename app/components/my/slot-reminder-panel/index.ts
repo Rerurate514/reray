@@ -1,1 +1,1 @@
-export * from './slot-reminder-panel'
+export * from "./slot-reminder-panel";

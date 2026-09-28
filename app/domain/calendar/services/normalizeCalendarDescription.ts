@@ -1,16 +1,19 @@
-import { UserFacingError } from '../../shared/errors/userFacingError'
+import { UserFacingError } from "../../shared/errors/userFacingError";
 
-const maxDescriptionLength = 2000
+const maxDescriptionLength = 2000;
 
 export function normalizeCalendarDescription(description?: string) {
-  const normalized = description?.trim()
+  const normalized = description?.trim();
   if (!normalized) {
-    return null
+    return null;
   }
 
   if (normalized.length > maxDescriptionLength) {
-    throw new UserFacingError('validation', `Description must be ${maxDescriptionLength} characters or fewer`)
+    throw new UserFacingError(
+      "validation",
+      `Description must be ${maxDescriptionLength} characters or fewer`,
+    );
   }
 
-  return normalized
+  return normalized;
 }

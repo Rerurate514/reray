@@ -1,39 +1,42 @@
-import { UserFacingError } from '../../shared/errors/userFacingError'
+import { UserFacingError } from "../../shared/errors/userFacingError";
 
-const MAX_TAGS = 8
-const MAX_TAG_LENGTH = 24
+const MAX_TAGS = 8;
+const MAX_TAG_LENGTH = 24;
 
 export function normalizeTagNames(input: string | string[] | undefined) {
-  const values = Array.isArray(input) ? input : String(input ?? '').split(',')
-  const tags: string[] = []
-  const seen = new Set<string>()
+  const values = Array.isArray(input) ? input : String(input ?? "").split(",");
+  const tags: string[] = [];
+  const seen = new Set<string>();
 
   for (const value of values) {
-    const name = normalizeTagName(value)
+    const name = normalizeTagName(value);
     if (!name || seen.has(name)) {
-      continue
+      continue;
     }
 
-    tags.push(name)
-    seen.add(name)
+    tags.push(name);
+    seen.add(name);
 
     if (tags.length >= MAX_TAGS) {
-      break
+      break;
     }
   }
 
-  return tags
+  return tags;
 }
 
 function normalizeTagName(input: string) {
-  const name = input.trim().replace(/^#/, '').replace(/\s+/g, ' ')
+  const name = input.trim().replace(/^#/, "").replace(/\s+/g, " ");
   if (!name) {
-    return null
+    return null;
   }
 
   if (name.length > MAX_TAG_LENGTH) {
-    throw new UserFacingError('validation', `Tag must be ${MAX_TAG_LENGTH} characters or less`)
+    throw new UserFacingError(
+      "validation",
+      `Tag must be ${MAX_TAG_LENGTH} characters or less`,
+    );
   }
 
-  return name.toLowerCase()
+  return name.toLowerCase();
 }

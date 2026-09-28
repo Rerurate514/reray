@@ -1,1 +1,1 @@
-export * from './translate-create-error'
+export * from "./translate-create-error";

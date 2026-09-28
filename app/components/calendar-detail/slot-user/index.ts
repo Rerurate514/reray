@@ -1,1 +1,1 @@
-export * from './slot-user'
+export * from "./slot-user";

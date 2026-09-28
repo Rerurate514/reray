@@ -1,43 +1,56 @@
-import { createRoute } from 'honox/factory'
-import { getPublicFirebaseConfig } from '../application/auth/firebaseConfig'
-import { createCalendar } from '../application/calendar/createCalendar'
-import { NewCalendarPage } from '../components/new-calendar/page'
-import { requireCurrentUser } from '../infrastructure/auth/currentUser'
-import { createDrizzleCalendarRepository } from '../infrastructure/calendar/repositories/drizzleCalendarRepository'
-import { presentError } from '../infrastructure/http/presentError'
-import { redirectBackWithError } from '../infrastructure/http/redirectBackWithError'
-import { createDb } from '../infrastructure/providers/db/client'
+import { createRoute } from "honox/factory";
+import { getPublicFirebaseConfig } from "../application/auth/firebaseConfig";
+import { createCalendar } from "../application/calendar/createCalendar";
+import { NewCalendarPage } from "../components/new-calendar/page";
+import { requireCurrentUser } from "../infrastructure/auth/currentUser";
+import { createDrizzleCalendarRepository } from "../infrastructure/calendar/repositories/drizzleCalendarRepository";
+import { presentError } from "../infrastructure/http/presentError";
+import { redirectBackWithError } from "../infrastructure/http/redirectBackWithError";
+import { createDb } from "../infrastructure/providers/db/client";
 
 export const POST = createRoute(async (c) => {
   if (!c.env.DB) {
-    return c.json({ error: 'database_not_configured' }, 500)
+    return c.json({ error: "database_not_configured" }, 500);
   }
 
   try {
-    const user = await requireCurrentUser(c)
-    const body = await c.req.parseBody()
-    const result = await createCalendar(createDrizzleCalendarRepository(createDb(c.env.DB)), {
-      ownerId: user.id,
-      title: String(body.title ?? ''),
-      description: String(body.description ?? ''),
-      startDate: String(body.startDate ?? ''),
-      endDate: String(body.endDate ?? ''),
-      frequency: body.frequency === 'weekdays' ? 'weekdays' : 'daily',
-      visibility: String(body.visibility ?? ''),
-      capacity: String(body.capacity ?? ''),
-      tags: String(body.tags ?? ''),
-    })
+    const user = await requireCurrentUser(c);
+    const body = await c.req.parseBody();
+    const result = await createCalendar(
+      createDrizzleCalendarRepository(createDb(c.env.DB)),
+      {
+        ownerId: user.id,
+        title: String(body.title ?? ""),
+        description: String(body.description ?? ""),
+        startDate: String(body.startDate ?? ""),
+        endDate: String(body.endDate ?? ""),
+        frequency: body.frequency === "weekdays" ? "weekdays" : "daily",
+        visibility: String(body.visibility ?? ""),
+        capacity: String(body.capacity ?? ""),
+        tags: String(body.tags ?? ""),
+      },
+    );
 
-    return c.redirect(`/c/${result.slug}`)
+    return c.redirect(`/c/${result.slug}`);
   } catch (error) {
-    const { message } = presentError(error, 'Calendar creation failed')
-    return redirectBackWithError(c.req.url, c.req.header('referer'), 'create_error', message)
+    const { message } = presentError(error, "Calendar creation failed");
+    return redirectBackWithError(
+      c.req.url,
+      c.req.header("referer"),
+      "create_error",
+      message,
+    );
   }
-})
+});
 
 export default createRoute((c) => {
-  const firebaseConfig = getPublicFirebaseConfig(c.env)
-  const createError = c.req.query('create_error')
+  const firebaseConfig = getPublicFirebaseConfig(c.env);
+  const createError = c.req.query("create_error");
 
-  return c.render(<NewCalendarPage createError={createError} firebaseConfig={firebaseConfig} />)
-})
+  return c.render(
+    <NewCalendarPage
+      createError={createError}
+      firebaseConfig={firebaseConfig}
+    />,
+  );
+});

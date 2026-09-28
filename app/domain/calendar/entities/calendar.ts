@@ -1,17 +1,17 @@
-import type { UserId } from '../../user/valueObjects/userId'
-import type { CalendarId } from '../valueObjects/calendarId'
-import type { CalendarVisibility } from '../valueObjects/calendarVisibility'
+import type { UserId } from "../../user/valueObjects/userId";
+import type { CalendarId } from "../valueObjects/calendarId";
+import type { CalendarVisibility } from "../valueObjects/calendarVisibility";
 
 export type NewCalendar = {
-  id: CalendarId
-  ownerId: UserId
-  slug: string
-  title: string
-  description: string | null
-  startDate: string
-  endDate: string
-  visibility: CalendarVisibility
-  capacity: number
-  createdAt: number
-  updatedAt: number
-}
+  id: CalendarId;
+  ownerId: UserId;
+  slug: string;
+  title: string;
+  description: string | null;
+  startDate: string;
+  endDate: string;
+  visibility: CalendarVisibility;
+  capacity: number;
+  createdAt: number;
+  updatedAt: number;
+};
