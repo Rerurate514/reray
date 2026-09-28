@@ -1,4 +1,5 @@
 import type { CalendarRepository } from './repositories/calendarRepository'
+import { UserFacingError } from '../../domain/shared/errors/userFacingError'
 import { fetchArticleTitle } from '../../domain/article/services/fetchArticleTitle'
 import { normalizeArticleTitle } from '../../domain/article/services/normalizeArticleTitle'
 import { normalizeArticleUrl } from '../../domain/article/services/normalizeArticleUrl'
@@ -9,7 +10,7 @@ export async function updateSlotArticle(
 ) {
   const entry = await calendarRepository.findEntryByUser({ slotId: input.slotId, userId: input.userId })
   if (!entry) {
-    throw new Error('Join the slot before registering an article')
+    throw new UserFacingError('validation', 'Join the slot before registering an article')
   }
 
   const url = normalizeArticleUrl(input.url)
@@ -18,7 +19,7 @@ export async function updateSlotArticle(
     url,
   })
   if (duplicateEntryId && duplicateEntryId !== entry.id) {
-    throw new Error('Article URL is already registered')
+    throw new UserFacingError('conflict', 'Article URL is already registered')
   }
 
   const fetchedTitle = input.title.trim() ? null : await fetchArticleTitle(url).catch(() => null)

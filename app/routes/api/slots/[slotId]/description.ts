@@ -2,6 +2,7 @@ import { createRoute } from 'honox/factory'
 import { updateSlotDescription } from '../../../../application/calendar/updateSlotDescription'
 import { requireCurrentUser } from '../../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
+import { presentError } from '../../../../infrastructure/http/presentError'
 import { redirectBackWithError } from '../../../../infrastructure/http/redirectBackWithError'
 import { createDb } from '../../../../infrastructure/providers/db/client'
 
@@ -28,7 +29,7 @@ export const POST = createRoute(async (c) => {
     url.searchParams.set('description_saved', '1')
     return Response.redirect(url.toString(), 303)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to save slot notice'
+    const { message } = presentError(error, 'Failed to save slot notice')
     return redirectBackWithError(c.req.url, c.req.header('referer'), 'description_error', message)
   }
 })

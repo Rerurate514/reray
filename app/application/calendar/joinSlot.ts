@@ -1,4 +1,5 @@
 import { createId } from '../../domain/shared/services/createId'
+import { UserFacingError } from '../../domain/shared/errors/userFacingError'
 import type { CalendarRepository } from './repositories/calendarRepository'
 
 export async function joinSlot(calendarRepository: CalendarRepository, input: { slotId: string; userId: string }) {
@@ -14,12 +15,12 @@ export async function joinSlot(calendarRepository: CalendarRepository, input: { 
   }
 
   if (outcome === 'slotNotFound') {
-    throw new Error('Slot not found')
+    throw new UserFacingError('notFound', 'Slot not found')
   }
 
   if (outcome === 'alreadyJoined') {
-    throw new Error('You have already joined this slot')
+    throw new UserFacingError('conflict', 'You have already joined this slot')
   }
 
-  throw new Error('Slot is full')
+  throw new UserFacingError('conflict', 'Slot is full')
 }

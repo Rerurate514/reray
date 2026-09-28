@@ -3,6 +3,7 @@ import { updateCalendar } from '../../../../application/calendar/updateCalendar'
 import { requireCurrentUser } from '../../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../../infrastructure/providers/db/client'
+import { presentError } from '../../../../infrastructure/http/presentError'
 import { redirectBackWithError } from '../../../../infrastructure/http/redirectBackWithError'
 
 export const POST = createRoute(async (c) => {
@@ -33,7 +34,7 @@ export const POST = createRoute(async (c) => {
     url.searchParams.delete('calendar_error')
     return c.redirect(url.toString(), 303)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Calendar update failed'
+    const { message } = presentError(error, 'Calendar update failed')
     return redirectBackWithError(c.req.url, c.req.header('referer'), 'calendar_error', message)
   }
 })

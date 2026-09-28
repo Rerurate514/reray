@@ -1,3 +1,4 @@
+import { UserFacingError } from '../../domain/shared/errors/userFacingError'
 import { normalizeDisplayName } from '../../domain/user/services/normalizeDisplayName'
 import type { UserRepository } from './repositories/userRepository'
 
@@ -9,7 +10,7 @@ export async function updateProfile(userRepository: UserRepository, input: { use
   })
 
   if (!user) {
-    throw new Error('Account not found')
+    throw new UserFacingError('notFound', 'Account not found')
   }
 
   return user

@@ -3,6 +3,7 @@ import { updateSlotArticle } from '../../../../application/calendar/updateSlotAr
 import { requireCurrentUser } from '../../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../../infrastructure/providers/db/client'
+import { presentError } from '../../../../infrastructure/http/presentError'
 import { redirectBackWithError } from '../../../../infrastructure/http/redirectBackWithError'
 
 export const POST = createRoute(async (c) => {
@@ -27,7 +28,7 @@ export const POST = createRoute(async (c) => {
 
     return c.redirect(c.req.header('referer') ?? '/my-schedule')
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to save article'
+    const { message } = presentError(error, 'Failed to save article')
     return redirectBackWithError(c.req.url, c.req.header('referer'), 'article_error', message)
   }
 })

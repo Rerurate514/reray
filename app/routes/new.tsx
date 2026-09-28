@@ -4,6 +4,7 @@ import { createCalendar } from '../application/calendar/createCalendar'
 import { NewCalendarPage } from '../components/new-calendar/page'
 import { requireCurrentUser } from '../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../infrastructure/calendar/repositories/drizzleCalendarRepository'
+import { presentError } from '../infrastructure/http/presentError'
 import { redirectBackWithError } from '../infrastructure/http/redirectBackWithError'
 import { createDb } from '../infrastructure/providers/db/client'
 
@@ -29,7 +30,7 @@ export const POST = createRoute(async (c) => {
 
     return c.redirect(`/c/${result.slug}`)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Calendar creation failed'
+    const { message } = presentError(error, 'Calendar creation failed')
     return redirectBackWithError(c.req.url, c.req.header('referer'), 'create_error', message)
   }
 })

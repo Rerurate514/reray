@@ -1,12 +1,13 @@
 import type { GeneratedSlot } from '../entities/slot'
 import type { SlotFrequency } from '../valueObjects/slotFrequency'
+import { UserFacingError } from '../../shared/errors/userFacingError'
 
 export function generateSlots(startDate: string, endDate: string, frequency: SlotFrequency) {
   const start = parseDate(startDate)
   const end = parseDate(endDate)
 
   if (!start || !end || start > end) {
-    throw new Error('Invalid date range')
+    throw new UserFacingError('validation', 'Invalid date range')
   }
 
   const slots: GeneratedSlot[] = []
@@ -27,7 +28,7 @@ export function generateSlots(startDate: string, endDate: string, frequency: Slo
   }
 
   if (slots.length === 0) {
-    throw new Error('No slots generated')
+    throw new UserFacingError('validation', 'No slots generated')
   }
 
   return slots

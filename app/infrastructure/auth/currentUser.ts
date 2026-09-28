@@ -2,6 +2,7 @@ import type { Context } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { getFirebaseProjectId } from '../../application/auth/firebaseConfig'
 import { syncAuthenticatedUser } from '../../application/user/syncAuthenticatedUser'
+import { UserFacingError } from '../../domain/shared/errors/userFacingError'
 import { createDb } from '../providers/db/client'
 import { createDrizzleUserRepository } from '../user/repositories/drizzleUserRepository'
 import { verifyFirebaseIdToken } from './firebaseToken'
@@ -20,7 +21,7 @@ export async function getCurrentUser(c: Context) {
 export async function requireCurrentUser(c: Context) {
   const user = await getCurrentUser(c)
   if (!user) {
-    throw new Error('Authentication required')
+    throw new UserFacingError('authenticationRequired', 'Authentication required')
   }
 
   return user

@@ -1,3 +1,4 @@
+import { UserFacingError } from '../../domain/shared/errors/userFacingError'
 import type { CalendarRepository } from './repositories/calendarRepository'
 
 export async function cancelSlot(calendarRepository: CalendarRepository, input: { slotId: string; userId: string }) {
@@ -8,6 +9,6 @@ export async function cancelSlot(calendarRepository: CalendarRepository, input: 
   })
 
   if (!canceled) {
-    throw new Error('Slot is not assigned to current user')
+    throw new UserFacingError('notFound', 'Slot is not assigned to current user')
   }
 }

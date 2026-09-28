@@ -2,6 +2,7 @@ import { createRoute } from 'honox/factory'
 import { updateProfile } from '../../../application/user/updateProfile'
 import { requireCurrentUser } from '../../../infrastructure/auth/currentUser'
 import { createDb } from '../../../infrastructure/providers/db/client'
+import { presentError } from '../../../infrastructure/http/presentError'
 import { createDrizzleUserRepository } from '../../../infrastructure/user/repositories/drizzleUserRepository'
 
 export const POST = createRoute(async (c) => {
@@ -22,7 +23,7 @@ export const POST = createRoute(async (c) => {
     url.searchParams.set('profile_saved', '1')
     return c.redirect(url.toString(), 303)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to update profile'
+    const { message } = presentError(error, 'Failed to update profile')
     const url = new URL(c.req.header('referer') ?? '/my-schedule', c.req.url)
     url.searchParams.set('profile_error', message)
     return c.redirect(url.toString(), 303)

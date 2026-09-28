@@ -3,6 +3,7 @@ import { deleteCalendar } from '../../../../application/calendar/deleteCalendar'
 import { requireCurrentUser } from '../../../../infrastructure/auth/currentUser'
 import { createDrizzleCalendarRepository } from '../../../../infrastructure/calendar/repositories/drizzleCalendarRepository'
 import { createDb } from '../../../../infrastructure/providers/db/client'
+import { presentError } from '../../../../infrastructure/http/presentError'
 
 export const POST = createRoute(async (c) => {
   if (!c.env.DB) {
@@ -23,8 +24,7 @@ export const POST = createRoute(async (c) => {
 
     return c.redirect('/')
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to delete calendar'
-    const status = message === 'Authentication required' ? 401 : message.startsWith('Only the owner') ? 403 : 404
+    const { status, message } = presentError(error, 'Failed to delete calendar')
     return c.json({ error: message }, status)
   }
 })

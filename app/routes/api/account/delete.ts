@@ -3,6 +3,7 @@ import { createRoute } from 'honox/factory'
 import { deleteAccount } from '../../../application/user/deleteAccount'
 import { requireCurrentUser } from '../../../infrastructure/auth/currentUser'
 import { createDb } from '../../../infrastructure/providers/db/client'
+import { presentError } from '../../../infrastructure/http/presentError'
 import { createDrizzleUserRepository } from '../../../infrastructure/user/repositories/drizzleUserRepository'
 
 export const POST = createRoute(async (c) => {
@@ -22,8 +23,7 @@ export const POST = createRoute(async (c) => {
 
     return c.json({ ok: true })
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to delete account'
-    const status = message === 'Authentication required' ? 401 : message === 'Account not found' ? 404 : 500
+    const { status, message } = presentError(error, 'Failed to delete account')
     return c.json({ error: message }, status)
   }
 })

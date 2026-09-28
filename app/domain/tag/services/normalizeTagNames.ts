@@ -1,3 +1,5 @@
+import { UserFacingError } from '../../shared/errors/userFacingError'
+
 const MAX_TAGS = 8
 const MAX_TAG_LENGTH = 24
 
@@ -30,7 +32,7 @@ function normalizeTagName(input: string) {
   }
 
   if (name.length > MAX_TAG_LENGTH) {
-    throw new Error(`Tag must be ${MAX_TAG_LENGTH} characters or less`)
+    throw new UserFacingError('validation', `Tag must be ${MAX_TAG_LENGTH} characters or less`)
   }
 
   return name.toLowerCase()

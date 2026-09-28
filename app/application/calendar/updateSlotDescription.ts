@@ -1,4 +1,5 @@
 import type { CalendarRepository } from './repositories/calendarRepository'
+import { UserFacingError } from '../../domain/shared/errors/userFacingError'
 import { normalizeCalendarDescription } from '../../domain/calendar/services/normalizeCalendarDescription'
 
 export async function updateSlotDescription(
@@ -7,7 +8,7 @@ export async function updateSlotDescription(
 ) {
   const entry = await calendarRepository.findEntryByUser({ slotId: input.slotId, userId: input.userId })
   if (!entry) {
-    throw new Error('Only the assigned user can edit this notice')
+    throw new UserFacingError('forbidden', 'Only the assigned user can edit this notice')
   }
 
   const updated = await calendarRepository.updateSlotDescription({
@@ -17,6 +18,6 @@ export async function updateSlotDescription(
   })
 
   if (!updated) {
-    throw new Error('Slot not found')
+    throw new UserFacingError('notFound', 'Slot not found')
   }
 }
