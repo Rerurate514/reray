@@ -36,25 +36,41 @@ export default function AuthStatus({ config }: Props) {
       return
     }
 
+    let isInitial = true
+
     return onAuthStateChanged(auth, async (user) => {
+      const isInitialCallback = isInitial
+      isInitial = false
       setFirebaseUser(user)
+
       if (!user) {
         setSessionUser(null)
-        return
+
+        try {
+          await fetch('/api/auth/session', { method: 'DELETE' })
+        } catch (error) {
+          console.error(error)
+        }
+      } else {
+        try {
+          await createSession(user)
+        } catch (error) {
+          console.error(error)
+          setErrorMessage('ログイン後のセッション作成に失敗しました。')
+          setStatus('error')
+          return
+        }
+
+        const response = await fetch('/api/auth/me')
+        const body = await response.json<{ user: SessionUser | null }>()
+        setSessionUser(body.user)
       }
 
-      try {
-        await createSession(user)
-      } catch (error) {
-        console.error(error)
-        setErrorMessage('ログイン後のセッション作成に失敗しました。')
-        setStatus('error')
-        return
+      // マイスケジュール等はサーバー側でログイン状態を描画しているため、
+      // ログイン・ログアウトの変化後はリロードして表示を合わせる。
+      if (!isInitialCallback) {
+        window.location.reload()
       }
-
-      const response = await fetch('/api/auth/me')
-      const body = await response.json<{ user: SessionUser | null }>()
-      setSessionUser(body.user)
     })
   }, [auth])
 
@@ -85,13 +101,11 @@ export default function AuthStatus({ config }: Props) {
     }
 
     setStatus('loading')
-    setFirebaseUser(null)
-    setSessionUser(null)
     setErrorMessage(null)
 
     try {
+      // セッションCookieの削除と、画面の再読み込みは onAuthStateChanged 側で行う。
       await signOut(auth)
-      await fetch('/api/auth/session', { method: 'DELETE' })
       setStatus('idle')
     } catch (error) {
       console.error(error)
