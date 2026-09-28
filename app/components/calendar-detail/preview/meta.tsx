@@ -26,6 +26,7 @@ export function createCalendarPreviewMeta(calendar: Calendar, slots: Slot[], req
     title,
     description,
     url: calendarUrl,
+    noIndex: calendar.visibility === 'private',
     image: {
       url: imageUrl,
       width: ogImage.width,

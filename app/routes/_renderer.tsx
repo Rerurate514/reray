@@ -5,7 +5,7 @@ const defaultTitle = 'Reray'
 const defaultDescription = 'Reray は、いつでも作れる記事リレーサービスです。'
 const themeColor = '#20201d'
 
-export default jsxRenderer(({ children, description, discordComponentEmbed, image, title, url }) => {
+export default jsxRenderer(({ children, description, discordComponentEmbed, image, noIndex, title, url }) => {
   const pageTitle = title ?? defaultTitle
   const pageDescription = description ?? defaultDescription
 
@@ -16,6 +16,7 @@ export default jsxRenderer(({ children, description, discordComponentEmbed, imag
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
+        {noIndex ? <meta name="robots" content="noindex" /> : null}
         <meta property="og:site_name" content="Reray" />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />

@@ -48,6 +48,7 @@ export default createRoute(async (c) => {
       title: `${detail.calendar.title} / ${slotLabel} - Reray`,
       description: `${detail.calendar.title} の ${slotLabel} の枠です。`,
       url: new URL(`/c/${detail.calendar.slug}/slots/${detail.slot.id}`, c.req.url).toString(),
+      noIndex: detail.calendar.visibility === 'private',
     },
   )
 })

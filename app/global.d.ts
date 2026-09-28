@@ -11,6 +11,7 @@ type PageMeta = {
     alt?: string
   }
   discordComponentEmbed?: string
+  noIndex?: boolean
 }
 
 declare module 'hono' {
