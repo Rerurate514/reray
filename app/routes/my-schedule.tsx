@@ -37,5 +37,6 @@ export default createRoute(async (c) => {
       slotError={slotError}
       user={user}
     />,
+    { noIndex: true },
   );
 });
