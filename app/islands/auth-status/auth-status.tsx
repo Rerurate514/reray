@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'hono/jsx'
 import { FirebaseError, getApps, initializeApp, type FirebaseOptions } from 'firebase/app'
-import { getAuth, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
+import { getAuth, onIdTokenChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
 import type { PublicFirebaseConfig } from '../../application/auth/firebaseConfig'
 import { SignedInMenu } from './signed-in-menu'
 import { SignedOutMenu } from './signed-out-menu'
@@ -37,10 +37,16 @@ export default function AuthStatus({ config }: Props) {
     }
 
     let isInitial = true
+    let currentUid: string | null = null
 
-    return onAuthStateChanged(auth, async (user) => {
+    return onIdTokenChanged(auth, async (user) => {
       const isInitialCallback = isInitial
       isInitial = false
+
+      const uid = user?.uid ?? null
+      const identityChanged = uid !== currentUid
+      currentUid = uid
+
       setFirebaseUser(user)
 
       if (!user) {
@@ -61,14 +67,21 @@ export default function AuthStatus({ config }: Props) {
           return
         }
 
-        const response = await fetch('/api/auth/me')
-        const body = await response.json<{ user: SessionUser | null }>()
-        setSessionUser(body.user)
+        if (isInitialCallback || identityChanged) {
+          try {
+            const response = await fetch('/api/auth/me')
+            const body = await response.json<{ user: SessionUser | null }>()
+            setSessionUser(body.user)
+          } catch (error) {
+            console.error(error)
+            setErrorMessage('セッション情報の取得に失敗しました。')
+            setStatus('error')
+            return
+          }
+        }
       }
 
-      // マイスケジュール等はサーバー側でログイン状態を描画しているため、
-      // ログイン・ログアウトの変化後はリロードして表示を合わせる。
-      if (!isInitialCallback) {
+      if (!isInitialCallback && identityChanged) {
         window.location.reload()
       }
     })
@@ -104,7 +117,6 @@ export default function AuthStatus({ config }: Props) {
     setErrorMessage(null)
 
     try {
-      // セッションCookieの削除と、画面の再読み込みは onAuthStateChanged 側で行う。
       await signOut(auth)
       setStatus('idle')
     } catch (error) {
