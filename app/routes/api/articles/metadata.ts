@@ -4,7 +4,16 @@ import { normalizeArticleUrl } from "../../../domain/article/services/normalizeA
 import { requireCurrentUser } from "../../../infrastructure/auth/currentUser";
 
 export const GET = createRoute(async (c) => {
-  await requireCurrentUser(c);
+  const user = await requireCurrentUser(c);
+  const limiter = c.env.ARTICLE_METADATA_RATE_LIMITER;
+
+  if (limiter) {
+    const { success } = await limiter.limit({ key: user.id });
+
+    if (!success) {
+      return c.json({ error: "rate_limited" }, 429);
+    }
+  }
 
   try {
     const url = normalizeArticleUrl(c.req.query("url") ?? "");

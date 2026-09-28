@@ -26,6 +26,7 @@ declare module "hono" {
     Variables: Record<string, never>;
     Bindings: {
       DB: D1Database;
+      ARTICLE_METADATA_RATE_LIMITER?: RateLimit;
       FIREBASE_PROJECT_ID: string;
       PUBLIC_FIREBASE_API_KEY: string;
       PUBLIC_FIREBASE_AUTH_DOMAIN: string;

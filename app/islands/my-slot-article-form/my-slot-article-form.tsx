@@ -25,6 +25,14 @@ export default function MySlotArticleForm({
     const response = await fetch(
       `/api/articles/metadata?url=${encodeURIComponent(nextUrl)}`,
     );
+
+    if (response.status === 429) {
+      setStatus(
+        "タイトル取得の回数が多すぎます。少し待ってからもう一度お試しください。",
+      );
+      return;
+    }
+
     const metadata = response.ok
       ? ((await response.json()) as { title: string | null })
       : { title: null };

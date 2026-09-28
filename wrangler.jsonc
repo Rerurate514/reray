@@ -15,6 +15,16 @@
       "migrations_dir": "drizzle"
     }
   ],
+  "ratelimits": [
+    {
+      "name": "ARTICLE_METADATA_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 30,
+        "period": 60
+      }
+    }
+  ],
   "vars": {
     "FIREBASE_PROJECT_ID": "reray-83ad4",
     "PUBLIC_FIREBASE_API_KEY": "AIzaSyCl6lHxOUi2O3BbxfZtxGB9Lci8VxphYNI",
