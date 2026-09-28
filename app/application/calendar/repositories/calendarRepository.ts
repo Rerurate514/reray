@@ -39,8 +39,8 @@ export type CalendarRepository = {
   removeSlotEntry(input: { entryId: string; now: number }): Promise<boolean>
   findEntryOwner(entryId: string): Promise<string | null>
   findEntryCalendarOwner(entryId: string): Promise<string | null>
-  findEntryByUser(input: { slotId: string; userId: string }): Promise<{ id: string } | null>
-  findArticleEntryIdByUrl(url: string): Promise<string | null>
+  findEntryByUser(input: { slotId: string; userId: string }): Promise<{ id: string; calendarId: string } | null>
+  findArticleEntryIdByUrl(input: { calendarId: string; url: string }): Promise<string | null>
   updateSlotArticle(input: { entryId: string; title: string; url: string; now: number }): Promise<boolean>
   updateSlotDescription(input: { entryId: string; description: string | null; now: number }): Promise<boolean>
   listPublishedPublicSlotsByUser(userId: string): Promise<MySlotSummary[]>

@@ -315,21 +315,30 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
     },
 
     async findEntryByUser(input) {
-      const entry = await db.query.slotEntries.findFirst({
-        columns: { id: true },
-        where: and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)),
-      })
+      const rows = await db
+        .select({
+          id: slotEntries.id,
+          calendarId: slots.calendarId,
+        })
+        .from(slotEntries)
+        .innerJoin(slots, eq(slotEntries.slotId, slots.id))
+        .where(and(eq(slotEntries.slotId, input.slotId), eq(slotEntries.userId, input.userId)))
+        .limit(1)
 
-      return entry ?? null
+      return rows[0] ?? null
     },
 
-    async findArticleEntryIdByUrl(url) {
-      const entry = await db.query.slotEntries.findFirst({
-        columns: { id: true },
-        where: eq(slotEntries.articleUrl, url),
-      })
+    async findArticleEntryIdByUrl(input) {
+      const rows = await db
+        .select({
+          id: slotEntries.id,
+        })
+        .from(slotEntries)
+        .innerJoin(slots, eq(slotEntries.slotId, slots.id))
+        .where(and(eq(slotEntries.articleUrl, input.url), eq(slots.calendarId, input.calendarId)))
+        .limit(1)
 
-      return entry?.id ?? null
+      return rows[0]?.id ?? null
     },
 
     async updateSlotArticle(input) {

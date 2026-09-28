@@ -13,7 +13,10 @@ export async function updateSlotArticle(
   }
 
   const url = normalizeArticleUrl(input.url)
-  const duplicateEntryId = await calendarRepository.findArticleEntryIdByUrl(url)
+  const duplicateEntryId = await calendarRepository.findArticleEntryIdByUrl({
+    calendarId: entry.calendarId,
+    url,
+  })
   if (duplicateEntryId && duplicateEntryId !== entry.id) {
     throw new Error('Article URL is already registered')
   }
