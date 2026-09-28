@@ -4,16 +4,20 @@ import type {
   PublicCalendarStatusFilter,
 } from "./repositories/calendarRepository";
 
+const pageSize = 24;
+
 export type ListPublicCalendarsInput = {
   query?: string;
   tag?: string;
   status?: string;
+  page?: string;
 };
 
 export type PublicCalendarSearch = {
   query: string;
   tag: string;
   status: PublicCalendarStatusFilter;
+  page: number;
 };
 
 export async function listPublicCalendars(
@@ -21,14 +25,24 @@ export async function listPublicCalendars(
   input: ListPublicCalendarsInput = {},
 ) {
   const search = normalizePublicCalendarSearch(input);
-  const calendars = await calendarRepository.listPublishedPublic(24, {
-    query: search.query || undefined,
-    tag: search.tag || undefined,
-    status: search.status,
-    today: formatToday(),
-  });
+  const calendars = await calendarRepository.listPublishedPublic(
+    pageSize + 1,
+    {
+      query: search.query || undefined,
+      tag: search.tag || undefined,
+      status: search.status,
+      today: formatToday(),
+    },
+    (search.page - 1) * pageSize,
+  );
+  const hasNext = calendars.length > pageSize;
 
-  return { calendars, search };
+  return {
+    calendars: calendars.slice(0, pageSize),
+    search,
+    hasNext,
+    hasPrev: search.page > 1,
+  };
 }
 
 function normalizePublicCalendarSearch(
@@ -39,8 +53,9 @@ function normalizePublicCalendarSearch(
     .slice(0, 80);
   const tag = normalizeTagNames(input.tag)[0] ?? "";
   const status = normalizeStatus(input.status);
+  const page = normalizePage(input.page);
 
-  return { query, tag, status };
+  return { query, tag, status, page };
 }
 
 function normalizeStatus(
@@ -51,6 +66,12 @@ function normalizeStatus(
   }
 
   return "all";
+}
+
+function normalizePage(value: string | undefined) {
+  const page = Number.parseInt(String(value ?? ""), 10);
+
+  return Number.isFinite(page) && page > 1 ? page : 1;
 }
 
 function formatToday() {

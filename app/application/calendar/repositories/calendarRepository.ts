@@ -34,6 +34,7 @@ export type CalendarRepository = {
   listPublishedPublic(
     limit: number,
     filters?: PublicCalendarFilters,
+    offset?: number,
   ): Promise<CalendarSummary[]>;
   listPublishedPublicByOwner(userId: string): Promise<CalendarSummary[]>;
   listCalendarsByOwner(userId: string): Promise<CalendarSummary[]>;

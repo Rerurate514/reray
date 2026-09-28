@@ -6,13 +6,17 @@ import { CalendarCard } from "../calendar-card/index";
 
 export function PublicCalendarsSection({
   calendars,
+  hasNext,
+  hasPrev,
   search,
 }: {
   calendars: CalendarSummary[];
+  hasNext: boolean;
+  hasPrev: boolean;
   search: PublicCalendarSearch;
 }) {
   const hasSearch = Boolean(
-    search.query || search.tag || search.status !== "all",
+    search.query || search.tag || search.status !== "all" || search.page > 1,
   );
 
   return (
@@ -44,6 +48,31 @@ export function PublicCalendarsSection({
               : "まだ公開中のリレーはありません。最初のリレーを作成できます。"}
           </div>
         )}
+        {hasPrev || hasNext ? (
+          <nav class="mt-6 flex items-center justify-between gap-4 border-t border-(--color-border) pt-4 text-sm font-semibold">
+            {hasPrev ? (
+              <a
+                class="text-(--color-accent) hover:text-(--color-accent-hover)"
+                href={createPageHref(search, search.page - 1)}
+              >
+                前へ
+              </a>
+            ) : (
+              <span />
+            )}
+            <span class="text-(--color-muted)">{search.page} ページ</span>
+            {hasNext ? (
+              <a
+                class="text-(--color-accent) hover:text-(--color-accent-hover)"
+                href={createPageHref(search, search.page + 1)}
+              >
+                次へ
+              </a>
+            ) : (
+              <span />
+            )}
+          </nav>
+        ) : null}
       </div>
     </section>
   );
@@ -130,4 +159,28 @@ function StatusOption({
       {label}
     </option>
   );
+}
+
+function createPageHref(search: PublicCalendarSearch, page: number) {
+  const params = new URLSearchParams();
+
+  if (search.query) {
+    params.set("q", search.query);
+  }
+
+  if (search.tag) {
+    params.set("tag", search.tag);
+  }
+
+  if (search.status !== "all") {
+    params.set("status", search.status);
+  }
+
+  if (page > 1) {
+    params.set("page", String(page));
+  }
+
+  const query = params.toString();
+
+  return query ? `/?${query}` : "/";
 }

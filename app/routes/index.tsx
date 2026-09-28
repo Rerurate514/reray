@@ -13,14 +13,22 @@ export default createRoute(async (c) => {
         query: c.req.query("q"),
         tag: c.req.query("tag"),
         status: c.req.query("status"),
+        page: c.req.query("page"),
       })
-    : { calendars: [], search: { query: "", tag: "", status: "all" as const } };
+    : {
+        calendars: [],
+        search: { query: "", tag: "", status: "all" as const, page: 1 },
+        hasNext: false,
+        hasPrev: false,
+      };
   const firebaseConfig = getPublicFirebaseConfig(c.env);
 
   return c.render(
     <HomePage
       calendars={result.calendars}
       firebaseConfig={firebaseConfig}
+      hasNext={result.hasNext}
+      hasPrev={result.hasPrev}
       search={result.search}
     />,
   );

@@ -9,10 +9,14 @@ import { PublicCalendarsSection } from "../public-calendars-section/index";
 export function HomePage({
   calendars,
   firebaseConfig,
+  hasNext,
+  hasPrev,
   search,
 }: {
   calendars: CalendarSummary[];
   firebaseConfig: PublicFirebaseConfig | null;
+  hasNext: boolean;
+  hasPrev: boolean;
   search: PublicCalendarSearch;
 }) {
   return (
@@ -20,7 +24,12 @@ export function HomePage({
       <title>Reray</title>
       <HomeHeader firebaseConfig={firebaseConfig} />
       <HeroSection />
-      <PublicCalendarsSection calendars={calendars} search={search} />
+      <PublicCalendarsSection
+        calendars={calendars}
+        hasNext={hasNext}
+        hasPrev={hasPrev}
+        search={search}
+      />
       <Footer />
     </main>
   );

@@ -140,7 +140,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
       };
     },
 
-    async listPublishedPublic(limit, filters) {
+    async listPublishedPublic(limit, filters, offset) {
       const conditions = [eq(calendars.visibility, "public")];
       const query = filters?.query?.trim();
       const tag = filters?.tag?.trim();
@@ -181,6 +181,7 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
         where: and(...conditions),
         orderBy: (table, { desc }) => [desc(table.createdAt)],
         limit,
+        offset,
         with: {
           owner: true,
         },
