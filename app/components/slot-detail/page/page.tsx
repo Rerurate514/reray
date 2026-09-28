@@ -120,7 +120,7 @@ function Panel({ children, title }: { children: Child; title: string }) {
 function SlotNoticeForm({ description, slotId }: { description: string; slotId: string }) {
   return (
     <form method="post" action={`/api/slots/${slotId}/description`} class="grid min-w-0 gap-3 border-t border-(--color-border) pt-4">
-      <textarea class="reray-input min-h-32 max-w-full px-3 py-3 leading-7" name="description" placeholder="この枠の告知文、募集内容、記事テーマなど">{description}</textarea>
+      <textarea class="reray-input min-h-32 max-w-full px-3 py-3 leading-7" name="description" maxlength={2000} placeholder="この枠の告知文、募集内容、記事テーマなど">{description}</textarea>
       <div>
         <button class="max-w-full bg-(--color-text) px-4 py-3 text-sm font-semibold text-(--color-page) hover:bg-(--color-accent-hover)" type="submit">告知文を保存</button>
       </div>

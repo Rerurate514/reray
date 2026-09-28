@@ -35,6 +35,14 @@ export function translateCalendarActionError(message: string) {
     return 'タイトルを入力してください。'
   }
 
+  if (message === 'Title must be 120 characters or fewer') {
+    return 'タイトルは120文字以内で入力してください。'
+  }
+
+  if (message === 'Description must be 2000 characters or fewer') {
+    return '説明・告知文は2000文字以内で入力してください。'
+  }
+
   if (message.startsWith('Tag must be')) {
     return 'タグは1つ24文字以内で入力してください。'
   }

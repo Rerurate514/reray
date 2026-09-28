@@ -10,7 +10,7 @@ export function CalendarEditorForm({ calendar }: { calendar: EditableCalendar })
       </label>
       <label class="grid gap-2">
         <span class="text-sm font-semibold">説明</span>
-        <textarea class="reray-input min-h-28 px-3 py-3 leading-7" name="description">{calendar.description ?? ''}</textarea>
+        <textarea class="reray-input min-h-28 px-3 py-3 leading-7" name="description" maxlength={2000}>{calendar.description ?? ''}</textarea>
       </label>
       <label class="grid gap-2">
         <span class="text-sm font-semibold">タグ</span>

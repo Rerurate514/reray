@@ -7,7 +7,7 @@ export function CalendarBasicsFields() {
       </label>
       <label class="grid gap-2">
         <span class="text-sm font-semibold">説明</span>
-        <textarea class="reray-input min-h-28 px-3 py-3 leading-7" name="description" placeholder="テーマや参加条件を書いてください" />
+        <textarea class="reray-input min-h-28 px-3 py-3 leading-7" name="description" maxlength={2000} placeholder="テーマや参加条件を書いてください" />
       </label>
       <label class="grid gap-2">
         <span class="text-sm font-semibold">タグ</span>
