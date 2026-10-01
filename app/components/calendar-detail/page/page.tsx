@@ -1,4 +1,5 @@
 import type { PublicFirebaseConfig } from "../../../application/auth/firebaseConfig";
+import { buildRelayProgress } from "../../../application/calendar/services/buildRelayProgress";
 import type { AuthenticatedUser } from "../../../domain/user/entities/user";
 import CalendarEditor from "../../../islands/calendar-editor";
 import DeleteCalendar from "../../../islands/delete-calendar";
@@ -30,6 +31,7 @@ export function CalendarDetailPage({
 }) {
   const isOwner = currentUser?.id === calendar.ownerId;
   const error = slotError ?? calendarError;
+  const progress = buildRelayProgress(slots);
 
   return (
     <main class="mx-auto min-h-screen w-full max-w-6xl px-5 py-6 sm:px-8">
@@ -47,7 +49,7 @@ export function CalendarDetailPage({
           リレーの内容を保存しました。
         </FeedbackMessage>
       ) : null}
-      <OverviewSection calendar={calendar} />
+      <OverviewSection calendar={calendar} progress={progress} />
       {isOwner ? <CalendarEditor calendar={calendar} /> : null}
       <CalendarGrid
         calendarSlug={calendar.slug}

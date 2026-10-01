@@ -1,7 +1,9 @@
+import type { RelayBaton } from "../../../application/calendar/dtos/relayBaton";
 import { countActiveParticipants } from "../../../application/calendar/dtos/slotParticipant";
 import type { AuthenticatedUser } from "../../../domain/user/entities/user";
 import { AssignedSlot } from "../assigned-slot/index";
 import { EmptySlot } from "../empty-slot/index";
+import { RelayLinks } from "../relay-links/index";
 import { SlotActions } from "../slot-actions/index";
 import type { Slot } from "../types/index";
 
@@ -12,6 +14,7 @@ export function SlotRow({
   currentUser,
   isOwner,
   onJoined,
+  relay,
   slot,
 }: {
   capacity: number;
@@ -20,6 +23,7 @@ export function SlotRow({
   currentUser: AuthenticatedUser | null;
   isOwner: boolean;
   onJoined?: () => void;
+  relay: RelayBaton | null;
   slot: Slot;
 }) {
   return (
@@ -57,6 +61,11 @@ export function SlotRow({
         onJoined={onJoined}
         slot={slot}
       />
+      {relay && (relay.previous || relay.next) ? (
+        <div class="sm:col-span-3">
+          <RelayLinks calendarSlug={calendarSlug} relay={relay} />
+        </div>
+      ) : null}
     </article>
   );
 }

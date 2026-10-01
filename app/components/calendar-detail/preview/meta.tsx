@@ -1,17 +1,7 @@
+import { ogImage } from "../../shared/preview/index";
 import type { Calendar, Slot } from "../types/index";
 import { createDiscordComponentEmbed } from "./discord-component-embed";
-import {
-  createCalendarPreviewDescription,
-  createNextOpenSlotText,
-  findNextOpenSlot,
-} from "./text";
-
-const ogImage = {
-  path: "/og-image.png",
-  width: 1200,
-  height: 630,
-  alt: "Reray Article Relay Calendar",
-};
+import { createCalendarPreviewDescription } from "./text";
 
 export function createCalendarPreviewMeta(
   calendar: Calendar,
@@ -20,20 +10,10 @@ export function createCalendarPreviewMeta(
 ) {
   const calendarUrl = new URL(`/c/${calendar.slug}`, requestUrl).toString();
   const imageUrl = new URL(ogImage.path, requestUrl).toString();
-  const description = createCalendarPreviewDescription(calendar);
-  const nextOpenSlot = findNextOpenSlot(slots, calendar.capacity);
-  const nextOpenSlotText = createNextOpenSlotText(slots, calendar.capacity);
-  const nextOpenSlotUrl = nextOpenSlot
-    ? new URL(
-        `/c/${calendar.slug}/slots/${nextOpenSlot.id}`,
-        requestUrl,
-      ).toString()
-    : null;
-  const title = `${calendar.title} - Reray`;
 
   return {
-    title,
-    description,
+    title: `${calendar.title} - Reray`,
+    description: createCalendarPreviewDescription(calendar),
     url: calendarUrl,
     noIndex: calendar.visibility === "private",
     image: {
@@ -45,9 +25,8 @@ export function createCalendarPreviewMeta(
     discordComponentEmbed: createDiscordComponentEmbed({
       calendar,
       imageUrl,
-      nextOpenSlotUrl,
-      nextOpenSlotText,
-      url: calendarUrl,
+      requestUrl,
+      slots,
     }),
   };
 }

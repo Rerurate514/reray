@@ -1,11 +1,19 @@
+import type { RelayProgress as RelayProgressStats } from "../../../application/calendar/services/buildRelayProgress";
 import CalendarShare from "../../../islands/calendar-share";
 import { RerayRule } from "../../shared/reray-rule/index";
 import { SectionNumber } from "../../shared/section-number/index";
 import { TagList } from "../../shared/tag-list/index";
 import { OwnerBadge } from "../owner-badge/index";
+import { RelayProgress } from "../relay-progress/index";
 import type { Calendar } from "../types/index";
 
-export function OverviewSection({ calendar }: { calendar: Calendar }) {
+export function OverviewSection({
+  calendar,
+  progress,
+}: {
+  calendar: Calendar;
+  progress: RelayProgressStats;
+}) {
   return (
     <section class="mb-12 grid gap-10">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -35,6 +43,7 @@ export function OverviewSection({ calendar }: { calendar: Calendar }) {
             {calendar.description}
           </p>
         ) : null}
+        <RelayProgress progress={progress} />
         <CalendarShare calendar={calendar} />
         <RerayRule class="mt-8" />
       </div>

@@ -10,6 +10,7 @@ import {
   slotEntries,
   slots,
   tags,
+  users,
 } from "../../providers/db/schema";
 import {
   attachTagsToCalendar,
@@ -138,6 +139,46 @@ export function createDrizzleCalendarRepository(db: Db): CalendarRepository {
           participants: slot.entries.map(toParticipant),
         },
       };
+    },
+
+    async listRelayLinksByCalendar(calendarId) {
+      const rows = await db
+        .select({
+          slotId: slots.id,
+          position: slots.position,
+          scheduledDate: slots.scheduledDate,
+          articleTitle: slotEntries.articleTitle,
+          articleUrl: slotEntries.articleUrl,
+          username: users.username,
+          displayName: users.displayName,
+          avatarUrl: users.avatarUrl,
+        })
+        .from(slotEntries)
+        .innerJoin(slots, eq(slotEntries.slotId, slots.id))
+        .leftJoin(users, eq(slotEntries.userId, users.id))
+        .where(
+          and(
+            eq(slots.calendarId, calendarId),
+            isNotNull(slotEntries.articleUrl),
+          ),
+        )
+        .orderBy(asc(slots.position), asc(slotEntries.createdAt));
+
+      return rows.map((row) => ({
+        slotId: row.slotId,
+        position: row.position,
+        scheduledDate: row.scheduledDate,
+        articleTitle: row.articleTitle,
+        articleUrl: row.articleUrl,
+        author:
+          row.username === null
+            ? null
+            : {
+                username: row.username,
+                displayName: row.displayName,
+                avatarUrl: row.avatarUrl,
+              },
+      }));
     },
 
     async listPublishedPublic(limit, filters, offset) {

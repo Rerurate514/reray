@@ -1,10 +1,12 @@
 import type { Child } from "hono/jsx";
 import type { PublicFirebaseConfig } from "../../../application/auth/firebaseConfig";
-import type { SlotDetail } from "../../../application/calendar/dtos/slotDetail";
+import type { RelayBatonLink } from "../../../application/calendar/dtos/relayBaton";
+import type { SlotDetailView } from "../../../application/calendar/dtos/slotDetail";
 import { countActiveParticipants } from "../../../application/calendar/dtos/slotParticipant";
 import type { AuthenticatedUser } from "../../../domain/user/entities/user";
 import JoinSlotButton from "../../../islands/join-slot-button";
 import MySlotArticleForm from "../../../islands/my-slot-article-form";
+import RelayBaton from "../../../islands/relay-baton";
 import SlotShareCard from "../../../islands/slot-share-card";
 import { ParticipantEntry } from "../../calendar-detail/participant-entry";
 import { translateCalendarActionError } from "../../calendar-detail/translate-calendar-action-error";
@@ -25,7 +27,7 @@ export function SlotDetailPage({
   currentUser: AuthenticatedUser | null;
   descriptionError: string | undefined;
   descriptionSaved: string | undefined;
-  detail: SlotDetail;
+  detail: SlotDetailView;
   firebaseConfig: PublicFirebaseConfig | null;
   slotError: string | undefined;
 }) {
@@ -132,6 +134,7 @@ export function SlotDetailPage({
 
         {ownEntry ? (
           <Panel title="記事を入力">
+            <PreviousArticlePrompt link={detail.relay.previous} />
             <MySlotArticleForm
               action={`/api/slots/${slot.id}/article`}
               articleTitle={ownEntry.articleTitle ?? ""}
@@ -139,6 +142,12 @@ export function SlotDetailPage({
             />
           </Panel>
         ) : null}
+
+        <RelayBaton
+          baton={detail.relay}
+          calendarSlug={calendar.slug}
+          calendarTitle={calendar.title}
+        />
 
         <SlotShareCard
           calendarTitle={calendar.title}
@@ -149,6 +158,31 @@ export function SlotDetailPage({
       </section>
       <Footer />
     </main>
+  );
+}
+
+function PreviousArticlePrompt({ link }: { link: RelayBatonLink | null }) {
+  if (!link?.articleUrl) {
+    return (
+      <p class="text-sm leading-7 text-(--color-muted)">
+        この枠より前に登録済みの記事はまだありません。
+      </p>
+    );
+  }
+
+  return (
+    <p class="text-sm leading-7 text-(--color-muted)">
+      書く前に{" "}
+      <a
+        class="font-semibold text-(--color-accent) underline-offset-4 hover:text-(--color-accent-hover) hover:underline"
+        href={link.articleUrl}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        前の記事「{link.articleTitle ?? link.articleUrl}」
+      </a>
+      を読むと、リレーがつながりやすくなります。
+    </p>
   );
 }
 

@@ -359,3 +359,51 @@ describe("article url uniqueness", () => {
     ).toBe("joined");
   });
 });
+
+describe("listRelayLinksByCalendar", () => {
+  it("returns only slots with an article, ordered by position", async () => {
+    await insertUser("alice");
+    await insertCalendar({
+      id: "cal",
+      ownerId: "alice",
+      capacity: 1,
+      slotIds: ["slot-1", "slot-2", "slot-3"],
+    });
+    await repository.joinSlot({
+      entryId: "entry-1",
+      slotId: "slot-1",
+      userId: "alice",
+      now,
+    });
+    await repository.joinSlot({
+      entryId: "entry-2",
+      slotId: "slot-2",
+      userId: "alice",
+      now,
+    });
+    await repository.joinSlot({
+      entryId: "entry-3",
+      slotId: "slot-3",
+      userId: "alice",
+      now,
+    });
+    await repository.updateSlotArticle({
+      entryId: "entry-1",
+      title: "First",
+      url: "https://example.com/1",
+      now,
+    });
+    await repository.updateSlotArticle({
+      entryId: "entry-3",
+      title: "Third",
+      url: "https://example.com/3",
+      now,
+    });
+
+    const links = await repository.listRelayLinksByCalendar("cal");
+
+    expect(links.map((link) => link.position)).toEqual([1, 3]);
+    expect(links[0]?.articleTitle).toBe("First");
+    expect(links[0]?.author?.username).toBe("alice");
+  });
+});

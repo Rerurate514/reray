@@ -1,4 +1,5 @@
 import { countActiveParticipants } from "../../../application/calendar/dtos/slotParticipant";
+import { buildRelayBatons } from "../../../application/calendar/services/buildRelayBaton";
 import type { AuthenticatedUser } from "../../../domain/user/entities/user";
 import CalendarSlotRow from "../../../islands/calendar-slot-row";
 import { SectionNumber } from "../../shared/section-number/index";
@@ -20,6 +21,8 @@ export function SlotsSection({
   isOwner: boolean;
   slots: Slot[];
 }) {
+  const relayBySlotId = buildRelayBatons(slots);
+
   return (
     <section class="grid gap-6">
       <SectionNumber number="03 /" label="Slots" />
@@ -36,6 +39,7 @@ export function SlotsSection({
               calendarTitle={calendarTitle}
               currentUser={currentUser}
               isOwner={isOwner}
+              relay={relayBySlotId.get(slot.id) ?? null}
               slot={slot}
             />
           ) : (
@@ -45,6 +49,7 @@ export function SlotsSection({
               calendarTitle={calendarTitle}
               currentUser={currentUser}
               isOwner={isOwner}
+              relay={relayBySlotId.get(slot.id) ?? null}
               slot={slot}
             />
           ),
